@@ -1,4 +1,4 @@
-# graduation_gathering_questionnaire
+# questionnaire_web_app
 
 A new Flutter project.
 
