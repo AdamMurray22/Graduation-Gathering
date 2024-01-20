@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:questionnaire_web_app/AWS/send_answers.dart';
+import 'package:questionnaire_web_app/survey_answers.dart';
 
 void main() {
   runApp(const MyApp());
@@ -58,6 +60,8 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
   void _incrementCounter() {
+    SendAnswers sendAnswers = SendAnswers();
+    sendAnswers.send(SurveyAnswers());
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
