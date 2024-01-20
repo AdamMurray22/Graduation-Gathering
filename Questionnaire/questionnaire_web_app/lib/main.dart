@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:questionnaire_web_app/questions_screen.dart';
 import 'package:questionnaire_web_app/terms_screen.dart';
+import 'package:questionnaire_web_app/thank_you_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -27,19 +28,20 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-
   int screenStackIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-            index: screenStackIndex, children: [TermsScreen(changeScreen: _changeScreen), QuestionsScreen(changeScreen: _changeScreen)]),
+      body: IndexedStack(index: screenStackIndex, children: [
+        TermsScreen(changeScreen: _changeScreen),
+        QuestionsScreen(changeScreen: _changeScreen),
+        const ThankYouScreen()
+      ]),
     );
   }
 
-  _changeScreen(int screenIndex)
-  {
+  _changeScreen(int screenIndex) {
     setState(() {
       screenStackIndex = screenIndex;
     });
