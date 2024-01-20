@@ -10,12 +10,7 @@ class SendAnswers
 
   send(SurveyAnswers answers)
   {
-    Map<String, String> bodyJson = {
-      "Q1" : "0",
-      "Q2" : "0,1,2,3,4,5",
-      "Q3" : "Suggestion"
-    };
-
+    dynamic bodyJson = answers.getAnswersAsJson();
     String body = json.encode(bodyJson);
     _post(body);
   }
