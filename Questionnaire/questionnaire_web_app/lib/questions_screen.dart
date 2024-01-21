@@ -13,7 +13,7 @@ class QuestionsScreen extends StatefulWidget {
 }
 
 class _QuestionsScreenState extends State<QuestionsScreen> {
-  Text _q1 = const Text("Q1. Please select the following that applies to you:");
+  Text _q1 = const Text("Q1. Please select the following that applies to you:", style: TextStyle(fontSize: 17));
 
   final List<bool> _q1CheckBoxes = [false, false, false];
 
@@ -40,100 +40,125 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: SingleChildScrollView(
-            child: Column(children: [
-      ElevatedButton(
-        onPressed: () {
-          _changeScreen(ScreensEnum.termsScreen);
-        },
-        child: const Text("Back To Participant Information Sheet"),
-      ),
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-      _q1,
-      Row(
-        children: [
-          const Text("Student"),
-          Checkbox(
-              value: _q1CheckBoxes[0],
-              onChanged: (checked) {
-                _checkBoxTicked(0, checked!);
-              })
-        ],
-      ),
-      Row(
-        children: [
-          const Text("Staff"),
-          Checkbox(
-              value: _q1CheckBoxes[1],
-              onChanged: (checked) {
-                _checkBoxTicked(1, checked!);
-              })
-        ],
-      ),
-      Row(
-        children: [
-          const Text("Prefer Not to Say"),
-          Checkbox(
-              value: _q1CheckBoxes[2],
-              onChanged: (checked) {
-                _checkBoxTicked(2, checked!);
-              })
-        ],
-      ),
-      const Text(
-          "Q2. Please arrange the following list of features from most important to you at the top, to least important to you at the bottom:"),
-      ReorderableListView(
-          scrollController: ScrollController(),
-          shrinkWrap: true,
-          onReorder: (oldIndex, newIndex) {
-            _onReorder(_q2ReorderableList, oldIndex, newIndex);
-          },
-          children: _q2ReorderableList
-              .map((item) => Text(item, key: Key(item)))
-              .toList()),
-      const Text(
-          "A Graduation zone in this context means an area of portsmouth that can be designated on the app to show peoples locations."),
-      const Text(
-          "Q3. Please arrange the following list of graduation zones from most important to you at the top, to least important to you at the bottom:"),
-      ReorderableListView(
-          scrollController: ScrollController(),
-          shrinkWrap: true,
-          onReorder: (oldIndex, newIndex) {
-            _onReorder(_q3ReorderableList, oldIndex, newIndex);
-          },
-          children: _q3ReorderableList
-              .map((item) => Text(item, key: Key(item)))
-              .toList()),
-      const Text(
-          "Q4(Optional). Please enter any other parts of Portsmouth you would like to be designated as graduation zones:"),
-      TextField(
-        onChanged: (text) {
-          _q4Text = text;
-        },
-        decoration: const InputDecoration(
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.black, width: 0.0),
-          ),
-          hintText: 'Enter text here...',
-        ),
-      ),
-        ],),
-      
-      ElevatedButton(
-        onPressed: () {
-          bool submitted = _submitResults();
-          if (submitted) {
-            _changeScreen(ScreensEnum.thankYouScreen);
-          } else {
-            setState(() {
-              _q1 = Text(_q1.data!, style: const TextStyle(color: Colors.red));
-            });
-          }
-        },
-        child: const Text("Submit"),
-      ),
-    ])));
+            child: Padding(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                child: Column(children: [
+                  const SizedBox(height: 7),
+                  ElevatedButton(
+                    onPressed: () {
+                      _changeScreen(ScreensEnum.termsScreen);
+                    },
+                    child: const Text("Back To Participant Information Sheet", style: TextStyle(fontSize: 17)),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 7),
+                      _q1,
+                      const SizedBox(height: 7),
+                      Padding(
+                          padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
+                          child: Column(children: [
+                            Row(
+                              children: [
+                                const Text("Student", style: TextStyle(fontSize: 17)),
+                                Checkbox(
+                                    value: _q1CheckBoxes[0],
+                                    onChanged: (checked) {
+                                      _checkBoxTicked(0, checked!);
+                                    })
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                const Text("Staff", style: TextStyle(fontSize: 17)),
+                                Checkbox(
+                                    value: _q1CheckBoxes[1],
+                                    onChanged: (checked) {
+                                      _checkBoxTicked(1, checked!);
+                                    })
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                const Text("Prefer Not to Say", style: TextStyle(fontSize: 17)),
+                                Checkbox(
+                                    value: _q1CheckBoxes[2],
+                                    onChanged: (checked) {
+                                      _checkBoxTicked(2, checked!);
+                                    })
+                              ],
+                            )
+                          ])),
+                      const SizedBox(height: 7),
+                      const Text(
+                          "Q2. Please arrange the following list of features from most important to you at the top, to least important to you at the bottom:", style: TextStyle(fontSize: 17)),
+                      const SizedBox(height: 7),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
+                        child:
+                      ReorderableListView(
+                          scrollController: ScrollController(),
+                          shrinkWrap: true,
+                          onReorder: (oldIndex, newIndex) {
+                            _onReorder(_q2ReorderableList, oldIndex, newIndex);
+                          },
+                          children: _q2ReorderableList
+                              .map((item) => Text(item, key: Key(item), style: const TextStyle(fontSize: 17)))
+                              .toList())),
+                      const SizedBox(height: 14),
+                      const Text(
+                          "A Graduation zone in this context means an area of portsmouth that can be designated on the app to show peoples locations.", style: TextStyle(fontSize: 17)),
+                      const SizedBox(height: 7),
+                      const Text(
+                          "Q3. Please arrange the following list of graduation zones from most important to you at the top, to least important to you at the bottom:", style: TextStyle(fontSize: 17)),
+                      const SizedBox(height: 7),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
+                        child:
+                      ReorderableListView(
+                          scrollController: ScrollController(),
+                          shrinkWrap: true,
+                          onReorder: (oldIndex, newIndex) {
+                            _onReorder(_q3ReorderableList, oldIndex, newIndex);
+                          },
+                          children: _q3ReorderableList
+                              .map((item) => Text(item, key: Key(item), style: const TextStyle(fontSize: 17)))
+                              .toList())),
+                      const SizedBox(height: 7),
+                      const Text(
+                          "Q4(Optional). Please enter any other parts of Portsmouth you would like to be designated as graduation zones:", style: TextStyle(fontSize: 17)),
+                      const SizedBox(height: 7),
+                      TextField(
+                        onChanged: (text) {
+                          _q4Text = text;
+                        },
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.black, width: 0.0),
+                          ),
+                          hintText: 'Enter text here...',
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 7),
+                  ElevatedButton(
+                    onPressed: () {
+                      bool submitted = _submitResults();
+                      if (submitted) {
+                        _changeScreen(ScreensEnum.thankYouScreen);
+                      } else {
+                        setState(() {
+                          _q1 = Text(_q1.data!,
+                              style: const TextStyle(color: Colors.red, fontSize: 17));
+                        });
+                      }
+                    },
+                    child: const Text("Submit", style: TextStyle(fontSize: 17)),
+                  ),
+                ]))));
   }
 
   _changeScreen(ScreensEnum screen) {
