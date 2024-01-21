@@ -18,15 +18,20 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
   final List<bool> _q1CheckBoxes = [false, false, false];
 
   final List<String> _q2ReorderableList = [
-    "data",
-    "Hi",
-    "Hi again",
+    "Users of the app are verified as University of Portsmouth staff or graduates",
+    "That you can be selective about which graduation zones you can be seen in by others",
+    "That you can be selective about which graduation zones you can see other in",
+    "You can filter which users you see by course",
+    "You can filter which users you see by name",
+    "You can filter which users you see by whether you've already met",
+    "A messaging service to allow you to communicate with others",
   ];
 
   final List<String> _q3ReorderableList = [
-    "zone1",
-    "Zone 2",
-    "zon 3",
+    "Guildhall square",
+    "Ravelin park",
+    "The area between Guildhall and Ravelin park",
+    "Pryzm"
   ];
 
   String _q4Text = "";
@@ -42,6 +47,9 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
         },
         child: const Text("Back To Participant Information Sheet"),
       ),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
       _q1,
       Row(
         children: [
@@ -98,15 +106,20 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
               .map((item) => Text(item, key: Key(item)))
               .toList()),
       const Text(
-          "Q4(Optional). Please enter any other parts of Portsmouth ou would like to be designated as graduation zones:"),
+          "Q4(Optional). Please enter any other parts of Portsmouth you would like to be designated as graduation zones:"),
       TextField(
         onChanged: (text) {
           _q4Text = text;
         },
         decoration: const InputDecoration(
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.black, width: 0.0),
+          ),
           hintText: 'Enter text here...',
         ),
       ),
+        ],),
+      
       ElevatedButton(
         onPressed: () {
           bool submitted = _submitResults();
