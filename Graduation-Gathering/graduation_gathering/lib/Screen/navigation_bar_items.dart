@@ -15,7 +15,8 @@ class NavigationBarItems
   NavigationBarItems()
   {
     mapScreen = const Tuple2(NavigationBarItemEnum.mapScreen, MapScreen());
-    aboutScreen = const Tuple2(NavigationBarItemEnum.aboutScreen, AboutScreen());
+    aboutScreen =
+      const Tuple2(NavigationBarItemEnum.aboutScreen, AboutScreen());
     _itemsInOrder.add(mapScreen);
     _itemsInOrder.add(aboutScreen);
   }
@@ -52,7 +53,7 @@ class NavigationBarItems
 }
 enum NavigationBarItemEnum {
   mapScreen(0, Icon(Icons.home), "Home"),
-  aboutScreen(3, Icon(Icons.info_outline), "About");
+  aboutScreen(1, Icon(Icons.info_outline), "About");
 
   const NavigationBarItemEnum(this.position, this.icon, this.label);
 

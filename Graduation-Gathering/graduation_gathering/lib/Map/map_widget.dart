@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:graduation_gathering/Map/tile_server.dart';
-import 'package:location/location.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 
@@ -27,6 +26,7 @@ abstract class MapWidgetState<E extends MapWidget> extends State<E> {
   /// Creates the webview with the map.
   @override
   void initState() {
+    PlatformWebViewControllerCreationParams params = const PlatformWebViewControllerCreationParams();
     _webViewController = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0x00000000))
