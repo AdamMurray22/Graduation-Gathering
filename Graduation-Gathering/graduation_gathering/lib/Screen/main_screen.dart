@@ -5,11 +5,7 @@ import 'navigation_bar_items.dart';
 
 /// This holds the screen for the application.
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key, this.pingMainMapServerFunction, this.pingRouteMapServerFunction, this.pingRoutingServerFunction});
-
-  final Function(String)? pingMainMapServerFunction;
-  final Function(String)? pingRouteMapServerFunction;
-  final Function(String)? pingRoutingServerFunction;
+  const MainScreen({super.key});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
