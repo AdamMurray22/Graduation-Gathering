@@ -1,5 +1,6 @@
 import json
 import logging
+import re
 import boto3
 
 logger = logging.getLogger()
@@ -16,8 +17,9 @@ def lambda_handler(event, context):
     messageBodyJson = event["body"]
     messageBody = json.loads(messageBodyJson)
     email = messageBody["email"]
-
-    writeJsonToS3Bucket(s3_Bucket_Name, s3_File_Name, bucketContent, email, "0000")
+    code = messageBody["code"]
+    
+    return verifyCode(bucketContent, email, code)
 
 def getJsonFromS3Bucket(s3_Bucket_Name, s3_File_Name):
     
@@ -30,12 +32,13 @@ def getJsonFromS3Bucket(s3_Bucket_Name, s3_File_Name):
         logger.error("Could not find file: " + s3_Bucket_Name + "/" + s3_File_Name)
     return []
 
-def writeJsonToS3Bucket(s3_Bucket_Name, s3_File_Name, bucketContent, email, code):
-    newContent = {"email": email, "code": code}
-    bucketContent.append(newContent)
-
-    bucketContentAsString = json.dumps(bucketContent)
-    encoded_string = bucketContentAsString.encode("utf-8")
-
-    s3 = boto3.resource("s3")
-    s3.Bucket(s3_Bucket_Name).put_object(Key=s3_File_Name, Body=encoded_string)
+def verifyCode(bucketContent, email, code):
+    for emailCode in bucketContent:
+        bucketEmail = emailCode["email"]
+        if bucketEmail == email:
+            bucketCode = emailCode["code"]
+            if bucketCode == code:
+                return True
+            else:
+                return False
+    return False

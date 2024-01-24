@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:graduation_gathering/Login/parse_email.dart';
-import 'package:graduation_gathering/Login/send_email_code.dart';
+import 'package:graduation_gathering/Login/send_email.dart';
+
+import '../Login/send_code.dart';
 
 /// This holds the screen for the application.
 class LoginScreen extends StatefulWidget {
@@ -96,7 +98,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 _codeInput = text;
               },
               onSubmitted: (text) {
-                _codeEntered();
+                _codeEntered(_emailInput, _codeInput);
               },
               decoration: const InputDecoration(
                 border: OutlineInputBorder(
@@ -107,7 +109,7 @@ class _LoginScreenState extends State<LoginScreen> {
             )),
             ElevatedButton(
                 onPressed: () {
-                  _codeEntered();
+                  _codeEntered(_emailInput, _codeInput);
                 },
                 child: const Icon(Icons.arrow_outward))
           ]),
@@ -156,13 +158,17 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
-  _codeEntered() {
-    widget.changeScreen();
+  _codeEntered(String email, String code) async {
+    SendCode sendCode = SendCode();
+    bool validated = await sendCode.send(email, code);
+    if (validated) {
+      widget.changeScreen();
+    }
   }
 
   _sendCode(String email)
   {
-    SendEmailCode emailCode = SendEmailCode();
+    SendEmail emailCode = SendEmail();
     emailCode.send(email);
   }
 }
