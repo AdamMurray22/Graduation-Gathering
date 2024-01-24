@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'Screen/main_screen.dart';
+import 'package:graduation_gathering/Screen/screen_holder.dart';
 
 /// Target for start of application.
 void main() {
@@ -22,7 +21,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return const MaterialApp(
         debugShowCheckedModeBanner: true,
-        home: MainScreen()
+        home: ScreenHolder(),
     );
   }
 }
