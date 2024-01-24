@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:graduation_gathering/Login/parse_email.dart';
+import 'package:graduation_gathering/Login/send_email_code.dart';
 
 /// This holds the screen for the application.
 class LoginScreen extends StatefulWidget {
@@ -121,11 +123,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   _emailEntered(String emailInput) {
     emailInput = emailInput.trim();
-    String startOfEmail =
-        '(?:[a-z0-9!#\$%&\'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#\$%&\'*+/=?^_`{|}~-]+)*|"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*")';
-    final studentEmail = RegExp('$startOfEmail@myport.ac.uk');
-    final staffEmail = RegExp('$startOfEmail@port.ac.uk');
-    if (studentEmail.hasMatch(emailInput) || staffEmail.hasMatch(emailInput)) {
+    ParseEmail parseEmail = ParseEmail();
+    if (parseEmail.validate(emailInput)) {
       _emailErrorTextVisible = false;
       _codeAreaVisible = true;
       _displayedEmailWidgets = Row(
@@ -163,6 +162,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   _sendCode(String email)
   {
-    
+    SendEmailCode emailCode = SendEmailCode();
+    emailCode.send(email);
   }
 }
