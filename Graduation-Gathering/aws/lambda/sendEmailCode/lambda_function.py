@@ -16,8 +16,12 @@ def lambda_handler(event, context):
     messageBodyJson = event["body"]
     messageBody = json.loads(messageBodyJson)
     email = messageBody["email"]
+    
+    code = "0000"
 
-    writeJsonToS3Bucket(s3_Bucket_Name, s3_File_Name, bucketContent, email, "0000")
+    writeJsonToS3Bucket(s3_Bucket_Name, s3_File_Name, bucketContent, email, code)
+    
+    sendEmail(email, code)
 
 def getJsonFromS3Bucket(s3_Bucket_Name, s3_File_Name):
     
@@ -39,3 +43,33 @@ def writeJsonToS3Bucket(s3_Bucket_Name, s3_File_Name, bucketContent, email, code
 
     s3 = boto3.resource("s3")
     s3.Bucket(s3_Bucket_Name).put_object(Key=s3_File_Name, Body=encoded_string)
+
+client = boto3.client('ses', region_name='eu-west-2')
+
+def sendEmail(receiver_email, code):
+        
+    response = client.send_email(
+    Destination={
+        'ToAddresses': [receiver_email]
+    },
+    Message={
+        'Body': {
+            'Text': {
+                'Charset': 'UTF-8',
+                'Data': "Your code is " + code + ". This will expire in 5 minutes.",
+            }
+        },
+        'Subject': {
+            'Charset': 'UTF-8',
+            'Data': 'Login Code',
+        },
+    },
+    Source='graduation.gathering.login@gmail.com'
+    )
+        
+    print(response)
+    
+    return {
+    'statusCode': 200,
+    'body': json.dumps("Email Sent Successfully. MessageId is: " + response['MessageId'])
+    }
