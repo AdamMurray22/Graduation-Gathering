@@ -1,6 +1,9 @@
 import json
 import logging
 import boto3
+import re
+import random
+import time
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -16,8 +19,11 @@ def lambda_handler(event, context):
     messageBodyJson = event["body"]
     messageBody = json.loads(messageBodyJson)
     email = messageBody["email"]
+
+    if not validEmail(email):
+        return
     
-    code = "0000"
+    code = generateCode()
 
     writeJsonToS3Bucket(s3_Bucket_Name, s3_File_Name, bucketContent, email, code)
     
@@ -35,7 +41,8 @@ def getJsonFromS3Bucket(s3_Bucket_Name, s3_File_Name):
     return []
 
 def writeJsonToS3Bucket(s3_Bucket_Name, s3_File_Name, bucketContent, email, code):
-    newContent = {"email": email, "code": code}
+    newContent = {"email": email, "code": code, "expire": str(time.time() + (5 * 60))}
+    bucketContent = removeEmail(bucketContent, email)
     bucketContent.append(newContent)
 
     bucketContentAsString = json.dumps(bucketContent)
@@ -43,6 +50,23 @@ def writeJsonToS3Bucket(s3_Bucket_Name, s3_File_Name, bucketContent, email, code
 
     s3 = boto3.resource("s3")
     s3.Bucket(s3_Bucket_Name).put_object(Key=s3_File_Name, Body=encoded_string)
+
+def removeEmail(bucket, email):
+    for i in reversed(range(len(bucket))):
+        emailCode = bucket[i]
+        if emailCode["email"] == email:
+            bucket.pop(i)
+    return bucket
+
+def validEmail(email):
+    startOfRegEmail = '(?:[a-z0-9!#\$%&\'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#\$%&\'*+/=?^_`{|}~-]+)*|"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*")'
+    studentReg = startOfRegEmail  + '@myport.ac.uk'
+    staffReg = startOfRegEmail + '@port.ac.uk'
+    return re.search(studentReg, email) or re.search(staffReg, email)
+
+def generateCode():
+    codeList = [str(random.randint(0,9)) for _ in range(5)]
+    return "".join(codeList)
 
 client = boto3.client('ses', region_name='eu-west-2')
 

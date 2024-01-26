@@ -2,6 +2,7 @@ import json
 import logging
 import re
 import boto3
+import time
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -38,7 +39,8 @@ def verifyCode(bucketContent, email, code):
         if bucketEmail == email:
             bucketCode = emailCode["code"]
             if bucketCode == code:
-                return True
+                expireTime = emailCode["expire"]
+                return float(expireTime) >= time.time()
             else:
                 return False
     return False
