@@ -4,6 +4,7 @@ import boto3
 import re
 import random
 import time
+import sendEmailCode.email_handler as email_handler
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -27,7 +28,7 @@ def lambda_handler(event, context):
 
     writeJsonToS3Bucket(s3_Bucket_Name, s3_File_Name, bucketContent, email, code)
     
-    sendEmail(email, code)
+    email_handler.sendEmail(email, code)
 
 def getJsonFromS3Bucket(s3_Bucket_Name, s3_File_Name):
     
@@ -67,33 +68,3 @@ def validEmail(email):
 def generateCode():
     codeList = [str(random.randint(0,9)) for _ in range(5)]
     return "".join(codeList)
-
-client = boto3.client('ses', region_name='eu-west-2')
-
-def sendEmail(receiver_email, code):
-        
-    response = client.send_email(
-    Destination={
-        'ToAddresses': [receiver_email]
-    },
-    Message={
-        'Body': {
-            'Text': {
-                'Charset': 'UTF-8',
-                'Data': "Your code is " + code + ". This will expire in 5 minutes.",
-            }
-        },
-        'Subject': {
-            'Charset': 'UTF-8',
-            'Data': 'Login Code',
-        },
-    },
-    Source='graduation.gathering.login@gmail.com'
-    )
-        
-    print(response)
-    
-    return {
-    'statusCode': 200,
-    'body': json.dumps("Email Sent Successfully. MessageId is: " + response['MessageId'])
-    }

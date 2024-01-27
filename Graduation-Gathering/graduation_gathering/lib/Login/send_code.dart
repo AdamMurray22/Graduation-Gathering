@@ -11,7 +11,8 @@ class SendCode extends SendRequest {
   Future<bool> send(String email, String code) async {
     Map<String, String> bodyJson = {"email": email ,"code": code};
     String body = json.encode(bodyJson);
-    return (await post(body)).toLowerCase() == "true";
+    String postBody = await post(body);
+    return json.decode(postBody)["validated"];
   }
 
   @override

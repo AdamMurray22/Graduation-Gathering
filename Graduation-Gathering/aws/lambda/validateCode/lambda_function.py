@@ -1,8 +1,10 @@
 import json
 import logging
 import re
+from urllib import response
 import boto3
 import time
+import validateCode.generate_jwt as jwt
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -19,8 +21,16 @@ def lambda_handler(event, context):
     messageBody = json.loads(messageBodyJson)
     email = messageBody["email"]
     code = messageBody["code"]
+
+    response = {
+        "validated": False,
+        "token": None
+    }
     
-    return verifyCode(bucketContent, email, code)
+    if verifyCode(bucketContent, email, code):
+        response["validated"] = True
+        response["token"] = jwt.generateToken(email)
+    return response
 
 def getJsonFromS3Bucket(s3_Bucket_Name, s3_File_Name):
     
