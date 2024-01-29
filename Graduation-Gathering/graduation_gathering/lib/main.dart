@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:graduation_gathering/Screen/screen_holder.dart';
 
+import 'Auth/auth_token.dart';
+import 'Auth/token_storage.dart';
+import 'Auth/validate_token.dart';
+
 /// Target for start of application.
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  runApp(MyApp());
 }
 
 class MyApp extends StatefulWidget {

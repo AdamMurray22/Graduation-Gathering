@@ -22,9 +22,9 @@ abstract class SendRequest {
   }
 
   @protected
-  Future<String> get(String body) async {
+  Future<String> get(Map<String, String>? headers) async {
     Uri uri = _getUri();
-    http.Response response = await http.post(uri, body: body);
+    http.Response response = await http.get(uri, headers: headers);
     return response.body;
   }
 }

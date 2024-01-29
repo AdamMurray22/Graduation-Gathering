@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:graduation_gathering/Auth/token_storage.dart';
+import 'package:graduation_gathering/Auth/validate_token.dart';
 import 'package:graduation_gathering/Screen/main_screen.dart';
 import '../Auth/auth_token.dart';
+import 'loading_screen.dart';
 import 'login_screen.dart';
 
 /// This holds the screen for the application.
@@ -16,12 +19,29 @@ class _ScreenHolderState extends State<ScreenHolder> {
 
   late Widget _screen;
 
-  AuthToken? authToken;
+  final TokenStorage _tokenStorage = TokenStorage();
 
   @override
   initState() {
-    _screen = LoginScreen(changeScreen: (authToken) {_switchToMainScreen(authToken);});
+    _screen = const LoadingScreen();
+    validateToken();
     super.initState();
+  }
+
+  validateToken() async {
+    AuthToken? authToken = await _tokenStorage.getToken();
+    if (!(await ValidateToken().valid(authToken)))
+    {
+      authToken = null;
+    }
+    if (authToken != null) {
+      _screen = MainScreen(authToken: authToken!);
+    }
+    else
+    {
+      _screen = LoginScreen(changeScreen: (authToken) {_switchToMainScreen(authToken);});
+    }
+    setState(() {});
   }
 
   /// Builds the GUI.
@@ -37,7 +57,7 @@ class _ScreenHolderState extends State<ScreenHolder> {
   _switchToMainScreen(AuthToken authToken)
   {
     setState(() {
-      this.authToken = authToken;
+      _tokenStorage.writeToken(authToken);
       _screen = MainScreen(authToken: authToken);
     });
   }
