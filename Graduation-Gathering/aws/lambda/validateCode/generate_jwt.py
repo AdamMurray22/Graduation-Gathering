@@ -3,7 +3,7 @@ import time
 import boto3
 import json
 import logging
-import base64
+from botocore.exceptions import ClientError
 
 client = boto3.client('kms')
 
@@ -22,18 +22,34 @@ def generateToken(email):
         'expires': time.time() + (60*60*24)
     }
 
-    message = json.dumps(header).encode() + '.'.encode() + json.dumps(payload).encode()
-    
-    sign_response = client.sign(
-        KeyId='e452d056-1194-44fd-9b9c-4cb775c10abb',
-        Message=message,
-        MessageType='RAW',
-        SigningAlgorithm='RSASSA_PSS_SHA_256',
-    )
-    
-    header = base64.urlsafe_b64encode(json.dumps(header).encode()).decode('utf-8')
-    payload = base64.urlsafe_b64encode(json.dumps(payload).encode()).decode('utf-8')
-    signature = base64.urlsafe_b64encode(sign_response['Signature']).decode('utf-8')
+    message = (json.dumps(header) + '.' + json.dumps(payload)).encode('utf-8')
 
-    token = header + '.' + payload + '.' + signature
+    secret = get_secret()
+
+    encoded_jwt = jwt.encode(payload, secret, algorithm="HS256")
+
+    token = encoded_jwt
     return token
+
+def get_secret():
+
+    secret_name = "Graduation-Gathering-API-key"
+    region_name = "eu-west-2"
+
+    # Create a Secrets Manager client
+    session = boto3.session.Session()
+    client = session.client(
+        service_name='secretsmanager',
+        region_name=region_name
+    )
+
+    try:
+        get_secret_value_response = client.get_secret_value(
+            SecretId=secret_name
+        )
+    except ClientError as e:
+        raise e
+
+    secret = get_secret_value_response['SecretString']
+
+    return json.loads(secret)["key"]
