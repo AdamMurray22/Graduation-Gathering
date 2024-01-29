@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:graduation_gathering/Login/parse_email.dart';
 import 'package:graduation_gathering/Login/send_email.dart';
+import 'package:tuple/tuple.dart';
 
+import '../Auth/auth_token.dart';
 import '../Login/send_code.dart';
 
 /// This holds the screen for the application.
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key, required this.changeScreen});
 
-  final Function() changeScreen;
+  final Function(AuthToken) changeScreen;
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -160,9 +162,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   _codeEntered(String email, String code) async {
     SendCode sendCode = SendCode();
-    bool validated = await sendCode.send(email, code);
+    Tuple2<bool, String?> response = await sendCode.send(email, code);
+    bool validated = response.item1;
     if (validated) {
-      widget.changeScreen();
+      AuthToken authToken = AuthToken(response.item2!);
+      widget.changeScreen(authToken);
     }
   }
 

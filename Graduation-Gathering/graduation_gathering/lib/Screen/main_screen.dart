@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:tuple/tuple.dart';
 
+import '../Auth/auth_token.dart';
 import 'navigation_bar_items.dart';
 
 /// This holds the screen for the application.
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  const MainScreen({super.key, required this.authToken});
+
+  final AuthToken authToken;
 
   @override
   State<MainScreen> createState() => _MainScreenState();

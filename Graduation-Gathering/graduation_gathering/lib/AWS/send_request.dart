@@ -6,13 +6,6 @@ abstract class SendRequest {
   @protected
   String serverURL = "";
 
-  @protected
-  Future<String> post(String body) async {
-    Uri uri = _getUri();
-    http.Response response = await http.post(uri, body: body);
-    return response.body;
-  }
-
   Uri _getUri() {
     Uri uri = Uri.parse(serverURL);
     return uri;
@@ -20,4 +13,18 @@ abstract class SendRequest {
 
   @protected
   setServerURL();
+
+  @protected
+  Future<String> post(String body) async {
+    Uri uri = _getUri();
+    http.Response response = await http.post(uri, body: body);
+    return response.body;
+  }
+
+  @protected
+  Future<String> get(String body) async {
+    Uri uri = _getUri();
+    http.Response response = await http.post(uri, body: body);
+    return response.body;
+  }
 }
