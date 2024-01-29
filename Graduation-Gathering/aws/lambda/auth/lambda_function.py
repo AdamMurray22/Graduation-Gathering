@@ -25,9 +25,6 @@ def lambda_handler(event, context):
         response["isAuthorized"] = True
         response["context"]["email"] = getEmail(decodedToken)
     return response
-    
-def getEmail(token):
-    return token["email"]
 
 def decodeToken(token):
     secret = get_secret()
@@ -38,7 +35,9 @@ def decodeToken(token):
     return decodedToken
         
 def validateToken(token):
-    return token != "Invalid Token"
+    if token == "Invalid Token":
+        return False
+    return getExpires(token) >= time.time()
 
 def get_secret():
 
@@ -62,3 +61,9 @@ def get_secret():
     secret = get_secret_value_response['SecretString']
 
     return json.loads(secret)["key"]
+
+def getEmail(token):
+    return token["email"]
+
+def getExpires(token):
+    return token["expires"]
