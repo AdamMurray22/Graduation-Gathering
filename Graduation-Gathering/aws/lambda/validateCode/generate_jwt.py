@@ -5,15 +5,13 @@ import json
 import logging
 from botocore.exceptions import ClientError
 
-client = boto3.client('kms')
-
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 def generateToken(email):
     
     header = {
-    'alg': 'RS256',
+    'alg': 'HS256',
     'typ': 'JWT'
     }
     payload = {
