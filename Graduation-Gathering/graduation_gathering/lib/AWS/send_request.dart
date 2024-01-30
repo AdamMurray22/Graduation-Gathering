@@ -3,16 +3,15 @@ import 'package:http/http.dart' as http;
 
 abstract class SendRequest {
 
-  @protected
-  String serverURL = "";
+  final String _serverURL = "https://058sjjvnef.execute-api.eu-west-2.amazonaws.com/";
 
   Uri _getUri() {
-    Uri uri = Uri.parse(serverURL);
+    Uri uri = Uri.parse(_serverURL + getRoute());
     return uri;
   }
 
   @protected
-  setServerURL();
+  getRoute();
 
   @protected
   Future<String> post(String body) async {

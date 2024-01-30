@@ -35,7 +35,7 @@ class _ScreenHolderState extends State<ScreenHolder> {
       authToken = null;
     }
     if (authToken != null) {
-      _screen = MainScreen(authToken: authToken!);
+      _screen = MainScreen(authToken: authToken);
     }
     else
     {

@@ -3,12 +3,6 @@ import '../AWS/send_request.dart';
 
 class ValidateToken extends SendRequest
 {
-
-  ValidateToken()
-  {
-    setServerURL();
-  }
-
   Future<bool> valid(AuthToken? token) async {
     if (token == null)
     {
@@ -24,7 +18,7 @@ class ValidateToken extends SendRequest
   }
 
   @override
-  setServerURL() {
-    serverURL = "https://xgetisy5fg.execute-api.eu-west-2.amazonaws.com/prod/TokenValid";
+  getRoute() {
+    return "tokenValid";
   }
 }
