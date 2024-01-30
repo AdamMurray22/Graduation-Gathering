@@ -19,8 +19,8 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
 
   final List<String> _q2ReorderableList = [
     "Users of the app are verified as University of Portsmouth staff or graduates",
-    "That you can be selective about which graduation zones you can be seen in by others",
-    "That you can be selective about which graduation zones you can see others in",
+    "You can be selective about which graduation zones you can be seen in by others",
+    "You can be selective about which graduation zones you can see others in",
     "You can filter which users you see by course",
     "You can filter which users you see by name",
     "You can filter which users you see by whether you've already met",
@@ -135,20 +135,8 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
                               .toList())),
                       const SizedBox(height: 14),
                       const Text(
-                          "Q3. Please arrange the following list of graduation zones from most important to you at the top, to least important to you at the bottom:", style: TextStyle(fontSize: 17)),
+                          "Q3. For each of the following potential graduation zones, please selected whether you want it as a zone, don't mind, or don't want it as a zone:", style: TextStyle(fontSize: 17)),
                       const SizedBox(height: 7),
-                      // Padding(
-                      //   padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
-                      //   child:
-                      // ReorderableListView(
-                      //     scrollController: ScrollController(),
-                      //     shrinkWrap: true,
-                      //     onReorder: (oldIndex, newIndex) {
-                      //       _onReorder(_q3ReorderableList, oldIndex, newIndex);
-                      //     },
-                      //     children: _q3ReorderableList
-                      //         .map((item) => Text(item, key: Key(item), style: const TextStyle(fontSize: 17)))
-                      //         .toList())),
                       Row(children: [
                         Text(_q3List[0]),
                         DropdownButton(
