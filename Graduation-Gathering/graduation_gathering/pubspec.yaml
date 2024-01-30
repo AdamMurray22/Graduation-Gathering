@@ -35,6 +35,7 @@ dependencies:
   webview_flutter: ^4.4.4
   location: ^5.0.3
   url_launcher: ^6.2.4
+  flutter_secure_storage: ^9.0.0
 
   webview_flutter_wkwebview: ^3.11.0
 
@@ -72,6 +73,8 @@ flutter:
     - assets/open-layers-map/ol/dist/
     - assets/open-layers-map/ol/
     - assets/open-layers-map/
+
+    - assets/images/
 
     - assets/
 
