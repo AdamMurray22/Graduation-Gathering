@@ -139,6 +139,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
                       const SizedBox(height: 7),
                       Row(children: [
                         Text(_q3List[0]),
+                        const SizedBox(width: 7),
                         DropdownButton(
                             value: _q3ButtonsValues[0],
                             items: _q3DropDownItems,
@@ -152,6 +153,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
                       ]),
                       Row(children: [
                         Text(_q3List[1]),
+                        const SizedBox(width: 7),
                         DropdownButton(
                             value: _q3ButtonsValues[1],
                             items: _q3DropDownItems,
@@ -165,6 +167,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
                       ]),
                       Row(children: [
                         Text(_q3List[2]),
+                        const SizedBox(width: 7),
                         DropdownButton(
                             value: _q3ButtonsValues[2],
                             items: _q3DropDownItems,
