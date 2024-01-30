@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:graduation_gathering/Auth/auth_token.dart';
 import '../Map/main_map_widget.dart';
 
 /// The screen that displays the map.
 class MapScreen extends StatefulWidget {
-  const MapScreen({super.key});
+  const MapScreen({super.key, required this.authToken});
+
+  final AuthToken authToken;
 
   @override
   State<MapScreen> createState() => _MapScreenState();
@@ -16,6 +19,7 @@ class _MapScreenState extends State<MapScreen> {
   @override
   initState() {
     _mapWidget = MainMapWidget(
+      authToken: widget.authToken,
       markerClickedFunction: (String markerId) {
         setState(() {});
       },
