@@ -43,7 +43,7 @@ class MainMapWidgetState extends MapWidgetState<MainMapWidget> {
   @override
   createLayers() {
     createMakerLayer(MapDataId.userLocation.idPrefix, "UserIcon.png", 0.1, 0.5, 0.5, false);
-    createMakerLayer(MapDataId.otherUsers.idPrefix, "test.png", 0.1, 0.5, 0.5, true);
+    createMakerLayer(MapDataId.otherUsers.idPrefix, "test.png", 0.2, 0.5, 1, true);
   }
 
   /// Adds the users location to the map as a marker and sets for it be updated

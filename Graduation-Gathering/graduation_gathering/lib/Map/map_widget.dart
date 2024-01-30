@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:graduation_gathering/Map/tile_server.dart';
-import 'package:location/location.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-import '../Location/location_handler.dart';
-import 'map_data_id.dart';
 
 
 abstract class MapWidget extends StatefulWidget {
