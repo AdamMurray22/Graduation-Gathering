@@ -5,6 +5,9 @@ import boto3
 import base64
 import auth.package.jwt as jwt
 from botocore.exceptions import ClientError
+import os
+
+key = os.environ['key']
 
 
 logger = logging.getLogger()
@@ -40,6 +43,8 @@ def validateToken(token):
     return getExpires(token) >= time.time()
 
 def get_secret():
+
+    return key
 
     secret_name = "Graduation-Gathering-API-key"
     region_name = "eu-west-2"
