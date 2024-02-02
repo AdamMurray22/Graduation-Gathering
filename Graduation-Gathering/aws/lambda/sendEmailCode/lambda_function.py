@@ -4,18 +4,34 @@ import boto3
 import re
 import random
 import time
+import os
+import sys
 import sendEmailCode.email_handler as email_handler
+import sendEmailCode.package.pymysql as pymysql
+
+# rds settings
+user_name = os.environ['USER_NAME']
+password = os.environ['PASSWORD']
+rds_proxy_host = os.environ['RDS_PROXY_HOST']
+db_name = os.environ['DB_NAME']
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 s3_client = boto3.client('s3')
 
-def lambda_handler(event, context):
-    s3_Bucket_Name = "graduation-gathering"
-    s3_File_Name = "Email Verification/codes.json"
+# create the database connection outside of the handler to allow connections to be
+# re-used by subsequent function invocations.
+try:
+        conn = pymysql.connect(host=rds_proxy_host, user=user_name, passwd=password, db=db_name, connect_timeout=5)
+except pymysql.MySQLError as e:
+    logger.error("ERROR: Unexpected error: Could not connect to MySQL instance.")
+    logger.error(e)
+    sys.exit()
 
-    bucketContent = getJsonFromS3Bucket(s3_Bucket_Name, s3_File_Name)
+logger.info("SUCCESS: Connection to RDS for MySQL instance succeeded")
+
+def lambda_handler(event, context):
 
     messageBodyJson = event["body"]
     messageBody = json.loads(messageBodyJson)
@@ -26,38 +42,57 @@ def lambda_handler(event, context):
     
     code = generateCode()
 
-    writeJsonToS3Bucket(s3_Bucket_Name, s3_File_Name, bucketContent, email, code)
-    
+    userID = getUserID(email)
+
+    if userID == None:
+        writeCodeToRDSWIthoutUserID(email, code)
+    else:
+        writeCodeToRDSWIthUserID(userID, code)
+
     email_handler.sendEmail(email, code)
 
-def getJsonFromS3Bucket(s3_Bucket_Name, s3_File_Name):
-    
-    try:
-        object = s3_client.get_object(Bucket=s3_Bucket_Name, Key=s3_File_Name)
-        body = object['Body']
-        jsonString = body.read().decode('utf-8')
-        return json.loads(jsonString)
-    except:
-        logger.error("Could not find file: " + s3_Bucket_Name + "/" + s3_File_Name)
-    return []
+def getUserID(email):
+    with conn.cursor() as cur:
+        cur.execute(f"select user_id from user where user_email = '{email}'")
+        userID = None
+        for row in cur:
+            userID = row[0]
+        cur.close()
+    conn.commit()
+    return userID
 
-def writeJsonToS3Bucket(s3_Bucket_Name, s3_File_Name, bucketContent, email, code):
-    newContent = {"email": email, "code": code, "expire": str(time.time() + (5 * 60))}
-    bucketContent = removeEmail(bucketContent, email)
-    bucketContent.append(newContent)
+def writeCodeToRDSWIthoutUserID(email, code):
+    userID = createUserID()
+    with conn.cursor() as cur:
+        try:
+            sql_string = 'insert into user (user_id, user_email, login_code) values("{userID}", "{userEmail}", "{loginCode}")'
+            cur.execute(sql_string.format(userID = escape_sql_string(userID), loginCode = escape_sql_string(code), userEmail = escape_sql_string(email)))
+        except pymysql.MySQLError as e:
+            logger.error(e)
+        conn.commit()
 
-    bucketContentAsString = json.dumps(bucketContent)
-    encoded_string = bucketContentAsString.encode("utf-8")
+def writeCodeToRDSWIthUserID(userID, code):
+    with conn.cursor() as cur:
+        try:
+            sql_string = 'update user set login_code = "{loginCode}" where user_id = "{userID}"'
+            cur.execute(sql_string.format(loginCode = escape_sql_string(code), userID = escape_sql_string(userID)))
+        except pymysql.MySQLError as e:
+            logger.error(e)
+        conn.commit()
 
-    s3 = boto3.resource("s3")
-    s3.Bucket(s3_Bucket_Name).put_object(Key=s3_File_Name, Body=encoded_string)
-
-def removeEmail(bucket, email):
-    for i in reversed(range(len(bucket))):
-        emailCode = bucket[i]
-        if emailCode["email"] == email:
-            bucket.pop(i)
-    return bucket
+def createUserID():
+    with conn.cursor() as cur:
+        uniqueCodeCreated = False
+        while uniqueCodeCreated == False:
+            userID = generateUserID()
+            cur.execute(f"select user_id from user where user_id = '{userID}'")
+            id = None
+            for row in cur:
+                id = row[0]
+            if id == None:
+                uniqueCodeCreated = True
+        cur.close()
+    conn.commit()
 
 def validEmail(email):
     startOfRegEmail = '(?:[a-z0-9!#\$%&\'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#\$%&\'*+/=?^_`{|}~-]+)*|"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*")'
@@ -68,3 +103,14 @@ def validEmail(email):
 def generateCode():
     codeList = [str(random.randint(0,9)) for _ in range(5)]
     return "".join(codeList)
+
+def generateUserID():
+    codeList = [str(random.randint(0,9)) for _ in range(10)]
+    return "US-".join(codeList)
+
+def escape_sql_string(sql_string):
+    translate_table = str.maketrans({"]": r"\]", "\\": r"\\",
+                                 "^": r"\^", "$": r"\$", "*": r"\*", "'": r"\'"})
+    if (sql_string is None):
+        return sql_string
+    return sql_string.translate(translate_table)
