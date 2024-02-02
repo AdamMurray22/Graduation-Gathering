@@ -63,19 +63,21 @@ def getUserID(email):
 
 def writeCodeToRDSWIthoutUserID(email, code):
     userID = createUserID()
+    expires = getCodeExpireTime()
     with conn.cursor() as cur:
         try:
-            sql_string = 'insert into user (user_id, user_email, login_code) values("{userID}", "{userEmail}", "{loginCode}")'
-            cur.execute(sql_string.format(userID = escape_sql_string(userID), loginCode = escape_sql_string(code), userEmail = escape_sql_string(email)))
+            sql_string = 'insert into user (user_id, user_email, login_code, login_code_expires) values("{userID}", "{userEmail}", "{loginCode}", {expires})'
+            cur.execute(sql_string.format(userID = escape_sql_string(userID), loginCode = escape_sql_string(code), expires = expires, userEmail = escape_sql_string(email)))
         except pymysql.MySQLError as e:
             logger.error(e)
         conn.commit()
 
 def writeCodeToRDSWIthUserID(userID, code):
+    expires = getCodeExpireTime()
     with conn.cursor() as cur:
         try:
-            sql_string = 'update user set login_code = "{loginCode}" where user_id = "{userID}"'
-            cur.execute(sql_string.format(loginCode = escape_sql_string(code), userID = escape_sql_string(userID)))
+            sql_string = 'update user set login_code = "{loginCode}", login_code_expires = {expires} where user_id = "{userID}"'
+            cur.execute(sql_string.format(loginCode = escape_sql_string(code), expires = expires, userID = escape_sql_string(userID)))
         except pymysql.MySQLError as e:
             logger.error(e)
         conn.commit()
@@ -94,11 +96,28 @@ def createUserID():
         cur.close()
     conn.commit()
 
+def createLoginCodeID():
+    with conn.cursor() as cur:
+        uniqueCodeCreated = False
+        while uniqueCodeCreated == False:
+            loginCodeID = generateLoginCodeID()
+            cur.execute(f"select user_id from user where user_id = '{loginCodeID}'")
+            id = None
+            for row in cur:
+                id = row[0]
+            if id == None:
+                uniqueCodeCreated = True
+        cur.close()
+    conn.commit()
+
 def validEmail(email):
     startOfRegEmail = '(?:[a-z0-9!#\$%&\'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#\$%&\'*+/=?^_`{|}~-]+)*|"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*")'
     studentReg = startOfRegEmail  + '@myport.ac.uk'
     staffReg = startOfRegEmail + '@port.ac.uk'
     return re.search(studentReg, email) or re.search(staffReg, email)
+
+def getCodeExpireTime():
+    return time.time() + (5 * 60)
 
 def generateCode():
     codeList = [str(random.randint(0,9)) for _ in range(5)]
