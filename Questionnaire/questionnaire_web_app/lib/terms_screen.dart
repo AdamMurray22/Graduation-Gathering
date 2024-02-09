@@ -43,36 +43,20 @@ class _TermsScreenState extends State<TermsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                   Text(
-                      "The purpose of this study is to understand what features both members of staff and students of the University Of Portsmouth desire from an app designed to connect them on graduation day. This study will require you to complete the following activities: ", style: TextStyle(fontSize: 17)),
-                  Padding(
-                      padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                                "1.	Access the website via your preferred browser", style: TextStyle(fontSize: 17)),
-                            Text(
-                                "2.	Input whether you are a student or member of staff at the University Of Portsmouth (Prefer not to say will also be an option)", style: TextStyle(fontSize: 17)),
-                            Text("3.	Prioritise a couple lists of features", style: TextStyle(fontSize: 17)),
-                            Text(
-                                "4.	If you have additional ideas about where you would like graduation zones, list them", style: TextStyle(fontSize: 17)),
-                            Text(
-                                "5.	Agree to this Participant Information Sheet", style: TextStyle(fontSize: 17)),
-                            Text("6.	Click Submit", style: TextStyle(fontSize: 17)),
-                          ])),
+                      "The purpose of this study is to understand what features both members of staff and students of the University Of Portsmouth desire from an app designed to connect them on graduation day.", style: TextStyle(fontSize: 17)),
                 ])),
             Text(
                 "3. 	What data will be collected and / or measurements taken? ", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
             Padding(
               padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
               child: Text(
-                  "The only data that will be collected will be your answer to whether you are a member of staff or a student, as well as a list of ID numbers relating to the features you have ordered on the website and finally the text that you input for the question asking about any ideas from you, about where you would like graduation zones to be designated. All data stored about you will be fully anonymised. Data will be stored securely on a google drive that can only be accessed by members of the research team. It will be deleted after the end of the project.", style: TextStyle(fontSize: 17)),
+                  "The only data that will be collected will be your answer to whether you are a member of staff or a student, as well as a list of ID numbers relating to the features you have ordered on the website, IDs for which graduation zones you want, and finally the text that you input for the question asking about any ideas from you, about where you would like graduation zones to be designated. No personally identifiable data will be collected. Data will be stored securely on a google drive that can only be accessed by members of the research team. It will be deleted after the end of the project.", style: TextStyle(fontSize: 17)),
             ),
             Text("4. 	Do I have to take part? ", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
             Padding(
               padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
               child: Text(
-                  "No, taking part in this research is entirely voluntary. It is up to you to decide if you want to volunteer for the study. You can still withdraw from the study at any time for any reason even after you have agreed to the term and conditions.", style: TextStyle(fontSize: 17)),
+                  "No, taking part in this research is entirely voluntary. It is up to you to decide if you want to volunteer for the study. You can still withdraw from the study at any time for any reason until you click submit on the questions page.", style: TextStyle(fontSize: 17)),
             ),
             Text("5. 	Expenses and payments ", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
             Padding(
@@ -83,7 +67,7 @@ class _TermsScreenState extends State<TermsScreen> {
             Padding(
               padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
               child: Text(
-                  "If you have a query, concern or complaint about any aspect of this study, in the first instance you should contact the researcher if appropriate. If there is a complaint and there is a supervisor listed, please contact the Supervisor with details of the complaint. The contact details for both the researcher and any supervisor are detailed above.", style: TextStyle(fontSize: 17)),
+                  "If you have a query, concern or complaint about any aspect of this study, in the first instance you should contact the researcher if appropriate. If there is a complaint please contact the Supervisor with details of the complaint. The contact details for both the researcher and any supervisor are detailed above.", style: TextStyle(fontSize: 17)),
             ),
             Text("Thank you", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
             Text(

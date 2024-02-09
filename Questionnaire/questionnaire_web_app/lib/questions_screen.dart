@@ -33,15 +33,12 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
     const DropdownMenuItem(value: Text("I don't want this as a zone"), child: Text("I don't want this as a zone")),
   ];
 
-  final List<DropdownButton> _q3Buttons = [];
-
   final List<Text> _q3ButtonsValues = [];
 
   final List<String> _q3List = [
     "Guildhall square",
     "Ravelin park",
-    "The area between Guildhall and Ravelin park",
-    "Pryzm"
+    "The area between Guildhall and Ravelin park"
   ];
 
   final Map<String, String> _q3Answers = {};
@@ -116,10 +113,10 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
                           ])),
                       const SizedBox(height: 7),
                       const Text(
-                          "A Graduation zone in this context means an area of portsmouth that can be designated on the app to show peoples locations.", style: TextStyle(fontSize: 17)),
+                          "A Graduation zone in this context means an area of Portsmouth designated on the app to show people's locations.", style: TextStyle(fontSize: 17)),
                       const SizedBox(height: 7),
                       const Text(
-                          "Q2. Please arrange the following list of features from most important to you at the top, to least important to you at the bottom:", style: TextStyle(fontSize: 17)),
+                          "Q2. Please arrange the following list of features from most important to you at the top, to least important to you at the bottom (use the handles on the right):", style: TextStyle(fontSize: 17)),
                       const SizedBox(height: 7),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
