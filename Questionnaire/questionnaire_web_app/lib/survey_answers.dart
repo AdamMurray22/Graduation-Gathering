@@ -20,7 +20,7 @@ class SurveyAnswers {
   }
 
   dynamic getAnswersAsJson() {
-    return {"Q1": _q1, "Q2": _q2, "Q3": json.encode(_q3), "Q4": _q4, "Q5": _q5};
+    return {"Q1": _q1, "Q2": _q2, "Q3": _q3, "Q4": _q4, "Q5": _q5};
   }
 
   bool answersValid() {
