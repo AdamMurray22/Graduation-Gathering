@@ -95,20 +95,7 @@ def createUserID():
                 uniqueCodeCreated = True
         cur.close()
     conn.commit()
-
-def createLoginCodeID():
-    with conn.cursor() as cur:
-        uniqueCodeCreated = False
-        while uniqueCodeCreated == False:
-            loginCodeID = generateLoginCodeID()
-            cur.execute(f"select user_id from user where user_id = '{loginCodeID}'")
-            id = None
-            for row in cur:
-                id = row[0]
-            if id == None:
-                uniqueCodeCreated = True
-        cur.close()
-    conn.commit()
+    return userID
 
 def validEmail(email):
     startOfRegEmail = '(?:[a-z0-9!#\$%&\'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#\$%&\'*+/=?^_`{|}~-]+)*|"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*")'
@@ -125,7 +112,7 @@ def generateCode():
 
 def generateUserID():
     codeList = [str(random.randint(0,9)) for _ in range(10)]
-    return "US-".join(codeList)
+    return "US-" + "".join(codeList)
 
 def escape_sql_string(sql_string):
     translate_table = str.maketrans({"]": r"\]", "\\": r"\\",
