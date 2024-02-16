@@ -2,61 +2,49 @@ import json
 import boto3
 import logging
 import re
+import setLocation.package.pymysql as pymysql
+import os
+import sys
+
+# rds settings
+user_name = os.environ['USER_NAME']
+password = os.environ['PASSWORD']
+rds_proxy_host = os.environ['RDS_PROXY_HOST']
+db_name = os.environ['DB_NAME']
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-s3_client = boto3.client('s3')
+# create the database connection outside of the handler to allow connections to be
+# re-used by subsequent function invocations.
+try:
+        conn = pymysql.connect(host=rds_proxy_host, user=user_name, passwd=password, db=db_name, connect_timeout=5)
+except pymysql.MySQLError as e:
+    logger.error("ERROR: Unexpected error: Could not connect to MySQL instance.")
+    logger.error(e)
+    sys.exit()
 
 def lambda_handler(event, context):
-    s3_Bucket_Name = "graduation-gathering"
-    s3_File_Name = "User Locations/location.json"
-    
-    bucketContent = getJsonFromS3Bucket(s3_Bucket_Name, s3_File_Name)
+    email = event['requestContext']['authorizer']["lambda"]["email"]
+    userID = event['requestContext']['authorizer']["lambda"]["userID"]
 
     messageBodyJson = event["body"]
     messageBody = json.loads(messageBodyJson)
-    email = event['requestContext']['authorizer']["lambda"]["email"]
-    
-    if not validEmail(email):
-        return
-    
     location = messageBody["location"]
+
+    sql_string = 'update user set latitude = {latitude}, longitude = {longitude} where user_id = "{userID}"'
+
+    with conn.cursor() as cur:
+        try:
+            cur.execute(sql_string.format(latitude = location["latitude"], longitude = location["longitude"], userID = escape_sql_string(userID)))
+            item_count += 1
+        except pymysql.MySQLError as e:
+            logger.error(e)
+        conn.commit()
     
-    writeJsonToS3Bucket(s3_Bucket_Name, s3_File_Name, bucketContent, email, location)
-    
-    
-def getJsonFromS3Bucket(s3_Bucket_Name, s3_File_Name):
-    
-    try:
-        object = s3_client.get_object(Bucket=s3_Bucket_Name, Key=s3_File_Name)
-        body = object['Body']
-        jsonString = body.read().decode('utf-8')
-        return json.loads(jsonString)
-    except:
-        logger.error("Could not find file: " + s3_Bucket_Name + "/" + s3_File_Name)
-    return []
-
-def writeJsonToS3Bucket(s3_Bucket_Name, s3_File_Name, bucketContent, email, location):
-    newContent = {"email": email, "location": location}
-    bucketContent = removeEmail(bucketContent, email)
-    bucketContent.append(newContent)
-
-    bucketContentAsString = json.dumps(bucketContent)
-    encoded_string = bucketContentAsString.encode("utf-8")
-
-    s3 = boto3.resource("s3")
-    s3.Bucket(s3_Bucket_Name).put_object(Key=s3_File_Name, Body=encoded_string)
-
-def removeEmail(bucket, email):
-    for i in reversed(range(len(bucket))):
-        emailCode = bucket[i]
-        if emailCode["email"] == email:
-            bucket.pop(i)
-    return bucket
-
-def validEmail(email):
-    startOfRegEmail = '(?:[a-z0-9!#\$%&\'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#\$%&\'*+/=?^_`{|}~-]+)*|"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*")'
-    studentReg = startOfRegEmail  + '@myport.ac.uk'
-    staffReg = startOfRegEmail + '@port.ac.uk'
-    return re.search(studentReg, email) or re.search(staffReg, email)
+def escape_sql_string(sql_string):
+    translate_table = str.maketrans({"]": r"\]", "\\": r"\\",
+                                 "^": r"\^", "$": r"\$", "*": r"\*", "'": r"\'"})
+    if (sql_string is None):
+        return sql_string
+    return sql_string.translate(translate_table)

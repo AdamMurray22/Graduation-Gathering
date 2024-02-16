@@ -8,13 +8,14 @@ from botocore.exceptions import ClientError
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-def generateToken(email):
+def generateToken(email, userID):
     
     header = {
     'alg': 'HS256',
     'typ': 'JWT'
     }
     payload = {
+        'id': userID,
         'email': email,
         'created': time.time(),
         'expires': time.time() + (60*60*24)

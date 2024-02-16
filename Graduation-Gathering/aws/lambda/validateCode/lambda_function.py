@@ -46,7 +46,7 @@ def lambda_handler(event, context):
     
     if verifyCode(email, code):
         response["validated"] = True
-        response["token"] = jwt.generateToken(email)
+        response["token"] = jwt.generateToken(email, getUserId(email))
     return response
 
 def verifyCode(email, code):
@@ -54,15 +54,23 @@ def verifyCode(email, code):
         cur.execute(f"select login_code, login_code_expires from user where user_email = '{email}'")
         loginCode = None
         for row in cur:
-            loginCodeId = row[0]
+            loginCode = row[0]
             expires = row[1]
         cur.close()
     conn.commit()
-
-    if loginCodeId == None:
+    if loginCode == None:
         return False
     
     if loginCode == code:
         return float(expires) >= time.time()
     else:
         return False
+    
+def getUserId(email):
+    with conn.cursor() as cur:
+        cur.execute(f"select user_id from user where user_email = '{email}'")
+        for row in cur:
+            userID = row[0]
+        cur.close()
+    conn.commit()
+    return userID
