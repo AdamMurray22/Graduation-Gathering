@@ -36,7 +36,7 @@ def lambda_handler(event, context):
 
     with conn.cursor() as cur:
         try:
-            cur.execute(sql_string.format(latitude = location["latitude"], longitude = location["longitude"], userID = escape_sql_string(userID)))
+            cur.execute(sql_string.format(latitude = location["lat"], longitude = location["long"], userID = escape_sql_string(userID)))
             item_count += 1
         except pymysql.MySQLError as e:
             logger.error(e)

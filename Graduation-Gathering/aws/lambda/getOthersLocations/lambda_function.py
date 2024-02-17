@@ -29,7 +29,7 @@ def lambda_handler(event, context):
 
     otherUsers = []
     with conn.cursor() as cur:
-        cur.execute(escape_sql_string(f"select user_email, latitude, longitude from user where user_id != '{userID}'"))
+        cur.execute(f"select user_email, latitude, longitude from user where user_id != '{userID}'")
         for row in cur:
             otherUserEmail = row[0]
             otherUserLatitude = row[1]
