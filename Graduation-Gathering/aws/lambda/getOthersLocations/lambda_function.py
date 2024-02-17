@@ -4,6 +4,7 @@ import boto3
 import getOthersLocations.package.pymysql as pymysql
 import os
 import sys
+import time
 
 # rds settings
 user_name = os.environ['USER_NAME']
@@ -29,17 +30,19 @@ def lambda_handler(event, context):
 
     otherUsers = []
     with conn.cursor() as cur:
-        cur.execute(f"select user_email, latitude, longitude from user where user_id != '{userID}'")
+        cur.execute(f"select user_email, latitude, longitude, location_set from user where user_id != '{userID}' AND location_set IS NOT NULL")
         for row in cur:
             otherUserEmail = row[0]
             otherUserLatitude = row[1]
             otherUserLongitude = row[2]
+            otherUserLocationSetTime = row[3]
             otherUser = {
                 'email': otherUserEmail,
                 'latitude': otherUserLatitude,
                 'longitude': otherUserLongitude
             }
-            otherUsers.append(otherUser)
+            if otherUserLocationSetTime + 60 > time.time():
+                otherUsers.append(otherUser)
         cur.close()
     conn.commit()
 

@@ -44,7 +44,6 @@ def validateToken(token):
     return getExpires(token) >= time.time()
 
 def get_secret():
-
     return key
 
 def getEmail(token):

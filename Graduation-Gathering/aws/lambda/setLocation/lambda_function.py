@@ -5,6 +5,7 @@ import re
 import setLocation.package.pymysql as pymysql
 import os
 import sys
+import time
 
 # rds settings
 user_name = os.environ['USER_NAME']
@@ -32,15 +33,15 @@ def lambda_handler(event, context):
     messageBody = json.loads(messageBodyJson)
     location = messageBody["location"]
 
-    sql_string = 'update user set latitude = {latitude}, longitude = {longitude} where user_id = "{userID}"'
+    sql_string = 'update user set latitude = {latitude}, longitude = {longitude}, location_set = {locationSet} where user_id = "{userID}"'
 
     with conn.cursor() as cur:
         try:
-            cur.execute(sql_string.format(latitude = location["lat"], longitude = location["long"], userID = escape_sql_string(userID)))
-            item_count += 1
+            cur.execute(sql_string.format(latitude = location["lat"], longitude = location["long"], locationSet = time.time(), userID = escape_sql_string(userID)))
         except pymysql.MySQLError as e:
             logger.error(e)
-        conn.commit()
+        cur.close()
+    conn.commit()
     
 def escape_sql_string(sql_string):
     translate_table = str.maketrans({"]": r"\]", "\\": r"\\",

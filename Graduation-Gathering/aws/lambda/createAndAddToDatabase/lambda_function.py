@@ -39,7 +39,7 @@ def lambda_handler(event, context):
     faculty_sql_string = 'insert into faculty (faculty_name) values("{FacultyName}")'
     school_sql_string = 'insert into school (school_name, faculty_name) values("{SchoolName}", "{FacultyName}")'
     course_sql_string = 'insert into course (course_name, school_name) values("{CourseName}", "{SchoolName}")'
-    user_sql_string = 'insert into user (user_id, user_email, user_name, login_code, login_code_expires, faculty_name, school_name, course_name, latitude, longitude) values("{UserID}", "{UserEmail}", "{UserName}", "{LoginCode}", {LoginCodeExpires}, "{FacultyName}", "{SchoolName}", "{CourseName}", {latitude}, {longitude})'
+    user_sql_string = 'insert into user (user_id, user_email, user_name, login_code, login_code_expires, faculty_name, school_name, course_name, latitude, longitude, location_set) values("{UserID}", "{UserEmail}", "{UserName}", "{LoginCode}", {LoginCodeExpires}, "{FacultyName}", "{SchoolName}", "{CourseName}", {Latitude}, {Longitude}, {LocationSet})'
 
     create_schema()
 
@@ -72,7 +72,7 @@ def lambda_handler(event, context):
 
         for user in UserData:
             try:
-                cur.execute(user_sql_string.format(UserID = escape_sql_string(user['user_id']), UserEmail = escape_sql_string(user['user_email']), UserName = escape_sql_string(user['user_name']), LoginCode = escape_sql_string(user['login_code']), LoginCodeExpires = user['login_code_expires'], FacultyName = escape_sql_string(user['faculty_name']), SchoolName = escape_sql_string(user['school_name']), CourseName = escape_sql_string(user['course_name']), latitude = user['latitude'], longitude = user['longitude']))
+                cur.execute(user_sql_string.format(UserID = escape_sql_string(user['user_id']), UserEmail = escape_sql_string(user['user_email']), UserName = escape_sql_string(user['user_name']), LoginCode = escape_sql_string(user['login_code']), LoginCodeExpires = user['login_code_expires'], FacultyName = escape_sql_string(user['faculty_name']), SchoolName = escape_sql_string(user['school_name']), CourseName = escape_sql_string(user['course_name']), Latitude = user['latitude'], Longitude = user['longitude'], LocationSet = user['location_set']))
                 item_count += 1
             except pymysql.MySQLError as e:
                 logger.error(e)
@@ -112,7 +112,7 @@ def get_course_table_sql():
 
 # Gets the user table sql
 def get_user_table_sql():
-    sql_string = "create table if not exists user ( {userID}, {userEmail}, {userName}, {loginCode}, {loginCodeExpires}, {userFaculty}, {userSchool}, {userCourse}, {longitude}, {latitude}, {primaryKey}, {foreignKey1}, {foreignKey2}, {foreignKey3})"
+    sql_string = "create table if not exists user ( {userID}, {userEmail}, {userName}, {loginCode}, {loginCodeExpires}, {userFaculty}, {userSchool}, {userCourse}, {longitude}, {latitude}, {locationSet}, {primaryKey}, {foreignKey1}, {foreignKey2}, {foreignKey3})"
     user_ID = "user_id varchar(255) NOT NULL"
     user_Email = "user_email varchar(255) NOT NULL"
     user_Name = "user_name varchar(255)"
@@ -123,11 +123,12 @@ def get_user_table_sql():
     user_Course = "course_name varchar(255)"
     longitude = "longitude double"
     latitude = "latitude double"
+    location_Set = "location_set double"
     primary_Key = "PRIMARY KEY (user_id)"
     foreign_Key1 = "FOREIGN KEY (faculty_name) REFERENCES faculty(faculty_name) ON DELETE SET NULL ON UPDATE CASCADE"
     foreign_Key2 = "FOREIGN KEY (school_name) REFERENCES school(school_name) ON DELETE SET NULL ON UPDATE CASCADE"
     foreign_Key3 = "FOREIGN KEY (course_name) REFERENCES course(course_name) ON DELETE SET NULL ON UPDATE CASCADE"
-    return sql_string.format(userID = user_ID, userEmail = user_Email, userName = user_Name, loginCode = login_Code, loginCodeExpires = login_Code_expires, userFaculty = user_Faculty, userSchool = user_School, userCourse = user_Course, longitude = longitude, latitude = latitude, primaryKey = primary_Key, foreignKey1 = foreign_Key1, foreignKey2 = foreign_Key2, foreignKey3 = foreign_Key3)
+    return sql_string.format(userID = user_ID, userEmail = user_Email, userName = user_Name, loginCode = login_Code, loginCodeExpires = login_Code_expires, userFaculty = user_Faculty, userSchool = user_School, userCourse = user_Course, longitude = longitude, latitude = latitude, locationSet = location_Set, primaryKey = primary_Key, foreignKey1 = foreign_Key1, foreignKey2 = foreign_Key2, foreignKey3 = foreign_Key3)
 
 def escape_sql_string(sql_string):
     translate_table = str.maketrans({"]": r"\]", "\\": r"\\",
