@@ -41,7 +41,7 @@ def lambda_handler(event, context):
     school_sql_string = 'insert into school (school_name, faculty_name) values("{SchoolName}", "{FacultyName}")'
     course_sql_string = 'insert into course (course_name, school_name) values("{CourseName}", "{SchoolName}")'
     user_sql_string = 'insert into user (user_id, user_email, user_name, login_code, login_code_expires, faculty_name, school_name, course_name, latitude, longitude, location_set) values("{UserID}", "{UserEmail}", "{UserName}", "{LoginCode}", {LoginCodeExpires}, "{FacultyName}", "{SchoolName}", "{CourseName}", {Latitude}, {Longitude}, {LocationSet})'
-    location_permission_sql_string = 'insert into location_permission (from_user,to_user,permission_granted) values("{FromUser}", "{ToUser}", {PermissionGranted})'
+    location_permission_sql_string = 'insert into location_permission (from_user,to_user,permission_granted) values("{FromUser}", "{ToUser}", "{PermissionGranted}")'
 
     create_schema()
 
@@ -82,7 +82,7 @@ def lambda_handler(event, context):
 
         for locationPermission in LocationPermissions:
             try:
-                cur.execute(location_permission_sql_string.format(FromUser = escape_sql_string(locationPermission['from_user']), ToUser = escape_sql_string(locationPermission['to_user']), PermissionGranted = locationPermission['permission_granted']))
+                cur.execute(location_permission_sql_string.format(FromUser = escape_sql_string(locationPermission['from_user']), ToUser = escape_sql_string(locationPermission['to_user']), PermissionGranted = escape_sql_string(locationPermission['permission_granted'])))
                 item_count += 1
             except pymysql.MySQLError as e:
                 logger.error(e)
@@ -144,7 +144,7 @@ def get_user_table_sql():
 
 # Gets the location_permission table sql
 def get_location_permission_table_sql():
-    return "CREATE table if NOT EXISTS location_permission ( from_user varchar(255) NOT NULL, to_user varchar(255) NOT NULL, permission_granted BOOL NOT NULL, FOREIGN KEY (from_user) REFERENCES user(user_id) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (to_user) REFERENCES user(user_id) ON DELETE CASCADE ON UPDATE CASCADE, PRIMARY KEY (from_user,to_user))"
+    return "CREATE table if NOT EXISTS location_permission ( from_user varchar(255) NOT NULL, to_user varchar(255) NOT NULL, permission_granted varchar(255) NOT NULL, FOREIGN KEY (from_user) REFERENCES user(user_id) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (to_user) REFERENCES user(user_id) ON DELETE CASCADE ON UPDATE CASCADE, PRIMARY KEY (from_user,to_user))"
 
 def escape_sql_string(sql_string):
     translate_table = str.maketrans({"]": r"\]", "\\": r"\\",
