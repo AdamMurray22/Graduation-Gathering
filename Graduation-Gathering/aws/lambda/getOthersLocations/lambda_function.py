@@ -30,7 +30,7 @@ def lambda_handler(event, context):
 
     otherUsers = []
     with conn.cursor() as cur:
-        cur.execute(f"select user_email, latitude, longitude, location_set from user where user_id != '{userID}' AND location_set IS NOT NULL")
+        cur.execute(f"SELECT user_email, latitude, longitude, location_set FROM user WHERE user_id != '{userID}' AND location_set IS NOT NULL AND '{userID}' in (SELECT from_user FROM location_permission WHERE '{userID}' = from_user AND user_id = to_user AND permission_granted = true)")
         for row in cur:
             otherUserEmail = row[0]
             otherUserLatitude = row[1]

@@ -34,12 +34,14 @@ def lambda_handler(event, context):
     SchoolData = message['School']
     CourseData = message['Course']
     UserData = message['User']
+    LocationPermissions = message['LocationPermissions']
 
 
     faculty_sql_string = 'insert into faculty (faculty_name) values("{FacultyName}")'
     school_sql_string = 'insert into school (school_name, faculty_name) values("{SchoolName}", "{FacultyName}")'
     course_sql_string = 'insert into course (course_name, school_name) values("{CourseName}", "{SchoolName}")'
     user_sql_string = 'insert into user (user_id, user_email, user_name, login_code, login_code_expires, faculty_name, school_name, course_name, latitude, longitude, location_set) values("{UserID}", "{UserEmail}", "{UserName}", "{LoginCode}", {LoginCodeExpires}, "{FacultyName}", "{SchoolName}", "{CourseName}", {Latitude}, {Longitude}, {LocationSet})'
+    location_permission_sql_string = 'insert into location_permission (from_user,to_user,permission_granted) values("{FromUser}", "{ToUser}", {PermissionGranted})'
 
     create_schema()
 
@@ -78,6 +80,14 @@ def lambda_handler(event, context):
                 logger.error(e)
             conn.commit()
 
+        for locationPermission in LocationPermissions:
+            try:
+                cur.execute(location_permission_sql_string.format(FromUser = escape_sql_string(locationPermission['from_user']), ToUser = escape_sql_string(locationPermission['to_user']), PermissionGranted = locationPermission['permission_granted']))
+                item_count += 1
+            except pymysql.MySQLError as e:
+                logger.error(e)
+            conn.commit()
+
         conn.commit()
     conn.commit()
 
@@ -95,6 +105,8 @@ def create_schema():
         cur.execute(get_course_table_sql())
         # Creates the user table
         cur.execute(get_user_table_sql())
+        # Creates the location_permission table
+        cur.execute(get_location_permission_table_sql())
         conn.commit()
     conn.commit()
 
@@ -129,6 +141,10 @@ def get_user_table_sql():
     foreign_Key2 = "FOREIGN KEY (school_name) REFERENCES school(school_name) ON DELETE SET NULL ON UPDATE CASCADE"
     foreign_Key3 = "FOREIGN KEY (course_name) REFERENCES course(course_name) ON DELETE SET NULL ON UPDATE CASCADE"
     return sql_string.format(userID = user_ID, userEmail = user_Email, userName = user_Name, loginCode = login_Code, loginCodeExpires = login_Code_expires, userFaculty = user_Faculty, userSchool = user_School, userCourse = user_Course, longitude = longitude, latitude = latitude, locationSet = location_Set, primaryKey = primary_Key, foreignKey1 = foreign_Key1, foreignKey2 = foreign_Key2, foreignKey3 = foreign_Key3)
+
+# Gets the location_permission table sql
+def get_location_permission_table_sql():
+    return "CREATE table if NOT EXISTS location_permission ( from_user varchar(255) NOT NULL, to_user varchar(255) NOT NULL, permission_granted BOOL NOT NULL, FOREIGN KEY (from_user) REFERENCES user(user_id) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (to_user) REFERENCES user(user_id) ON DELETE CASCADE ON UPDATE CASCADE, PRIMARY KEY (from_user,to_user))"
 
 def escape_sql_string(sql_string):
     translate_table = str.maketrans({"]": r"\]", "\\": r"\\",
