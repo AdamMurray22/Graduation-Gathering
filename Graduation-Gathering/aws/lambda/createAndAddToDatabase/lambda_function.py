@@ -26,6 +26,8 @@ except pymysql.MySQLError as e:
 logger.info("SUCCESS: Connection to RDS for MySQL instance succeeded")
 
 def lambda_handler(event, context):
+    #deleteDatabase()
+    #createDatabase()
     """
     This function creates a new RDS database table and writes records to it
     """
@@ -144,7 +146,7 @@ def get_user_table_sql():
 
 # Gets the location_permission table sql
 def get_location_permission_table_sql():
-    return "CREATE table if NOT EXISTS location_permission ( from_user varchar(255) NOT NULL, to_user varchar(255) NOT NULL, permission_granted varchar(255) NOT NULL, FOREIGN KEY (from_user) REFERENCES user(user_id) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (to_user) REFERENCES user(user_id) ON DELETE CASCADE ON UPDATE CASCADE, PRIMARY KEY (from_user,to_user))"
+    return "CREATE table if NOT EXISTS location_permission ( from_user varchar(255) NOT NULL, to_user varchar(255) NOT NULL, permission_granted ENUM('Granted', 'Requested', 'Denied') NOT NULL, FOREIGN KEY (from_user) REFERENCES user(user_id) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (to_user) REFERENCES user(user_id) ON DELETE CASCADE ON UPDATE CASCADE, PRIMARY KEY (from_user,to_user))"
 
 def escape_sql_string(sql_string):
     translate_table = str.maketrans({"]": r"\]", "\\": r"\\",
@@ -152,3 +154,19 @@ def escape_sql_string(sql_string):
     if (sql_string is None):
         return sql_string
     return sql_string.translate(translate_table)
+
+def deleteDatabase():
+    with conn.cursor() as cur:
+        try:
+            cur.execute("DROP DATABASE 	GraduationGathering")
+        except pymysql.MySQLError as e:
+            logger.error(e)
+        conn.commit()
+
+def createDatabase():
+    with conn.cursor() as cur:
+        try:
+            cur.execute("CREATE DATABASE 	GraduationGathering")
+        except pymysql.MySQLError as e:
+            logger.error(e)
+        conn.commit()
