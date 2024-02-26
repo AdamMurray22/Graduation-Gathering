@@ -126,7 +126,7 @@ def get_course_table_sql():
 
 # Gets the user table sql
 def get_user_table_sql():
-    sql_string = "create table if not exists user ( {userID}, {userEmail}, {userName}, {loginCode}, {loginCodeExpires}, {userFaculty}, {userSchool}, {userCourse}, {longitude}, {latitude}, {locationSet}, {primaryKey}, {foreignKey1}, {foreignKey2}, {foreignKey3})"
+    sql_string = "create table if not exists user ( {userID}, {userEmail}, {userName}, {loginCode}, {loginCodeExpires}, {userFaculty}, {userSchool}, {userCourse}, {longitude}, {latitude}, {locationSet}, {hasLoggedIn}, {uniqueUserEmail}, {primaryKey}, {foreignKey1}, {foreignKey2}, {foreignKey3})"
     user_ID = "user_id varchar(255) NOT NULL"
     user_Email = "user_email varchar(255) NOT NULL"
     user_Name = "user_name varchar(255)"
@@ -138,15 +138,29 @@ def get_user_table_sql():
     longitude = "longitude double"
     latitude = "latitude double"
     location_Set = "location_set double"
+    has_Logged_In = "has_logged_in bool NOT NULL DEFAULT false"
+    unique_User_Email = "UNIQUE (user_email)"
     primary_Key = "PRIMARY KEY (user_id)"
     foreign_Key1 = "FOREIGN KEY (faculty_name) REFERENCES faculty(faculty_name) ON DELETE SET NULL ON UPDATE CASCADE"
     foreign_Key2 = "FOREIGN KEY (school_name) REFERENCES school(school_name) ON DELETE SET NULL ON UPDATE CASCADE"
     foreign_Key3 = "FOREIGN KEY (course_name) REFERENCES course(course_name) ON DELETE SET NULL ON UPDATE CASCADE"
-    return sql_string.format(userID = user_ID, userEmail = user_Email, userName = user_Name, loginCode = login_Code, loginCodeExpires = login_Code_expires, userFaculty = user_Faculty, userSchool = user_School, userCourse = user_Course, longitude = longitude, latitude = latitude, locationSet = location_Set, primaryKey = primary_Key, foreignKey1 = foreign_Key1, foreignKey2 = foreign_Key2, foreignKey3 = foreign_Key3)
+    return sql_string.format(userID = user_ID, userEmail = user_Email, userName = user_Name, loginCode = login_Code, loginCodeExpires = login_Code_expires, userFaculty = user_Faculty, userSchool = user_School, userCourse = user_Course, longitude = longitude, latitude = latitude, locationSet = location_Set, hasLoggedIn = has_Logged_In, uniqueUserEmail = unique_User_Email, primaryKey = primary_Key, foreignKey1 = foreign_Key1, foreignKey2 = foreign_Key2, foreignKey3 = foreign_Key3)
 
 # Gets the location_permission table sql
 def get_location_permission_table_sql():
     return "CREATE table if NOT EXISTS location_permission ( from_user varchar(255) NOT NULL, to_user varchar(255) NOT NULL, permission_granted ENUM('Granted', 'Requested', 'Denied') NOT NULL, FOREIGN KEY (from_user) REFERENCES user(user_id) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (to_user) REFERENCES user(user_id) ON DELETE CASCADE ON UPDATE CASCADE, PRIMARY KEY (from_user,to_user))"
+
+# Gets the graduation_zones table sql
+def get_graduation_zones_table_sql():
+    return "create table if not exists graduation_zones ( zone_id varchar(255) NOT NULL, zone_name varchar(255) NOT NULL, UNIQUE (zone_name), PRIMARY KEY (zone_id))"
+
+# Gets the graduation_zones_text table sql
+def get_graduation_zones_text_table_sql():
+    return "create table if not exists graduation_zones_text ( zone_id varchar(255) NOT NULL, geojson text NOT NULL, UNIQUE (geojson), FOREIGN KEY (zone_id) REFERENCES graduation_zones(zone_id) ON DELETE CASCADE ON UPDATE CASCADE, PRIMARY KEY (zone_id))"
+
+# Gets the user_zones table sql
+def get_user_zones_table_sql():
+    return "create table if not exists user_zones ( user_id varchar(255) NOT NULL, zone_id varchar(255) NOT NULL, FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (zone_id) REFERENCES graduation_zones(zone_id) ON DELETE CASCADE ON UPDATE CASCADE, PRIMARY KEY (user_id,zone_id))"
 
 def escape_sql_string(sql_string):
     translate_table = str.maketrans({"]": r"\]", "\\": r"\\",
