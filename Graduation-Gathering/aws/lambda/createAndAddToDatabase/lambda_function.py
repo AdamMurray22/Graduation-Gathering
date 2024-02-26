@@ -37,13 +37,18 @@ def lambda_handler(event, context):
     CourseData = message['Course']
     UserData = message['User']
     LocationPermissions = message['LocationPermissions']
+    GraduationZones = message['GraduationZones']
+    UserZones = message['UserZones']
 
 
     faculty_sql_string = 'insert into faculty (faculty_name) values("{FacultyName}")'
     school_sql_string = 'insert into school (school_name, faculty_name) values("{SchoolName}", "{FacultyName}")'
     course_sql_string = 'insert into course (course_name, school_name) values("{CourseName}", "{SchoolName}")'
-    user_sql_string = 'insert into user (user_id, user_email, user_name, login_code, login_code_expires, faculty_name, school_name, course_name, latitude, longitude, location_set) values("{UserID}", "{UserEmail}", "{UserName}", "{LoginCode}", {LoginCodeExpires}, "{FacultyName}", "{SchoolName}", "{CourseName}", {Latitude}, {Longitude}, {LocationSet})'
+    user_sql_string = 'insert into user (user_id, user_email, user_name, login_code, login_code_expires, faculty_name, school_name, course_name, latitude, longitude, location_set, has_logged_in) values("{UserID}", "{UserEmail}", "{UserName}", "{LoginCode}", {LoginCodeExpires}, "{FacultyName}", "{SchoolName}", "{CourseName}", {Latitude}, {Longitude}, {LocationSet}, {HasLoggedIn})'
     location_permission_sql_string = 'insert into location_permission (from_user,to_user,permission_granted) values("{FromUser}", "{ToUser}", "{PermissionGranted}")'
+    graduation_zones_sql_string = 'insert into graduation_zones (zone_id,zone_name) values("{ZoneID}", "{ZoneName}")'
+    graduation_zones_text_sql_string = 'insert into graduation_zones_text (zone_id,geojson) values("{ZoneID}", "{GeoJson}")'
+    user_zones_sql_string = 'insert into user_zones (user_id,zone_id) values("{UserID}","{ZoneID}")'
 
     create_schema()
 
@@ -76,7 +81,7 @@ def lambda_handler(event, context):
 
         for user in UserData:
             try:
-                cur.execute(user_sql_string.format(UserID = escape_sql_string(user['user_id']), UserEmail = escape_sql_string(user['user_email']), UserName = escape_sql_string(user['user_name']), LoginCode = escape_sql_string(user['login_code']), LoginCodeExpires = user['login_code_expires'], FacultyName = escape_sql_string(user['faculty_name']), SchoolName = escape_sql_string(user['school_name']), CourseName = escape_sql_string(user['course_name']), Latitude = user['latitude'], Longitude = user['longitude'], LocationSet = user['location_set']))
+                cur.execute(user_sql_string.format(UserID = escape_sql_string(user['user_id']), UserEmail = escape_sql_string(user['user_email']), UserName = escape_sql_string(user['user_name']), LoginCode = escape_sql_string(user['login_code']), LoginCodeExpires = user['login_code_expires'], FacultyName = escape_sql_string(user['faculty_name']), SchoolName = escape_sql_string(user['school_name']), CourseName = escape_sql_string(user['course_name']), Latitude = user['latitude'], Longitude = user['longitude'], LocationSet = user['location_set'], HasLoggedIn = user['has_logged_in']))
                 item_count += 1
             except pymysql.MySQLError as e:
                 logger.error(e)
@@ -85,6 +90,23 @@ def lambda_handler(event, context):
         for locationPermission in LocationPermissions:
             try:
                 cur.execute(location_permission_sql_string.format(FromUser = escape_sql_string(locationPermission['from_user']), ToUser = escape_sql_string(locationPermission['to_user']), PermissionGranted = escape_sql_string(locationPermission['permission_granted'])))
+                item_count += 1
+            except pymysql.MySQLError as e:
+                logger.error(e)
+            conn.commit()
+
+        for zone in GraduationZones:
+            try:
+                cur.execute(graduation_zones_sql_string.format(ZoneID = escape_sql_string(zone['zone_id']), ZoneName = escape_sql_string(zone['zone_name'])))
+                cur.execute(graduation_zones_text_sql_string.format(ZoneID = escape_sql_string(zone['zone_id']), GeoJson = escape_sql_string(zone['geojson'])))
+                item_count += 1
+            except pymysql.MySQLError as e:
+                logger.error(e)
+            conn.commit()
+
+        for userZone in UserZones:
+            try:
+                cur.execute(user_zones_sql_string.format(UserID = escape_sql_string(userZone['user_id']), ZoneID = escape_sql_string(userZone['zone_id'])))
                 item_count += 1
             except pymysql.MySQLError as e:
                 logger.error(e)
@@ -109,24 +131,30 @@ def create_schema():
         cur.execute(get_user_table_sql())
         # Creates the location_permission table
         cur.execute(get_location_permission_table_sql())
+        # Creates the graduation_zones table
+        cur.execute(get_graduation_zones_table_sql())
+        # Creates the graduation_zones_text table
+        cur.execute(get_graduation_zones_text_table_sql())
+        # Creates the user_zones table
+        cur.execute(get_user_zones_table_sql())
         conn.commit()
     conn.commit()
 
 # Gets the faculty table sql
 def get_faculty_table_sql():
-    return "create table if not exists faculty ( faculty_name varchar(255) NOT NULL, PRIMARY KEY (faculty_name))"
+    return "create table if NOT EXISTS faculty ( faculty_name varchar(255) NOT NULL, PRIMARY KEY (faculty_name))"
 
 # Gets the school table sql
 def get_school_table_sql():
-    return "create table if not exists school ( school_name  varchar(255) NOT NULL, faculty_name varchar(255) NOT NULL, PRIMARY KEY (school_name), FOREIGN KEY (faculty_name) REFERENCES faculty(faculty_name) ON DELETE CASCADE ON UPDATE CASCADE)"
+    return "create table if NOT EXISTS school ( school_name  varchar(255) NOT NULL, faculty_name varchar(255) NOT NULL, PRIMARY KEY (school_name), FOREIGN KEY (faculty_name) REFERENCES faculty(faculty_name) ON DELETE CASCADE ON UPDATE CASCADE)"
 
 # Gets the course table sql
 def get_course_table_sql():
-    return "create table if not exists course ( course_name  varchar(255) NOT NULL, school_name varchar(255) NOT NULL, PRIMARY KEY (course_name), FOREIGN KEY (school_name) REFERENCES school(school_name) ON DELETE CASCADE ON UPDATE CASCADE)"
+    return "create table if NOT EXISTS course ( course_name  varchar(255) NOT NULL, school_name varchar(255) NOT NULL, PRIMARY KEY (course_name), FOREIGN KEY (school_name) REFERENCES school(school_name) ON DELETE CASCADE ON UPDATE CASCADE)"
 
 # Gets the user table sql
 def get_user_table_sql():
-    sql_string = "create table if not exists user ( {userID}, {userEmail}, {userName}, {loginCode}, {loginCodeExpires}, {userFaculty}, {userSchool}, {userCourse}, {longitude}, {latitude}, {locationSet}, {hasLoggedIn}, {uniqueUserEmail}, {primaryKey}, {foreignKey1}, {foreignKey2}, {foreignKey3})"
+    sql_string = "create table if NOT EXISTS user ( {userID}, {userEmail}, {userName}, {loginCode}, {loginCodeExpires}, {userFaculty}, {userSchool}, {userCourse}, {longitude}, {latitude}, {locationSet}, {hasLoggedIn}, {uniqueUserEmail}, {primaryKey}, {foreignKey1}, {foreignKey2}, {foreignKey3})"
     user_ID = "user_id varchar(255) NOT NULL"
     user_Email = "user_email varchar(255) NOT NULL"
     user_Name = "user_name varchar(255)"
@@ -152,15 +180,15 @@ def get_location_permission_table_sql():
 
 # Gets the graduation_zones table sql
 def get_graduation_zones_table_sql():
-    return "create table if not exists graduation_zones ( zone_id varchar(255) NOT NULL, zone_name varchar(255) NOT NULL, UNIQUE (zone_name), PRIMARY KEY (zone_id))"
+    return "create table if NOT EXISTS graduation_zones ( zone_id varchar(255) NOT NULL, zone_name varchar(255) NOT NULL, UNIQUE (zone_name), PRIMARY KEY (zone_id))"
 
 # Gets the graduation_zones_text table sql
 def get_graduation_zones_text_table_sql():
-    return "create table if not exists graduation_zones_text ( zone_id varchar(255) NOT NULL, geojson text NOT NULL, UNIQUE (geojson), FOREIGN KEY (zone_id) REFERENCES graduation_zones(zone_id) ON DELETE CASCADE ON UPDATE CASCADE, PRIMARY KEY (zone_id))"
+    return "create table if NOT EXISTS graduation_zones_text ( zone_id varchar(255) NOT NULL, geojson text NOT NULL, FOREIGN KEY (zone_id) REFERENCES graduation_zones(zone_id) ON DELETE CASCADE ON UPDATE CASCADE, PRIMARY KEY (zone_id))"
 
 # Gets the user_zones table sql
 def get_user_zones_table_sql():
-    return "create table if not exists user_zones ( user_id varchar(255) NOT NULL, zone_id varchar(255) NOT NULL, FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (zone_id) REFERENCES graduation_zones(zone_id) ON DELETE CASCADE ON UPDATE CASCADE, PRIMARY KEY (user_id,zone_id))"
+    return "create table if NOT EXISTS user_zones ( user_id varchar(255) NOT NULL, zone_id varchar(255) NOT NULL, FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (zone_id) REFERENCES graduation_zones(zone_id) ON DELETE CASCADE ON UPDATE CASCADE, PRIMARY KEY (user_id,zone_id))"
 
 def escape_sql_string(sql_string):
     translate_table = str.maketrans({"]": r"\]", "\\": r"\\",
