@@ -64,10 +64,11 @@ def getUserID(email):
 def writeCodeToRDSWIthoutUserID(email, code):
     userID = createUserID()
     expires = getCodeExpireTime()
+    studentStaff = getStudentStaff(email)
     with conn.cursor() as cur:
         try:
-            sql_string = 'insert into user (user_id, user_email, login_code, login_code_expires) values("{userID}", "{userEmail}", "{loginCode}", {expires})'
-            cur.execute(sql_string.format(userID = escape_sql_string(userID), loginCode = escape_sql_string(code), expires = expires, userEmail = escape_sql_string(email)))
+            sql_string = 'insert into user (user_id, user_email, login_code, login_code_expires, student_staff) values("{userID}", "{userEmail}", "{loginCode}", {expires}, "{studentStaff}")'
+            cur.execute(sql_string.format(userID = escape_sql_string(userID), loginCode = escape_sql_string(code), expires = expires, userEmail = escape_sql_string(email), studentStaff = escape_sql_string(studentStaff)))
         except pymysql.MySQLError as e:
             logger.error(e)
         conn.commit()
@@ -113,6 +114,13 @@ def generateCode():
 def generateUserID():
     codeList = [str(random.randint(0,9)) for _ in range(10)]
     return "US-" + "".join(codeList)
+
+def getStudentStaff(email):
+    endOfEmail = email.split('@')[1]
+    if endOfEmail == "myport.ac.uk":
+        return "Student"
+    elif endOfEmail == "port.ac.uk":
+        return "Staff"
 
 def escape_sql_string(sql_string):
     translate_table = str.maketrans({"]": r"\]", "\\": r"\\",
