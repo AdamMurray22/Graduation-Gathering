@@ -30,19 +30,31 @@ def lambda_handler(event, context):
 
     otherUsers = []
     with conn.cursor() as cur:
-        cur.execute(f"SELECT user_email, latitude, longitude, location_set FROM user WHERE user_id != '{userID}' AND location_set IS NOT NULL AND '{userID}' in (SELECT from_user FROM location_permission WHERE '{userID}' = from_user AND user_id = to_user AND permission_granted = 'Granted')")
+        sql = "SELECT user_email, latitude, longitude, user_id, user_name, faculty_name, school_name, course_name, student_staff FROM user WHERE user_id != '{userID}' AND location_set > {time} AND '{userID}' in (SELECT from_user FROM location_permission WHERE '{userID}' = from_user AND user_id = to_user AND permission_granted = 'Granted')"
+        locationValidTime = time.time() - 60
+        cur.execute(sql.format(userID = userID, time = locationValidTime))
         for row in cur:
             otherUserEmail = row[0]
             otherUserLatitude = row[1]
             otherUserLongitude = row[2]
-            otherUserLocationSetTime = row[3]
+            otherUserID = row[3]
+            otherUserName = row[4]
+            otherUserFaculty = row[5]
+            otherUserSchool = row[6]
+            otherUserCourse = row[7]
+            otherUserStudentStaff = row[8]
             otherUser = {
                 'email': otherUserEmail,
                 'latitude': otherUserLatitude,
-                'longitude': otherUserLongitude
+                'longitude': otherUserLongitude,
+                'id': otherUserID,
+                'name': otherUserName,
+                'faculty': otherUserFaculty,
+                'school': otherUserSchool,
+                'course': otherUserCourse,
+                'student/staff': otherUserStudentStaff
             }
-            if otherUserLocationSetTime + 60 > time.time():
-                otherUsers.append(otherUser)
+            otherUsers.append(otherUser)
         cur.close()
     conn.commit()
 
