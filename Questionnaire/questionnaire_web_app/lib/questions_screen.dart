@@ -67,9 +67,9 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
                   const SizedBox(height: 7),
                   ElevatedButton(
                     onPressed: () {
-                      _changeScreen(ScreensEnum.termsScreen);
+                      _changeScreen(ScreensEnum.consentScreen);
                     },
-                    child: const Text("Back To Participant Information Sheet", style: TextStyle(fontSize: 17)),
+                    child: const Text("Back To Consent Form", style: TextStyle(fontSize: 17)),
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,7 +116,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
                           "A Graduation zone in this context means an area of Portsmouth designated on the app to show people's locations.", style: TextStyle(fontSize: 17)),
                       const SizedBox(height: 7),
                       const Text(
-                          "Q2. Please arrange the following list of features from most important to you at the top, to least important to you at the bottom (use the handles on the right):", style: TextStyle(fontSize: 17)),
+                          "Q2. Please arrange the following list of features from most important to you at the top, to least important to you at the bottom (if on a computer use the handles on the right, if on mobile hold and drag):", style: TextStyle(fontSize: 17)),
                       const SizedBox(height: 7),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),

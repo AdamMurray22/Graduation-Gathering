@@ -30,6 +30,8 @@ class _TermsScreenState extends State<TermsScreen> {
                 "Name and Contact Details of Researcher: Adam Murray, up2166905@myyport.ac.uk", style: TextStyle(fontSize: 17)),
             Text(
                 "Name and Contact Details of Supervisor: Dr Gail Ollis, gail.ollis@port.ac.uk", style: TextStyle(fontSize: 17)),
+            Text(
+                "Ethics Committee Reference Number: TETHIC-2023-106661", style: TextStyle(fontSize: 17)),
             Text("1.	Invitation", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
             Padding(
               padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
@@ -78,13 +80,13 @@ class _TermsScreenState extends State<TermsScreen> {
           onPressed: () {
             _changeScreen();
           },
-          child: const Text("I Agree To Participate", style: TextStyle(fontSize: 17)),
+          child: const Text("Continue", style: TextStyle(fontSize: 17)),
         ),
       ]),
     )));
   }
 
   _changeScreen() {
-    widget.changeScreen(ScreensEnum.questionsScreen.screenIndex);
+    widget.changeScreen(ScreensEnum.consentScreen.screenIndex);
   }
 }
