@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:questionnaire_web_app/consent_screen.dart';
 import 'package:questionnaire_web_app/questions_screen.dart';
 import 'package:questionnaire_web_app/terms_screen.dart';
 import 'package:questionnaire_web_app/thank_you_screen.dart';
@@ -35,6 +36,7 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
       body: IndexedStack(index: screenStackIndex, children: [
         TermsScreen(changeScreen: _changeScreen),
+        ConsentScreen(changeScreen: _changeScreen),
         QuestionsScreen(changeScreen: _changeScreen),
         const ThankYouScreen()
       ]),
