@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:graduation_gathering/Screen/profile_screen.dart';
 import 'package:tuple/tuple.dart';
 
 import 'about_screen.dart';
@@ -10,14 +11,17 @@ class NavigationBarItems
 {
   final List<Tuple2<NavigationBarItemEnum, StatefulWidget>> _itemsInOrder = [];
   late final Tuple2<NavigationBarItemEnum, MapScreen> mapScreen;
+  late final Tuple2<NavigationBarItemEnum, ProfileScreen> profileScreen;
   late final Tuple2<NavigationBarItemEnum, AboutScreen> aboutScreen;
 
   NavigationBarItems()
   {
     mapScreen = const Tuple2(NavigationBarItemEnum.mapScreen, MapScreen());
+    profileScreen = const Tuple2(NavigationBarItemEnum.profileScreen, ProfileScreen());
     aboutScreen =
       const Tuple2(NavigationBarItemEnum.aboutScreen, AboutScreen());
     _itemsInOrder.add(mapScreen);
+    _itemsInOrder.add(profileScreen);
     _itemsInOrder.add(aboutScreen);
   }
 
@@ -53,7 +57,8 @@ class NavigationBarItems
 }
 enum NavigationBarItemEnum {
   mapScreen(0, Icon(Icons.home), "Home"),
-  aboutScreen(1, Icon(Icons.info_outline), "About");
+  profileScreen(1, Icon(Icons.settings), "Profile"),
+  aboutScreen(2, Icon(Icons.info_outline), "About");
 
   const NavigationBarItemEnum(this.position, this.icon, this.label);
 
