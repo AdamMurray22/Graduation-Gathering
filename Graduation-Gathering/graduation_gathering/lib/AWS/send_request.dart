@@ -14,9 +14,9 @@ abstract class SendRequest {
   getRoute();
 
   @protected
-  Future<String> post(String body) async {
+  Future<String> post(String body, {Map<String, String>? headers}) async {
     Uri uri = _getUri();
-    http.Response response = await http.post(uri, body: body);
+    http.Response response = await http.post(uri, headers: headers, body: body);
     return response.body;
   }
 

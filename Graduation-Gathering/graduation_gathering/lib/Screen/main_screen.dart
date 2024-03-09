@@ -22,7 +22,7 @@ class _MainScreenState extends State<MainScreen> {
   /// Creates the screens accessed through the nav bar.
   @override
   initState() {
-    _navigationBarItems = NavigationBarItems();
+    _navigationBarItems = NavigationBarItems(widget.authToken);
     super.initState();
   }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:graduation_gathering/Auth/auth_token.dart';
 import 'package:tuple/tuple.dart';
 
 import 'about_screen.dart';
@@ -12,9 +13,9 @@ class NavigationBarItems
   late final Tuple2<NavigationBarItemEnum, MapScreen> mapScreen;
   late final Tuple2<NavigationBarItemEnum, AboutScreen> aboutScreen;
 
-  NavigationBarItems()
+  NavigationBarItems(AuthToken authToken)
   {
-    mapScreen = const Tuple2(NavigationBarItemEnum.mapScreen, MapScreen());
+    mapScreen = Tuple2(NavigationBarItemEnum.mapScreen, MapScreen(authToken: authToken));
     aboutScreen =
       const Tuple2(NavigationBarItemEnum.aboutScreen, AboutScreen());
     _itemsInOrder.add(mapScreen);
