@@ -3,6 +3,7 @@ import 'package:graduation_gathering/Map/tile_server.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 
+
 abstract class MapWidget extends StatefulWidget {
   const MapWidget({this.markerClickedFunction, super.key, this.pingTileServerFunction});
 
