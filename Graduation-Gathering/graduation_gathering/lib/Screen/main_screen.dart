@@ -25,6 +25,10 @@ class _MainScreenState extends State<MainScreen> {
   @override
   initState() {
     _navigationBarItems = NavigationBarItems(widget.authToken, widget.profile);
+    if (!widget.profile.getHasLoggedInBefore())
+    {
+      _navigationBarItems.setSelectedIndex(_navigationBarItems.profileScreen.item1.position);
+    }
     super.initState();
   }
 
