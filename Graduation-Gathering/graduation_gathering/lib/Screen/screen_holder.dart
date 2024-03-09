@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:graduation_gathering/Auth/token_storage.dart';
 import 'package:graduation_gathering/Auth/validate_token.dart';
+import 'package:graduation_gathering/Profile/profile_settings.dart';
 import 'package:graduation_gathering/Screen/main_screen.dart';
 import '../Auth/auth_token.dart';
+import '../Login/get_user_profile.dart';
 import 'loading_screen.dart';
 import 'login_screen.dart';
 
@@ -35,7 +37,8 @@ class _ScreenHolderState extends State<ScreenHolder> {
       authToken = null;
     }
     if (authToken != null) {
-      _screen = MainScreen(authToken: authToken);
+      ProfileSettings profile = await GetUserProfile().send(authToken);
+      _screen = MainScreen(authToken: authToken, profile: profile);
     }
     else
     {
@@ -54,11 +57,12 @@ class _ScreenHolderState extends State<ScreenHolder> {
     );
   }
 
-  _switchToMainScreen(AuthToken authToken)
+  _switchToMainScreen(AuthToken authToken) async
   {
+    _tokenStorage.writeToken(authToken);
+    ProfileSettings profile = await GetUserProfile().send(authToken);
+    _screen = MainScreen(authToken: authToken, profile: profile);
     setState(() {
-      _tokenStorage.writeToken(authToken);
-      _screen = MainScreen(authToken: authToken);
     });
   }
 }

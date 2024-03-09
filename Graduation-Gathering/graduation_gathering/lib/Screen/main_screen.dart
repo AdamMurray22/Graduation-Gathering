@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:graduation_gathering/Profile/profile_settings.dart';
 import 'package:tuple/tuple.dart';
 
 import '../Auth/auth_token.dart';
@@ -6,9 +7,10 @@ import 'navigation_bar_items.dart';
 
 /// This holds the screen for the application.
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key, required this.authToken});
+  const MainScreen({super.key, required this.authToken, required this.profile});
 
   final AuthToken authToken;
+  final ProfileSettings profile;
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -22,7 +24,7 @@ class _MainScreenState extends State<MainScreen> {
   /// Creates the screens accessed through the nav bar.
   @override
   initState() {
-    _navigationBarItems = NavigationBarItems(widget.authToken);
+    _navigationBarItems = NavigationBarItems(widget.authToken, widget.profile);
     super.initState();
   }
 
