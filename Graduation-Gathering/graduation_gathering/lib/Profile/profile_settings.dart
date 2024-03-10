@@ -34,27 +34,34 @@ class ProfileSettings
     }
   }
 
+  Map<String, dynamic> toJson()
+  {
+    return {'id': getId(), 'hasLoggedInBefore': getHasLoggedInBefore(), 'email': getEmail(),
+      'accountType': getAccountType(), 'name': getName(), 'faculty': getFaculty(),
+      'school': getSchool(), 'course': getCourse()};
+  }
+
   setHasLoggedInBefore(bool hasLoggedIn)
   {
     _hasLoggedInBefore = hasLoggedIn;
   }
 
-  setName(String name)
+  setName(String? name)
   {
     _name = name;
   }
 
-  setFaculty(String faculty)
+  setFaculty(String? faculty)
   {
     _faculty = faculty;
   }
 
-  setSchool(String school)
+  setSchool(String? school)
   {
     _school = school;
   }
 
-  setCourse(String course)
+  setCourse(String? course)
   {
     _course = course;
   }
