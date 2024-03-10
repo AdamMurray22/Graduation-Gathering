@@ -197,11 +197,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               _school = null;
                               _course = null;
                             } else {
-                              _courseVisible = true;
-                              _courseDropDownList.clear();
-                              _courseDropDownController.dropDownValue = null;
-                              widget.academicStructure.getCoursesFromSchoolAndFaculty(value.value, _faculty!)?.forEach((element) {_courseDropDownList.add(DropDownValueModel(name: element, value: element));});
-                              _school = value.value;
+                              if (widget.profile.getAccountType() == "Student") {
+                                _courseVisible = true;
+                                _courseDropDownList.clear();
+                                _courseDropDownController.dropDownValue = null;
+                                widget.academicStructure
+                                    .getCoursesFromSchoolAndFaculty(
+                                    value.value, _faculty!)?.forEach((element) {
+                                  _courseDropDownList.add(DropDownValueModel(
+                                      name: element, value: element));
+                                });
+                                _school = value.value;
+                              }
                             }
                             setState(() {});
                           },
