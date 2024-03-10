@@ -5,6 +5,8 @@ import 'package:graduation_gathering/Profile/profile_settings.dart';
 import 'package:graduation_gathering/Screen/main_screen.dart';
 import '../Auth/auth_token.dart';
 import '../Login/get_user_profile.dart';
+import '../Profile/academic_structure.dart';
+import '../Profile/get_academic_structure.dart';
 import 'loading_screen.dart';
 import 'login_screen.dart';
 
@@ -38,7 +40,8 @@ class _ScreenHolderState extends State<ScreenHolder> {
     }
     if (authToken != null) {
       ProfileSettings profile = await GetUserProfile().send(authToken);
-      _screen = MainScreen(authToken: authToken, profile: profile);
+      AcademicStructure structure = await GetAcademicStructure().send(authToken);
+      _screen = MainScreen(authToken: authToken, profile: profile, academicStructure: structure);
     }
     else
     {
@@ -61,7 +64,8 @@ class _ScreenHolderState extends State<ScreenHolder> {
   {
     _tokenStorage.writeToken(authToken);
     ProfileSettings profile = await GetUserProfile().send(authToken);
-    _screen = MainScreen(authToken: authToken, profile: profile);
+    AcademicStructure structure = await GetAcademicStructure().send(authToken);
+    _screen = MainScreen(authToken: authToken, profile: profile, academicStructure: structure);
     setState(() {
     });
   }

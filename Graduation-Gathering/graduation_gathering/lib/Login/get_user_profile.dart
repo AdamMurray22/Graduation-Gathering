@@ -11,7 +11,6 @@ class GetUserProfile extends SendRequest {
     Map<String, String> headers = {"Authorization": token.getToken()};
     String responseBody = await get(headers);
     Map<String, dynamic> responseJson = json.decode(responseBody);
-    print(responseJson);
     return ProfileSettings(responseJson["hasLoggedInBefore"], responseJson["id"],
       responseJson["email"], responseJson["accountType"],
       responseJson["name"], responseJson["faculty"],

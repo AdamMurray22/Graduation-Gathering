@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:graduation_gathering/Profile/academic_structure.dart';
 import 'package:graduation_gathering/Profile/profile_settings.dart';
 import 'package:graduation_gathering/Screen/profile_screen.dart';
 import 'package:graduation_gathering/Auth/auth_token.dart';
@@ -16,10 +17,10 @@ class NavigationBarItems
   late final Tuple2<NavigationBarItemEnum, ProfileScreen> profileScreen;
   late final Tuple2<NavigationBarItemEnum, AboutScreen> aboutScreen;
 
-  NavigationBarItems(AuthToken authToken, ProfileSettings profile)
+  NavigationBarItems(AuthToken authToken, ProfileSettings profile, AcademicStructure structure)
   {
     mapScreen = Tuple2(NavigationBarItemEnum.mapScreen, MapScreen(authToken: authToken));
-    profileScreen = Tuple2(NavigationBarItemEnum.profileScreen, ProfileScreen(authToken: authToken, profile: profile));
+    profileScreen = Tuple2(NavigationBarItemEnum.profileScreen, ProfileScreen(authToken: authToken, profile: profile, academicStructure: structure));
     aboutScreen =
       const Tuple2(NavigationBarItemEnum.aboutScreen, AboutScreen());
     _itemsInOrder.add(mapScreen);

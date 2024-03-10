@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:graduation_gathering/Profile/academic_structure.dart';
 import 'package:graduation_gathering/Profile/set_user_profile.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 
@@ -8,10 +9,11 @@ import '../Profile/profile_settings.dart';
 /// This holds the screen for the application.
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen(
-      {super.key, required this.authToken, required this.profile});
+      {super.key, required this.authToken, required this.profile, required this.academicStructure});
 
   final AuthToken authToken;
   final ProfileSettings profile;
+  final AcademicStructure academicStructure;
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -48,9 +50,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _school = widget.profile.getSchool();
     _course = widget.profile.getCourse();
 
+    _schoolVisible = (_faculty != null);
+    _courseVisible = (_school != null);
+
     _facultyDropDownController = SingleValueDropDownController();
     _schoolDropDownController = SingleValueDropDownController();
     _courseDropDownController = SingleValueDropDownController();
+    if (_faculty != null)
+    {
+      _facultyDropDownController.dropDownValue = DropDownValueModel(name: _faculty!, value: _faculty);
+    }
+    if (_school != null)
+    {
+      _schoolDropDownController.dropDownValue = DropDownValueModel(name: _school!, value: _school);
+    }
+    if (_course != null)
+    {
+      _courseDropDownController.dropDownValue = DropDownValueModel(name: _course!, value: _course);
+    }
+    widget.academicStructure.getFaculties().forEach((element) {_facultyDropDownList.add(DropDownValueModel(name: element, value: element));});
+    if (_schoolVisible)
+    {
+      widget.academicStructure.getSchoolsFromFaculty(_faculty!)?.forEach((element) {_schoolDropDownList.add(DropDownValueModel(name: element, value: element));});
+    }
+    if (_courseVisible)
+    {
+      widget.academicStructure.getCoursesFromSchoolAndFaculty(_school!, _faculty!)?.forEach((element) {_courseDropDownList.add(DropDownValueModel(name: element, value: element));});
+    }
     super.initState();
   }
 
@@ -81,7 +107,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 const Text("Name: ", style: TextStyle(fontSize: 22)),
                 const SizedBox(width: 3),
                 SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.75,
+                    width: MediaQuery.of(context).size.width * 0.7,
                     child: TextField(
                       onChanged: (text) {
                         if (text.length > 50) {
@@ -103,11 +129,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Row(children: [
                 const Text("Faculty:", style: TextStyle(fontSize: 22)),
                 SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.75,
+                    width: MediaQuery.of(context).size.width * 0.7,
                     child: DropDownTextField(
                       key: const Key("Faculty Search box"),
                       controller: _facultyDropDownController,
-                      initialValue: _faculty,
                       clearOption: true,
                       enableSearch: true,
                       textFieldDecoration:
@@ -124,13 +149,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       dropDownItemCount: 5,
                       dropDownList: _facultyDropDownList,
                       onChanged: (value) {
-                        if (value == "") {
+                        if (value == "" || value == null) {
                           _schoolVisible = false;
-                          value = null;
+                          _courseVisible = false;
+                          _school = null;
+                          _course = null;
+                          _faculty = null;
                         } else {
                           _schoolVisible = true;
+                          _schoolDropDownList.clear();
+                          _schoolDropDownController.dropDownValue = null;
+                          widget.academicStructure.getSchoolsFromFaculty(value.value)?.forEach((element) {_schoolDropDownList.add(DropDownValueModel(name: element, value: element));});
+                          _faculty = value.value;
                         }
-                        _faculty = value;
                         setState(() {});
                       },
                     ))
@@ -141,11 +172,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Row(children: [
                     const Text("School:", style: TextStyle(fontSize: 22)),
                     SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.75,
+                        width: MediaQuery.of(context).size.width * 0.7,
                         child: DropDownTextField(
                           key: const Key("School Search box"),
                           controller: _schoolDropDownController,
-                          initialValue: _school,
                           clearOption: true,
                           enableSearch: true,
                           textFieldDecoration:
@@ -162,13 +192,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           dropDownItemCount: 5,
                           dropDownList: _schoolDropDownList,
                           onChanged: (value) {
-                            if (value == "") {
+                            if (value == "" || value == null) {
                               _courseVisible = false;
-                              value = null;
+                              _school = null;
+                              _course = null;
                             } else {
                               _courseVisible = true;
+                              _courseDropDownList.clear();
+                              _courseDropDownController.dropDownValue = null;
+                              widget.academicStructure.getCoursesFromSchoolAndFaculty(value.value, _faculty!)?.forEach((element) {_courseDropDownList.add(DropDownValueModel(name: element, value: element));});
+                              _school = value.value;
                             }
-                            _school = value;
                             setState(() {});
                           },
                         ))
@@ -179,11 +213,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Row(children: [
                     const Text("Course: ", style: TextStyle(fontSize: 22)),
                     SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.75,
+                        width: MediaQuery.of(context).size.width * 0.7,
                         child: DropDownTextField(
                           key: const Key("Course Search box"),
                           controller: _courseDropDownController,
-                          initialValue: _course,
                           clearOption: true,
                           enableSearch: true,
                           textFieldDecoration:
@@ -200,10 +233,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           dropDownItemCount: 5,
                           dropDownList: _courseDropDownList,
                           onChanged: (value) {
-                            if (value == "") {
-                              value = null;
+                            if (value == "" || value == null) {
+                              _course = null;
                             }
-                            _course = value;
+                            else
+                            {
+                              _course = value.value;
+                            }
                             setState(() {});
                           },
                         ))
