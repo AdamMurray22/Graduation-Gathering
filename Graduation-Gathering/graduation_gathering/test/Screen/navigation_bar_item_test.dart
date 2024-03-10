@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:graduation_gathering/Auth/auth_token.dart';
 import 'package:graduation_gathering/Profile/academic_structure.dart';
 import 'package:graduation_gathering/Profile/profile_settings.dart';
@@ -26,6 +28,7 @@ void main() {
       NavigationBarItems navigationBarItems = NavigationBarItems(authToken, profile, structure);
       expect(navigationBarItems.getValuesInOrder(), [
         navigationBarItems.mapScreen,
+        navigationBarItems.manageUserPermissionsScreen,
         navigationBarItems.profileScreen,
         navigationBarItems.aboutScreen
       ]);
@@ -35,6 +38,7 @@ void main() {
       NavigationBarItems navigationBarItems = NavigationBarItems(authToken, profile, structure);
       expect(navigationBarItems.getScreensInOrder(), [
         navigationBarItems.mapScreen.item2,
+        navigationBarItems.manageUserPermissionsScreen.item2,
         navigationBarItems.profileScreen.item2,
         navigationBarItems.aboutScreen.item2
       ]);
