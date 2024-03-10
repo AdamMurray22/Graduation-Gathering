@@ -1,17 +1,20 @@
+import 'package:graduation_gathering/Profile/account_type.dart';
+
 class ProfileSettings
 {
   late bool _hasLoggedInBefore;
   final String _id;
   final String _email;
-  final String _accountType;
+  late final AccountType _accountType;
   String? _name;
   String? _faculty;
   String? _school;
   String? _course;
 
-  ProfileSettings(hasLoggedInBefore, this._id, this._email, this._accountType, name, faculty, school, course)
+  ProfileSettings(hasLoggedInBefore, this._id, this._email, accountType, name, faculty, school, course)
   {
     _hasLoggedInBefore = (hasLoggedInBefore != 0);
+    _accountType = AccountType.getAccountTypeFromString(accountType)!;
     _name = name;
     if (name == "null")
     {
@@ -37,7 +40,7 @@ class ProfileSettings
   Map<String, dynamic> toJson()
   {
     return {'id': getId(), 'hasLoggedInBefore': getHasLoggedInBefore(), 'email': getEmail(),
-      'accountType': getAccountType(), 'name': getName(), 'faculty': getFaculty(),
+      'accountType': getAccountType().accountTypeAsString, 'name': getName(), 'faculty': getFaculty(),
       'school': getSchool(), 'course': getCourse()};
   }
 
@@ -81,7 +84,7 @@ class ProfileSettings
     return _email;
   }
 
-  String getAccountType()
+  AccountType getAccountType()
   {
     return _accountType;
   }

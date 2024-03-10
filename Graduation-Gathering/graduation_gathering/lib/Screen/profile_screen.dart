@@ -4,6 +4,7 @@ import 'package:graduation_gathering/Profile/set_user_profile.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 
 import '../Auth/auth_token.dart';
+import '../Profile/account_type.dart';
 import '../Profile/profile_settings.dart';
 
 /// This holds the screen for the application.
@@ -34,7 +35,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool _courseVisible = false;
 
   String _email = "";
-  String _accountType = "";
+  late AccountType _accountType;
   String? _name;
   String? _faculty;
   String? _school;
@@ -100,7 +101,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 5),
               Text("Email: $_email", style: const TextStyle(fontSize: 22)),
               const SizedBox(height: 5),
-              Text("Account Type: $_accountType",
+              Text("Account Type: ${_accountType.accountTypeAsString}",
                   style: const TextStyle(fontSize: 22)),
               const SizedBox(height: 5),
               Row(children: [
@@ -197,7 +198,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               _school = null;
                               _course = null;
                             } else {
-                              if (widget.profile.getAccountType() == "Student") {
+                              if (widget.profile.getAccountType() == AccountType.student) {
                                 _courseVisible = true;
                                 _courseDropDownList.clear();
                                 _courseDropDownController.dropDownValue = null;
