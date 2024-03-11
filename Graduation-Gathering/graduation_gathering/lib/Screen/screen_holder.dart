@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:graduation_gathering/Auth/token_storage.dart';
 import 'package:graduation_gathering/Auth/validate_token.dart';
+import 'package:graduation_gathering/Map/Zones/get_grad_zones.dart';
 import 'package:graduation_gathering/Profile/profile_settings.dart';
 import 'package:graduation_gathering/Screen/main_screen.dart';
 import '../Auth/auth_token.dart';
 import '../Login/get_user_profile.dart';
+import '../Map/Zones/grad_zones.dart';
 import '../Profile/academic_structure.dart';
 import '../Profile/get_academic_structure.dart';
 import 'loading_screen.dart';
@@ -39,9 +41,7 @@ class _ScreenHolderState extends State<ScreenHolder> {
       authToken = null;
     }
     if (authToken != null) {
-      ProfileSettings profile = await GetUserProfile().send(authToken);
-      AcademicStructure structure = await GetAcademicStructure().send(authToken);
-      _screen = MainScreen(authToken: authToken, profile: profile, academicStructure: structure);
+      _loadMainScreen(authToken);
     }
     else
     {
@@ -63,10 +63,16 @@ class _ScreenHolderState extends State<ScreenHolder> {
   _switchToMainScreen(AuthToken authToken) async
   {
     _tokenStorage.writeToken(authToken);
-    ProfileSettings profile = await GetUserProfile().send(authToken);
-    AcademicStructure structure = await GetAcademicStructure().send(authToken);
-    _screen = MainScreen(authToken: authToken, profile: profile, academicStructure: structure);
+    _loadMainScreen(authToken);
     setState(() {
     });
+  }
+
+  _loadMainScreen(AuthToken authToken) async
+  {
+    ProfileSettings profile = await GetUserProfile().send(authToken);
+    AcademicStructure structure = await GetAcademicStructure().send(authToken);
+    GradZones zones = await GetGradZones().send(authToken);
+    _screen = MainScreen(authToken: authToken, profile: profile, academicStructure: structure, gradZones: zones);
   }
 }
