@@ -41,7 +41,7 @@ class _ScreenHolderState extends State<ScreenHolder> {
       authToken = null;
     }
     if (authToken != null) {
-      _loadMainScreen(authToken);
+      await _loadMainScreen(authToken);
     }
     else
     {
@@ -63,7 +63,7 @@ class _ScreenHolderState extends State<ScreenHolder> {
   _switchToMainScreen(AuthToken authToken) async
   {
     _tokenStorage.writeToken(authToken);
-    _loadMainScreen(authToken);
+    await _loadMainScreen(authToken);
     setState(() {
     });
   }
