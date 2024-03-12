@@ -1,3 +1,4 @@
+import 'package:graduation_gathering/Map/Zones/zone_colours_enum.dart';
 import 'package:graduation_gathering/Sorts/heap_sort.dart';
 import 'package:graduation_gathering/Sorts/comparator.dart';
 import 'grad_zone.dart';
@@ -10,7 +11,7 @@ class GradZones extends Iterable<GradZone>
   {
     for (Map<String, dynamic> zone in gradZones)
     {
-      _gradZones.add(GradZone(zone));
+      _gradZones.add(GradZone(zone, ZoneColours.red.getColourRGB()));
     }
   }
 

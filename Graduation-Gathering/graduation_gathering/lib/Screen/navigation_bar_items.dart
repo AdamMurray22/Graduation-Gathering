@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:graduation_gathering/Map/Zones/grad_zones.dart';
+import 'package:graduation_gathering/Map/main_map_widget.dart';
 import 'package:graduation_gathering/Profile/academic_structure.dart';
 import 'package:graduation_gathering/Profile/profile_settings.dart';
 import 'package:graduation_gathering/Screen/profile_screen.dart';
 import 'package:graduation_gathering/Auth/auth_token.dart';
 import 'package:tuple/tuple.dart';
 
+import '../Map/Zones/grad_zone.dart';
+import '../Map/Zones/zone_colours_enum.dart';
 import 'about_screen.dart';
 import 'map_screen.dart';
 
@@ -18,10 +21,16 @@ class NavigationBarItems
   late final Tuple2<NavigationBarItemEnum, ProfileScreen> profileScreen;
   late final Tuple2<NavigationBarItemEnum, AboutScreen> aboutScreen;
 
+  GlobalKey<MainMapWidgetState> mainMapWidgetStateKey = GlobalKey();
+
   NavigationBarItems(AuthToken authToken, ProfileSettings profile, AcademicStructure structure, GradZones zones)
   {
-    mapScreen = Tuple2(NavigationBarItemEnum.mapScreen, MapScreen(authToken: authToken, allGradZones: zones, usersGradZones: profile.getUserGradZones()));
-    profileScreen = Tuple2(NavigationBarItemEnum.profileScreen, ProfileScreen(authToken: authToken, profile: profile, academicStructure: structure, allGradZones: zones));
+    for (GradZone zone in profile.getUserGradZones())
+    {
+      zones.getZoneFromId(zone.getId())?.setColour(ZoneColours.blue.getColourRGB());
+    }
+    mapScreen = Tuple2(NavigationBarItemEnum.mapScreen, MapScreen(authToken: authToken, allGradZones: zones, usersGradZones: profile.getUserGradZones(), mainMapWidgetStateKey: mainMapWidgetStateKey));
+    profileScreen = Tuple2(NavigationBarItemEnum.profileScreen, ProfileScreen(authToken: authToken, profile: profile, academicStructure: structure, allGradZones: zones, mainMapWidgetStateKey: mainMapWidgetStateKey));
     aboutScreen =
       const Tuple2(NavigationBarItemEnum.aboutScreen, AboutScreen());
     _itemsInOrder.add(mapScreen);

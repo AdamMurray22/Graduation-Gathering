@@ -9,9 +9,9 @@ void main() {
   group('Navigation Bar Item Tests', () {
 
     AuthToken authToken = AuthToken("");
-    ProfileSettings profile = ProfileSettings(true, "", "", "Student", null, null, null, null);
-    AcademicStructure structure = AcademicStructure({});
     GradZones zones = GradZones([]);
+    ProfileSettings profile = ProfileSettings(true, "", "", "Student", null, null, null, null, zones);
+    AcademicStructure structure = AcademicStructure({});
 
     test('.getSelectedIndex() default value', () {
       NavigationBarItems navigationBarItems = NavigationBarItems(authToken, profile, structure, zones);

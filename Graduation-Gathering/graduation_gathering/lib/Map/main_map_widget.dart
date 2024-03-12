@@ -1,8 +1,10 @@
 import 'dart:convert';
-
+import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:graduation_gathering/AWS/get_other_users_location.dart';
 import 'package:graduation_gathering/AWS/send_location_data.dart';
 import 'package:graduation_gathering/Auth/auth_token.dart';
+import 'package:graduation_gathering/Map/Zones/colour.dart';
 import 'package:graduation_gathering/Map/Zones/grad_zone.dart';
 import 'package:graduation_gathering/Map/Zones/grad_zones.dart';
 import 'package:location/location.dart' as location_data;
@@ -49,7 +51,7 @@ class MainMapWidgetState extends MapWidgetState<MainMapWidget> {
   // Assigns an id to each layer used by this map to be referenced later.
   @override
   createLayers() {
-    createGeoJsonLayer(MapDataId.zones.idPrefix, "blue", 8);
+    createGeoJsonLayer(MapDataId.zones.idPrefix, Colour(0, 0, 255), 8);
     createMakerLayer(MapDataId.otherUsers.idPrefix, "test.png", 0.2, 0.5, 1, true);
     createMakerLayer(MapDataId.userLocation.idPrefix, "UserIcon.png", 0.1, 0.5, 0.5, false);
   }
@@ -92,7 +94,13 @@ class MainMapWidgetState extends MapWidgetState<MainMapWidget> {
   _addGradZones()
   {
     for (GradZone zone in widget.allGradZones) {
-      addGeoJson(MapDataId.zones.idPrefix, jsonEncode(zone.getGeoJson()));
+      addGeoJsonWithColour(MapDataId.zones.idPrefix, jsonEncode(zone.getGeoJson()), zone.getColour()!);
     }
+  }
+
+  updateGradZoneColours()
+  {
+    clearGeoJsonLayer(MapDataId.zones.idPrefix);
+    _addGradZones();
   }
 }
