@@ -36,6 +36,7 @@ def lambda_handler(event, context):
     faculty = messageBody["faculty"]
     school = messageBody["school"]
     course = messageBody["course"]
+    zones = messageBody["userGradZoneIds"]
     
     if name == None:
         name = "Null"
@@ -61,6 +62,19 @@ def lambda_handler(event, context):
             cur.execute(sql_string.format(hasLoggedInBefore = hasLoggedInBefore, name = name, faculty = faculty, school = school, course = course, userID = escape_sql_string(userID)))
         except pymysql.MySQLError as e:
             logger.error(e)
+
+        delete_sql = 'DELETE FROM user_zones WHERE user_id = "{userID}"'
+        try:
+            cur.execute(delete_sql.format(userID = escape_sql_string(userID)))
+        except pymysql.MySQLError as e:
+            logger.error(e)
+
+        insert_sql = 'INSERT INTO user_zones (user_id, zone_id) VALUES ("{userID}", "{zone}")'
+        for zone in zones:
+            try:
+                cur.execute(insert_sql.format(userID = escape_sql_string(userID), zone = zone))
+            except pymysql.MySQLError as e:
+                logger.error(e)
         cur.close()
     conn.commit()
     

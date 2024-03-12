@@ -1,3 +1,5 @@
+import 'package:graduation_gathering/Sorts/heap_sort.dart';
+import 'package:graduation_gathering/Sorts/comparator.dart';
 import 'grad_zone.dart';
 
 class GradZones extends Iterable<GradZone>
@@ -15,6 +17,28 @@ class GradZones extends Iterable<GradZone>
   Set<GradZone> getZones()
   {
     return _gradZones;
+  }
+
+  List<GradZone> getZonesInOrder()
+  {
+    HeapSort<String> sort = HeapSort<String>(Comparator.alphabeticalComparator());
+    List<String> sortedZoneIds = sort.sort(getIds());
+    List<GradZone> zones = [];
+    for (String zoneId in sortedZoneIds)
+    {
+      zones.add(getZoneFromId(zoneId)!);
+    }
+    return _gradZones.toList();
+  }
+
+  List<String> getIds()
+  {
+    List<String> ids = [];
+    for (GradZone zone in this)
+    {
+      ids.add(zone.getId());
+    }
+    return ids;
   }
 
   addZone(GradZone zone)
@@ -35,6 +59,18 @@ class GradZones extends Iterable<GradZone>
       zones.add(zone.getGeoJson());
     }
     return zones;
+  }
+
+  GradZone? getZoneFromId(String id)
+  {
+    for (GradZone zone in this)
+    {
+      if (zone.getId() == id)
+      {
+        return zone;
+      }
+    }
+    return null;
   }
 
   @override
