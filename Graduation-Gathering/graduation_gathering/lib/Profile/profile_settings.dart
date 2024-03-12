@@ -44,7 +44,7 @@ class ProfileSettings
   {
     return {'id': getId(), 'hasLoggedInBefore': getHasLoggedInBefore(), 'email': getEmail(),
       'accountType': getAccountType().accountTypeAsString, 'name': getName(), 'faculty': getFaculty(),
-      'school': getSchool(), 'course': getCourse()};
+      'school': getSchool(), 'course': getCourse(), 'userGradZoneIds': _userGradZones.getIds()};
   }
 
   setHasLoggedInBefore(bool hasLoggedIn)

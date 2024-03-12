@@ -17,6 +17,22 @@ class GradZones extends Iterable<GradZone>
     return _gradZones;
   }
 
+  List<GradZone> getZonesInOrder()
+  {
+    /// TODO: Sort this list alphabetically
+    return _gradZones.toList();
+  }
+
+  List<String> getIds()
+  {
+    List<String> ids = [];
+    for (GradZone zone in this)
+    {
+      ids.add(zone.getId());
+    }
+    return ids;
+  }
+
   addZone(GradZone zone)
   {
     _gradZones.add(zone);
@@ -35,6 +51,18 @@ class GradZones extends Iterable<GradZone>
       zones.add(zone.getGeoJson());
     }
     return zones;
+  }
+
+  GradZone? getZoneFromId(String id)
+  {
+    for (GradZone zone in this)
+    {
+      if (zone.getId() == id)
+      {
+        return zone;
+      }
+    }
+    return null;
   }
 
   @override
