@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:graduation_gathering/Map/Zones/grad_zone.dart';
+import 'package:graduation_gathering/Map/Zones/grad_zones.dart';
+import 'package:graduation_gathering/Map/Zones/zone_colours_enum.dart';
+import 'package:graduation_gathering/Map/main_map_widget.dart';
 import 'package:graduation_gathering/Profile/academic_structure.dart';
 import 'package:graduation_gathering/Profile/set_user_profile.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
@@ -10,11 +14,13 @@ import '../Profile/profile_settings.dart';
 /// This holds the screen for the application.
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen(
-      {super.key, required this.authToken, required this.profile, required this.academicStructure});
+      {super.key, required this.authToken, required this.profile, required this.academicStructure, required this.allGradZones, required this.mainMapWidgetStateKey});
 
   final AuthToken authToken;
   final ProfileSettings profile;
   final AcademicStructure academicStructure;
+  final GradZones allGradZones;
+  final GlobalKey<MainMapWidgetState> mainMapWidgetStateKey;
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -27,9 +33,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late SingleValueDropDownController _schoolDropDownController;
   late SingleValueDropDownController _courseDropDownController;
 
-  late List<DropDownValueModel> _facultyDropDownList = [];
-  late List<DropDownValueModel> _schoolDropDownList = [];
-  late List<DropDownValueModel> _courseDropDownList = [];
+  final List<DropDownValueModel> _facultyDropDownList = [];
+  final List<DropDownValueModel> _schoolDropDownList = [];
+  final List<DropDownValueModel> _courseDropDownList = [];
+
+  final Map<String,bool> _gradZonesCheckboxTicked = <String,bool>{};
 
   bool _schoolVisible = false;
   bool _courseVisible = false;
@@ -78,6 +86,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     {
       widget.academicStructure.getCoursesFromSchoolAndFaculty(_school!, _faculty!)?.forEach((element) {_courseDropDownList.add(DropDownValueModel(name: element, value: element));});
     }
+
+    for (GradZone zone in widget.allGradZones) {
+      _gradZonesCheckboxTicked[zone.getId()] = widget.profile.getUserGradZones().getZoneFromId(zone.getId()) != null;
+    }
     super.initState();
   }
 
@@ -86,6 +98,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
     TextEditingController textEditingController = TextEditingController();
     if (_name != null) {
       textEditingController.text = _name!;
+    }
+    List<Widget> gradZonesColumnWidgets = [];
+    for (GradZone zone in widget.allGradZones.getZonesInOrder()) {
+      gradZonesColumnWidgets.add(
+          Row(
+            children: [
+              Text(zone.getName(), style: const TextStyle(fontSize: 17)),
+              Checkbox(
+                  value: _gradZonesCheckboxTicked[zone.getId()],
+                  onChanged: (checked) {
+                    _zoneCheckBoxTicked(zone.getId(), checked!);
+                  })
+            ],
+          ));
     }
     return Scaffold(
         resizeToAvoidBottomInset: false,
@@ -126,6 +152,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     )),
               ]),
+              const SizedBox(height: 5),
+              const Text("Graduation Zones you can be seen in:", style: TextStyle(fontSize: 22)),
+              Column(
+                children: gradZonesColumnWidgets,
+              ),
               const SizedBox(height: 5),
               Row(children: [
                 const Text("Faculty:", style: TextStyle(fontSize: 22)),
@@ -272,6 +303,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
     widget.profile.setFaculty(_faculty);
     widget.profile.setSchool(_school);
     widget.profile.setCourse(_course);
+    for (String zoneId in _gradZonesCheckboxTicked.keys)
+    {
+      if (_gradZonesCheckboxTicked[zoneId]!)
+      {
+        widget.profile.getUserGradZones().addZone(widget.allGradZones.getZoneFromId(zoneId)!);
+      }
+      else
+      {
+        widget.profile.getUserGradZones().removeZone(widget.allGradZones.getZoneFromId(zoneId)!);
+      }
+    }
+    _updateMapGeojsonColours();
     _setUserProfile.send(widget.profile);
+  }
+
+  _zoneCheckBoxTicked(String zoneId, bool checked)
+  {
+    _gradZonesCheckboxTicked[zoneId] = checked;
+    setState(() {
+    });
+  }
+
+  _updateMapGeojsonColours()
+  {
+    for (GradZone zone in widget.allGradZones)
+    {
+      zone.setColour(ZoneColours.red.getColourRGB());
+    }
+    for (GradZone zone in widget.profile.getUserGradZones())
+    {
+      widget.allGradZones.getZoneFromId(zone.getId())?.setColour(ZoneColours.blue.getColourRGB());
+    }
+    widget.mainMapWidgetStateKey.currentState?.updateGradZoneColours();
   }
 }

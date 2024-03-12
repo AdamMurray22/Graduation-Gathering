@@ -1,6 +1,11 @@
+import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:graduation_gathering/Map/tile_server.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+
+import 'Zones/colour.dart';
+import 'Zones/grad_zones.dart';
 
 
 
@@ -94,10 +99,10 @@ abstract class MapWidgetState<E extends MapWidget> extends State<E> {
 
   /// Adds the markers.
   @protected
-  createGeoJsonLayer(String layerId, String colour, int width)
+  createGeoJsonLayer(String layerId, Colour colour, int width)
   {
     String jsObject =
-        "{layerId: '$layerId', colour: '$colour', width: $width}";
+        "{layerId: '$layerId', colour: {r: ${colour.red}, g: ${colour.green}, b: ${colour.blue}}, width: $width}";
     _webViewController.runJavaScript("createGeoJsonLayer($jsObject)");
   }
 
@@ -141,11 +146,11 @@ abstract class MapWidgetState<E extends MapWidget> extends State<E> {
     _webViewController.runJavaScript("addGeoJson($jsObject)");
   }
 
-  /// Adds the geo json with given colour.
+  /// Adds the geo json with given colour.dart.
   @protected
-  addGeoJsonWithColour(String layerId, String geoJson, String colour)
+  addGeoJsonWithColour(String layerId, String geoJson, Colour colour)
   {
-    String jsObject = "{layerId: '$layerId', geoJson: '$geoJson', colour: '$colour'}";
+    String jsObject = "{layerId: '$layerId', geoJson: '$geoJson', colour: {r: ${colour.red}, g: ${colour.green}, b: ${colour.blue}}}";
     _webViewController.runJavaScript("addGeoJsonWithColour($jsObject)");
   }
 
@@ -155,6 +160,23 @@ abstract class MapWidgetState<E extends MapWidget> extends State<E> {
   {
     String jsObject = "{layerId: '$layerId'}";
     _webViewController.runJavaScript("clearGeoJsonLayer($jsObject)");
+  }
+
+  @protected
+  Future<bool> isPointInsideGeojson(double long, double lat, GradZones zones) async
+  {
+    if (zones.isEmpty)
+    {
+      return false;
+    }
+    List<Map<String, dynamic>> zonesGeojsons = zones.geojsonsAsList();
+    List<Map<String, Map<String, dynamic>>> zonesInJsForm = [];
+    for (Map<String, dynamic> zoneGeojson in zonesGeojsons) {
+      zonesInJsForm.add({"geoJson": zoneGeojson});
+    }
+    String jsObjectPoint = "{longitude: $long, latitude: $lat}";
+    String jsObjectGeojsons = json.encode(zonesInJsForm);
+    return await _webViewController.runJavaScriptReturningResult("isPointInsidePolygons($jsObjectPoint, $jsObjectGeojsons)") as bool;
   }
 
   // This is called when a marker on the map gets clicked.

@@ -98,6 +98,9 @@ def lambda_handler(event, context):
         for zone in GraduationZones:
             try:
                 cur.execute(graduation_zones_sql_string.format(ZoneID = escape_sql_string(zone['zone_id']), ZoneName = escape_sql_string(zone['zone_name'])))
+            except pymysql.MySQLError as e:
+                logger.error(e)
+            try:
                 cur.execute(graduation_zones_text_sql_string.format(ZoneID = escape_sql_string(zone['zone_id']), GeoJson = escape_sql_string(zone['geojson'])))
                 item_count += 1
             except pymysql.MySQLError as e:
@@ -193,7 +196,7 @@ def get_user_zones_table_sql():
 
 def escape_sql_string(sql_string):
     translate_table = str.maketrans({"]": r"\]", "\\": r"\\",
-                                 "^": r"\^", "$": r"\$", "*": r"\*", "'": r"\'"})
+                                 "^": r"\^", "$": r"\$", "*": r"\*", "'": r"\'", '"': r'\"'})
     if (sql_string is None):
         return sql_string
     return sql_string.translate(translate_table)
