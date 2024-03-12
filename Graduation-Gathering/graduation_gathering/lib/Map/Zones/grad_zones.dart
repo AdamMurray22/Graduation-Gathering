@@ -17,6 +17,16 @@ class GradZones extends Iterable<GradZone>
     return _gradZones;
   }
 
+  List<Map<String, dynamic>> geojsonsAsList()
+  {
+    List<Map<String, dynamic>> zones = [];
+    for (GradZone zone in this)
+    {
+      zones.add(zone.getGeoJson());
+    }
+    return zones;
+  }
+
   @override
   Iterator<GradZone> get iterator => _gradZones.iterator;
 }

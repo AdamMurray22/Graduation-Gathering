@@ -206,6 +206,20 @@
         layer.getSource().addFeatures(features);
     }
 
+    function isPointInsidePolygons(point, geojsons) {
+        for (var geoJsonIndex in geojsons) {
+            const geoJson = geojsons[geoJsonIndex];
+            const polygon = (new ol.format.GeoJSON({
+                featureProjection: 'EPSG:3857',
+                dataProjection: 'EPSG:4326'
+            })).readFeatures(geoJson.geoJson);
+            if (!polygon[0].getGeometry().intersectsCoordinate(new ol.proj.fromLonLat([point.longitude, point.latitude]))) {
+                return false;
+            }
+        };
+        return true;
+    }
+
 </script>
 </body>
 </html>

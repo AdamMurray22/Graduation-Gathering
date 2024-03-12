@@ -48,17 +48,16 @@ class MainMapWidgetState extends MapWidgetState<MainMapWidget> {
   // Assigns an id to each layer used by this map to be referenced later.
   @override
   createLayers() {
-    createMakerLayer(MapDataId.userLocation.idPrefix, "UserIcon.png", 0.1, 0.5, 0.5, false);
-    createMakerLayer(MapDataId.otherUsers.idPrefix, "test.png", 0.2, 0.5, 1, true);
     createGeoJsonLayer(MapDataId.zones.idPrefix, "blue", 8);
+    createMakerLayer(MapDataId.otherUsers.idPrefix, "test.png", 0.2, 0.5, 1, true);
+    createMakerLayer(MapDataId.userLocation.idPrefix, "UserIcon.png", 0.1, 0.5, 0.5, false);
   }
 
   /// Adds the users location to the map as a marker and sets for it be updated
   /// whenever the user moves.
   _addUserLocationIcon() {
-    LocationHandler handler =
-    LocationHandler.getHandler();
-    handler.onLocationChanged((location_data.LocationData currentLocation) {
+    LocationHandler handler = LocationHandler.getHandler();
+    handler.onLocationChanged((location_data.LocationData currentLocation) async {
       updateMarker(MapDataId.userLocation.idPrefix, MapDataId.userLocation.idPrefix,
           currentLocation.longitude!, currentLocation.latitude!);
       _sendLocationData.send(Location(currentLocation.longitude!, currentLocation.latitude!));
@@ -74,12 +73,15 @@ class MainMapWidgetState extends MapWidgetState<MainMapWidget> {
     _addOtherUsersMarkers(await _getOtherUsersLocation.send());
   }
 
-  _addOtherUsersMarkers(List<dynamic> users)
-  {
+  _addOtherUsersMarkers(List<dynamic> users) async {
     for (Map<String, dynamic> user in users)
     {
-      updateMarker(MapDataId.otherUsers.idPrefix, user["email"],
-          user["location"]["long"], user["location"]["lat"]);
+      if (!(await isPointInsideGeojson(user["location"]["long"], user["location"]["lat"], widget.gradZones))) {
+        removeMarker(MapDataId.otherUsers.idPrefix, user["email"]);
+        return;
+      }
+        updateMarker(MapDataId.otherUsers.idPrefix, user["email"],
+            user["location"]["long"], user["location"]["lat"]);
     }
   }
 
