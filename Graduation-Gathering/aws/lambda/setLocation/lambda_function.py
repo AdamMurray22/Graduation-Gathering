@@ -45,7 +45,7 @@ def lambda_handler(event, context):
     
 def escape_sql_string(sql_string):
     translate_table = str.maketrans({"]": r"\]", "\\": r"\\",
-                                 "^": r"\^", "$": r"\$", "*": r"\*", "'": r"\'"})
+                                 "^": r"\^", "$": r"\$", "*": r"\*", "'": r"\'", '"': r'\"'})
     if (sql_string is None):
         return sql_string
     return sql_string.translate(translate_table)

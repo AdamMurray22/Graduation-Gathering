@@ -106,6 +106,9 @@
                     color: layer.colour,
                     width: 8,
                 }),
+                fill: new ol.style.Fill({
+                    color: 'rgba(0, 0, 255, 0.1)',
+                }),
             }),
         });
         map.addLayer(geoJsonLayer);
@@ -201,6 +204,26 @@
             }));
         });
         layer.getSource().addFeatures(features);
+    }
+
+    function isPointInsidePolygons(point, geojsons) {
+        if (geojsons.length == 0)
+        {
+            return false;
+        }
+        for (var geoJsonIndex in geojsons) {
+            const geoJson = geojsons[geoJsonIndex];
+            const polygons = (new ol.format.GeoJSON({
+                featureProjection: 'EPSG:3857',
+                dataProjection: 'EPSG:4326'
+            })).readFeatures(geoJson.geoJson);
+            for (var polygonIndex in polygons) {
+                if (!polygons[polygonIndex].getGeometry().intersectsCoordinate(new ol.proj.fromLonLat([point.longitude, point.latitude]))) {
+                    return false;
+                }
+            }
+        };
+        return true;
     }
 
 </script>

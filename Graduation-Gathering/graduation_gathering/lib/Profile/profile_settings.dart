@@ -1,17 +1,20 @@
 import 'package:graduation_gathering/Profile/account_type.dart';
 
+import '../Map/Zones/grad_zones.dart';
+
 class ProfileSettings
 {
   late bool _hasLoggedInBefore;
   final String _id;
   final String _email;
   late final AccountType _accountType;
+  final GradZones _userGradZones;
   String? _name;
   String? _faculty;
   String? _school;
   String? _course;
 
-  ProfileSettings(hasLoggedInBefore, this._id, this._email, accountType, name, faculty, school, course)
+  ProfileSettings(hasLoggedInBefore, this._id, this._email, accountType, name, faculty, school, course, this._userGradZones)
   {
     _hasLoggedInBefore = (hasLoggedInBefore != 0);
     _accountType = AccountType.getAccountTypeFromString(accountType)!;
@@ -87,6 +90,11 @@ class ProfileSettings
   AccountType getAccountType()
   {
     return _accountType;
+  }
+
+  GradZones getUserGradZones()
+  {
+    return _userGradZones;
   }
 
   String? getName()

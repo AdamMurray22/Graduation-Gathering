@@ -4,19 +4,16 @@ class AcademicStructure
 
   AcademicStructure(Map<String, dynamic> structure)
   {
-    print(structure);
     structure.forEach((key, value) {_structure[key] = {};
     for (String valueKey in (value as Map<String, dynamic>).keys)
     {
       _structure[key]![valueKey] = <String>{};
       for (String valueValue in (value[valueKey]))
       {
-        print({key: valueKey});
         _structure[key]![valueKey]!.add(valueValue);
       }
     }
     });
-    print(_structure);
   }
 
   Iterable<String> getFaculties()
