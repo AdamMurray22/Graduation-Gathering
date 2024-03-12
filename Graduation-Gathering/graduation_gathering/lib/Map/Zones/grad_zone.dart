@@ -1,10 +1,13 @@
+import 'colour.dart';
+
 class GradZone
 {
   late final String _id;
   late final String _name;
   late final Map<String, dynamic> _geojson;
+  Colour? _colour;
 
-  GradZone(Map<String, dynamic> zone)
+  GradZone(Map<String, dynamic> zone, this._colour)
   {
     _id = zone["id"];
     _name = zone["name"];
@@ -24,5 +27,15 @@ class GradZone
   String getName()
   {
     return _name;
+  }
+
+  Colour? getColour()
+  {
+    return _colour;
+  }
+
+  setColour(Colour colour)
+  {
+    _colour = colour;
   }
 }
