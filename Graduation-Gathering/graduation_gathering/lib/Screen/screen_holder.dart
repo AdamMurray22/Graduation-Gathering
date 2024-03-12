@@ -70,9 +70,10 @@ class _ScreenHolderState extends State<ScreenHolder> {
 
   _loadMainScreen(AuthToken authToken) async
   {
-    ProfileSettings profile = await GetUserProfile().send(authToken);
-    AcademicStructure structure = await GetAcademicStructure().send(authToken);
+    Future<AcademicStructure> futureStructure = GetAcademicStructure().send(authToken);
     GradZones zones = await GetGradZones().send(authToken);
+    ProfileSettings profile = await GetUserProfile().send(authToken, zones);
+    AcademicStructure structure = await futureStructure;
     _screen = MainScreen(authToken: authToken, profile: profile, academicStructure: structure, gradZones: zones);
   }
 }

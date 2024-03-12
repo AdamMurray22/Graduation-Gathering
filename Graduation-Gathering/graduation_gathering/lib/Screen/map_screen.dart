@@ -5,10 +5,11 @@ import '../Map/main_map_widget.dart';
 
 /// The screen that displays the map.
 class MapScreen extends StatefulWidget {
-  const MapScreen({super.key, required this.authToken, required this.gradZones});
+  const MapScreen({super.key, required this.authToken, required this.allGradZones, required this.usersGradZones});
 
   final AuthToken authToken;
-  final GradZones gradZones;
+  final GradZones allGradZones;
+  final GradZones usersGradZones;
 
   @override
   State<MapScreen> createState() => _MapScreenState();
@@ -22,7 +23,8 @@ class _MapScreenState extends State<MapScreen> {
   initState() {
     _mapWidget = MainMapWidget(
       authToken: widget.authToken,
-      gradZones: widget.gradZones,
+      allGradZones: widget.allGradZones,
+      usersGradZones: widget.usersGradZones,
       markerClickedFunction: (String markerId) {
         setState(() {});
       },

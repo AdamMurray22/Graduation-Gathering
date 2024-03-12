@@ -15,4 +15,14 @@ class GradZone
   {
     return _geojson;
   }
+
+  String getId()
+  {
+    return _id;
+  }
+
+  String getName()
+  {
+    return _name;
+  }
 }

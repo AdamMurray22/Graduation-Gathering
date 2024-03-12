@@ -164,6 +164,10 @@ abstract class MapWidgetState<E extends MapWidget> extends State<E> {
   @protected
   Future<bool> isPointInsideGeojson(double long, double lat, GradZones zones) async
   {
+    if (zones.isEmpty)
+    {
+      return false;
+    }
     List<Map<String, dynamic>> zonesGeojsons = zones.geojsonsAsList();
     List<Map<String, Map<String, dynamic>>> zonesInJsForm = [];
     for (Map<String, dynamic> zoneGeojson in zonesGeojsons) {

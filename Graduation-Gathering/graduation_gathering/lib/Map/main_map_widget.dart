@@ -15,10 +15,11 @@ import 'map_data_id.dart';
 import 'map_widget.dart';
 
 class MainMapWidget extends MapWidget {
-  const MainMapWidget({required this.authToken, required this.gradZones, super.markerClickedFunction, super.key});
+  const MainMapWidget({required this.authToken, required this.allGradZones, required this.usersGradZones, super.markerClickedFunction, super.key});
 
   final AuthToken authToken;
-  final GradZones gradZones;
+  final GradZones allGradZones;
+  final GradZones usersGradZones;
 
   @override
   MapWidgetState<MainMapWidget> createState() => MainMapWidgetState();
@@ -60,7 +61,12 @@ class MainMapWidgetState extends MapWidgetState<MainMapWidget> {
     handler.onLocationChanged((location_data.LocationData currentLocation) async {
       updateMarker(MapDataId.userLocation.idPrefix, MapDataId.userLocation.idPrefix,
           currentLocation.longitude!, currentLocation.latitude!);
-      _sendLocationData.send(Location(currentLocation.longitude!, currentLocation.latitude!));
+      print(1);
+      if (await isPointInsideGeojson(currentLocation.longitude!, currentLocation.latitude!, widget.usersGradZones)) {
+        print(2);
+        _sendLocationData.send(
+            Location(currentLocation.longitude!, currentLocation.latitude!));
+      }
     });
   }
 
@@ -76,7 +82,7 @@ class MainMapWidgetState extends MapWidgetState<MainMapWidget> {
   _addOtherUsersMarkers(List<dynamic> users) async {
     for (Map<String, dynamic> user in users)
     {
-      if (!(await isPointInsideGeojson(user["location"]["long"], user["location"]["lat"], widget.gradZones))) {
+      if (!(await isPointInsideGeojson(user["location"]["long"], user["location"]["lat"], widget.allGradZones))) {
         removeMarker(MapDataId.otherUsers.idPrefix, user["email"]);
         return;
       }
@@ -87,7 +93,7 @@ class MainMapWidgetState extends MapWidgetState<MainMapWidget> {
 
   _addGradZones()
   {
-    for (GradZone zone in widget.gradZones) {
+    for (GradZone zone in widget.allGradZones) {
       addGeoJson(MapDataId.zones.idPrefix, jsonEncode(zone.getGeoJson()));
     }
   }

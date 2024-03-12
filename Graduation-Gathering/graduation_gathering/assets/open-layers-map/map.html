@@ -207,14 +207,20 @@
     }
 
     function isPointInsidePolygons(point, geojsons) {
+        if (geojsons.length == 0)
+        {
+            return false;
+        }
         for (var geoJsonIndex in geojsons) {
             const geoJson = geojsons[geoJsonIndex];
-            const polygon = (new ol.format.GeoJSON({
+            const polygons = (new ol.format.GeoJSON({
                 featureProjection: 'EPSG:3857',
                 dataProjection: 'EPSG:4326'
             })).readFeatures(geoJson.geoJson);
-            if (!polygon[0].getGeometry().intersectsCoordinate(new ol.proj.fromLonLat([point.longitude, point.latitude]))) {
-                return false;
+            for (var polygonIndex in polygons) {
+                if (!polygons[polygonIndex].getGeometry().intersectsCoordinate(new ol.proj.fromLonLat([point.longitude, point.latitude]))) {
+                    return false;
+                }
             }
         };
         return true;
