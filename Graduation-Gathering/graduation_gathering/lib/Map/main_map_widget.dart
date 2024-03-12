@@ -54,16 +54,14 @@ class MainMapWidgetState extends MapWidgetState<MainMapWidget> {
     createMakerLayer(MapDataId.userLocation.idPrefix, "UserIcon.png", 0.1, 0.5, 0.5, false);
   }
 
-  /// Adds the users location to the map as a marker and sets for it be updated
-  /// whenever the user moves.
+  /// Adds the users location to the map as a marker and sets for it be updated whenever the user moves.
+  /// Also sends the users location to the server when the user is within one of their chosen zones.
   _addUserLocationIcon() {
     LocationHandler handler = LocationHandler.getHandler();
     handler.onLocationChanged((location_data.LocationData currentLocation) async {
       updateMarker(MapDataId.userLocation.idPrefix, MapDataId.userLocation.idPrefix,
           currentLocation.longitude!, currentLocation.latitude!);
-      print(1);
       if (await isPointInsideGeojson(currentLocation.longitude!, currentLocation.latitude!, widget.usersGradZones)) {
-        print(2);
         _sendLocationData.send(
             Location(currentLocation.longitude!, currentLocation.latitude!));
       }
