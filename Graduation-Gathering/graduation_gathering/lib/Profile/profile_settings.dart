@@ -1,6 +1,7 @@
 import 'package:graduation_gathering/Profile/account_type.dart';
 
 import '../Map/Zones/grad_zones.dart';
+import 'Connections/connections.dart';
 
 class ProfileSettings
 {

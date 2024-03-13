@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:graduation_gathering/Map/Zones/grad_zones.dart';
+import 'package:graduation_gathering/Profile/Connections/connections.dart';
 import 'package:graduation_gathering/Profile/academic_structure.dart';
 import 'package:graduation_gathering/Profile/profile_settings.dart';
 import 'package:tuple/tuple.dart';
@@ -9,12 +10,13 @@ import 'navigation_bar_items.dart';
 
 /// This holds the screen for the application.
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key, required this.authToken, required this.profile, required this.academicStructure, required this.gradZones});
+  const MainScreen({super.key, required this.authToken, required this.profile, required this.academicStructure, required this.gradZones, required this.connections});
 
   final AuthToken authToken;
   final ProfileSettings profile;
   final AcademicStructure academicStructure;
   final GradZones gradZones;
+  final Connections connections;
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -28,7 +30,7 @@ class _MainScreenState extends State<MainScreen> {
   /// Creates the screens accessed through the nav bar.
   @override
   initState() {
-    _navigationBarItems = NavigationBarItems(widget.authToken, widget.profile, widget.academicStructure, widget.gradZones);
+    _navigationBarItems = NavigationBarItems(widget.authToken, widget.profile, widget.academicStructure, widget.gradZones, widget.connections);
     if (!widget.profile.getHasLoggedInBefore())
     {
       _navigationBarItems.setSelectedIndex(_navigationBarItems.profileScreen.item1.position);
