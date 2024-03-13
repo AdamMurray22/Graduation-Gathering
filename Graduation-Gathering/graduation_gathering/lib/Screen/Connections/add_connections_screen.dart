@@ -7,19 +7,20 @@ import 'package:graduation_gathering/Profile/set_user_profile.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 
 import '../../Auth/auth_token.dart';
+import '../../Profile/Connections/connection_profile.dart';
+import '../../Profile/Connections/other_user_profiles.dart';
 import '../../Profile/account_type.dart';
 import '../../Profile/profile_settings.dart';
 
 /// This holds the screen for the application.
 class AddConnectionsScreen extends StatefulWidget {
-  const AddConnectionsScreen(
-      {super.key,
-      required this.authToken,
-      required this.connections,
-      required this.backButtonPressed});
+  const AddConnectionsScreen({super.key,
+    required this.authToken,
+    required this.connections, required this.otherUserProfiles, required this.backButtonPressed,});
 
   final AuthToken authToken;
   final Connections connections;
+  final OtherUserProfiles otherUserProfiles;
   final Function() backButtonPressed;
 
   @override
@@ -28,75 +29,88 @@ class AddConnectionsScreen extends StatefulWidget {
 
 // This class contains the GUI structure for the app.
 class _AddConnectionsScreenState extends State<AddConnectionsScreen> {
+  late Widget _connectionsContainer;
+
   final SingleValueDropDownController _addConnectionsDropDownController =
-      SingleValueDropDownController();
+  SingleValueDropDownController();
   final List<DropDownValueModel> _dropDownList = [];
   String? _selectedDropDownItem;
 
   @override
   void initState() {
+    createConnectionsContainer();
     super.initState();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: Column(
-          children: [
-            ElevatedButton(
-                onPressed: () {
-                  widget.backButtonPressed();
-                },
-                child: const Text("Back", style: TextStyle(fontSize: 20))),
-            DropDownTextField(
-              key: const Key("Search box"),
-              controller: _addConnectionsDropDownController,
-              clearOption: true,
-              enableSearch: true,
-              textFieldDecoration: const InputDecoration(hintText: "Search"),
-              searchDecoration:
-                  const InputDecoration(hintText: "Search here"),
-              validator: (value) {
-                if (value == null) {
-                  return "Required field";
-                } else {
-                  return null;
-                }
-              },
-              dropDownItemCount: 5,
-              dropDownList: _dropDownList,
-              onChanged: (value) {
-                if (value == "" || value == null) {
-                  _selectedDropDownItem = null;
-                } else {
-                  _selectedDropDownItem = value.value;
-                }
-                setState(() {});
-              },
-            ),
-            DropdownButton<String>(
-                value: "Search By",
-                items: const [
-                  DropdownMenuItem(
-                    value: "Search By",
-                    child: Text("Search By"),
-                  ),
-                  DropdownMenuItem(
-                    value: "Course",
-                    child: Text("Course"),
-                  ),
-                  DropdownMenuItem(
-                    value: "Email",
-                    child: Text("Email"),
-                  )
-                ],
-                menuMaxHeight: 500,
-                onChanged: (value) {},
-                elevation: 8,
-                isExpanded: true,
-                underline: Container())
-          ],
-        ));
+  createConnectionsContainer() {
+    List<Widget> connectionsWidgets = [];
+    for (ConnectionProfile profile in widget.otherUserProfiles) {
+      connectionsWidgets.add(Text(profile.getId()));
+    }
+    _connectionsContainer = Column(
+      children: connectionsWidgets,
+    );
   }
-}
+
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+      resizeToAvoidBottomInset: false,
+      body: Column(
+        children: [
+          ElevatedButton(
+              onPressed: () {
+                widget.backButtonPressed();
+              },
+              child: const Text("Back", style: TextStyle(fontSize: 20))),
+          DropDownTextField(
+            key: const Key("Search box"),
+            controller: _addConnectionsDropDownController,
+            clearOption: true,
+            enableSearch: true,
+            textFieldDecoration: const InputDecoration(hintText: "Search"),
+            searchDecoration:
+            const InputDecoration(hintText: "Search here"),
+            validator: (value) {
+              if (value == null) {
+                return "Required field";
+              } else {
+                return null;
+              }
+            },
+            dropDownItemCount: 5,
+            dropDownList: _dropDownList,
+            onChanged: (value) {
+              if (value == "" || value == null) {
+                _selectedDropDownItem = null;
+              } else {
+                _selectedDropDownItem = value.value;
+              }
+              setState(() {});
+            },
+          ),
+          DropdownButton<String>(
+              value: "Search By",
+              items: const [
+                DropdownMenuItem(
+                  value: "Search By",
+                  child: Text("Search By"),
+                ),
+                DropdownMenuItem(
+                  value: "Course",
+                  child: Text("Course"),
+                ),
+                DropdownMenuItem(
+                  value: "Email",
+                  child: Text("Email"),
+                )
+              ],
+              menuMaxHeight: 500,
+              onChanged: (value) {},
+              elevation: 8,
+              isExpanded: true,
+              underline: Container()),
+          _connectionsContainer
+        ],
+      ));
+}}

@@ -11,6 +11,7 @@ import 'package:tuple/tuple.dart';
 import '../Map/Zones/grad_zone.dart';
 import '../Map/Zones/zone_colours_enum.dart';
 import '../Profile/Connections/connections.dart';
+import '../Profile/Connections/other_user_profiles.dart';
 import 'about_screen.dart';
 import 'map_screen.dart';
 
@@ -26,14 +27,14 @@ class NavigationBarItems
 
   GlobalKey<MainMapWidgetState> mainMapWidgetStateKey = GlobalKey();
 
-  NavigationBarItems(AuthToken authToken, ProfileSettings profile, AcademicStructure structure, GradZones zones, Connections connections)
+  NavigationBarItems(AuthToken authToken, ProfileSettings profile, AcademicStructure structure, GradZones zones, Connections connections, OtherUserProfiles otherUserProfiles)
   {
     for (GradZone zone in profile.getUserGradZones())
     {
       zones.getZoneFromId(zone.getId())?.setColour(ZoneColours.blue.getColourRGB());
     }
     mapScreen = Tuple2(NavigationBarItemEnum.mapScreen, MapScreen(authToken: authToken, allGradZones: zones, usersGradZones: profile.getUserGradZones(), mainMapWidgetStateKey: mainMapWidgetStateKey));
-    manageUserPermissionsScreen = Tuple2(NavigationBarItemEnum.manageUserPermissionsScreen, ConnectionsScreen(authToken: authToken, connections: connections));
+    manageUserPermissionsScreen = Tuple2(NavigationBarItemEnum.manageUserPermissionsScreen, ConnectionsScreen(authToken: authToken, connections: connections, otherUserProfiles: otherUserProfiles));
     profileScreen = Tuple2(NavigationBarItemEnum.profileScreen, ProfileScreen(authToken: authToken, profile: profile, academicStructure: structure, allGradZones: zones, mainMapWidgetStateKey: mainMapWidgetStateKey));
     aboutScreen =
       const Tuple2(NavigationBarItemEnum.aboutScreen, AboutScreen());

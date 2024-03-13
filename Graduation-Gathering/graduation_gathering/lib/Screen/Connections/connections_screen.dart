@@ -8,6 +8,7 @@ import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:graduation_gathering/Screen/Connections/add_connections_screen.dart';
 
 import '../../Auth/auth_token.dart';
+import '../../Profile/Connections/other_user_profiles.dart';
 import '../../Profile/account_type.dart';
 import '../../Profile/profile_settings.dart';
 
@@ -15,20 +16,22 @@ import '../../Profile/profile_settings.dart';
 class ConnectionsScreen extends StatefulWidget {
   const ConnectionsScreen(
       {super.key,
-      required this.authToken, required this.connections});
+      required this.authToken,
+      required this.connections,
+      required this.otherUserProfiles});
 
   final AuthToken authToken;
   final Connections connections;
+  final OtherUserProfiles otherUserProfiles;
 
   @override
-  State<ConnectionsScreen> createState() =>
-      _ConnectionsScreenState();
+  State<ConnectionsScreen> createState() => _ConnectionsScreenState();
 }
 
 // This class contains the GUI structure for the app.
 class _ConnectionsScreenState extends State<ConnectionsScreen> {
-
   late Widget _connectionsContainer;
+  late Widget _connectionRequestsContainer;
 
   int _screenIndex = 0;
 
@@ -38,17 +41,13 @@ class _ConnectionsScreenState extends State<ConnectionsScreen> {
     super.initState();
   }
 
-  createConnectionsContainer()
-  {
+  createConnectionsContainer() {
     if (widget.connections.isEmpty) {
       _connectionsContainer = const Text("You have no Connections");
-    }
-    else
-    {
+    } else {
       List<Widget> connectionsWidgets = [];
-      for (Connection connection in widget.connections)
-      {
-        connectionsWidgets.add(Text(connection.getToUserId()));
+      for (Connection connection in widget.connections) {
+        connectionsWidgets.add(Text(connection.getMainText()));
       }
       _connectionsContainer = Column(
         children: connectionsWidgets,
@@ -60,66 +59,77 @@ class _ConnectionsScreenState extends State<ConnectionsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         resizeToAvoidBottomInset: false,
-        body: IndexedStack(
-          index: _screenIndex,
-          children: [
-        Column(
-          children: [
-            Container(
-              alignment: Alignment.topCenter,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    child: ElevatedButton(
-                        onPressed: () {refreshPressed();}, child: const Text("Refresh")),
-                  ),
-                  Container(
-                    alignment: Alignment.centerRight,
-                    child: ElevatedButton(
-                        onPressed: () {_screenIndex = 1;setState(() {});}, child: const Text("Add Connections")),
-                  ),
-                ],
+        body: IndexedStack(index: _screenIndex, children: [
+          Column(
+            children: [
+              Container(
+                alignment: Alignment.topCenter,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      child: ElevatedButton(
+                          onPressed: () {
+                            refreshPressed();
+                          },
+                          child: const Text("Refresh")),
+                    ),
+                    Container(
+                      alignment: Alignment.centerRight,
+                      child: ElevatedButton(
+                          onPressed: () {
+                            _screenIndex = 1;
+                            setState(() {});
+                          },
+                          child: const Text("Add Connections")),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Visibility(
-              visible: false,
+              Visibility(
+                visible: false,
                 child: Column(
                   children: [
                     Container(
                       width: MediaQuery.of(context).size.width,
                       color: const Color(0xFFD3D3D3),
-                      child: const Text("Location Requests", style: TextStyle(fontSize: 17)),
+                      child: const Text("Location Requests",
+                          style: TextStyle(fontSize: 17)),
                     ),
-
                   ],
                 ),
-            ),
-            Column(
-              children: [
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  color: const Color(0xFFD3D3D3),
-                  child: const Text("Connections", style: TextStyle(fontSize: 17)),
-                ),
-                _connectionsContainer
-              ],
-            ),
-          ],
-        ),
-            AddConnectionsScreen(authToken: widget.authToken, connections: widget.connections, backButtonPressed: () {_screenIndex = 0;setState(() {});},),
-    ]));
+              ),
+              Column(
+                children: [
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    color: const Color(0xFFD3D3D3),
+                    child: const Text("Connections",
+                        style: TextStyle(fontSize: 17)),
+                  ),
+                  _connectionsContainer
+                ],
+              ),
+            ],
+          ),
+          AddConnectionsScreen(
+              authToken: widget.authToken,
+              connections: widget.connections,
+              otherUserProfiles: widget.otherUserProfiles,
+              backButtonPressed: () {
+                _screenIndex = 0;
+                setState(() {});
+              }),
+        ]));
   }
 
-  refreshPressed() async
-  {
-    Connections connections = await GetConnections().send(widget.authToken);
+  refreshPressed() async {
+    Connections connections = await GetConnections().send(widget.authToken, widget.otherUserProfiles);
     widget.connections.clear();
     widget.connections.addAll(connections);
     createConnectionsContainer();
-    setState(() {
-    });
+    setState(() {});
   }
 }

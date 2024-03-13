@@ -1,4 +1,5 @@
 import 'package:graduation_gathering/Profile/Connections/connection_permission_enum.dart';
+import 'package:graduation_gathering/Profile/Connections/other_user_profiles.dart';
 
 import 'connection.dart';
 
@@ -6,11 +7,11 @@ class Connections extends Iterable<Connection>
 {
   final Set<Connection> _connections = {};
 
-  Connections(List<dynamic> connections)
+  Connections(List<dynamic> connections, OtherUserProfiles allOtherUserProfiles)
   {
     for (Map<String, dynamic> connection in connections)
     {
-      _connections.add(Connection(connection["toUser"]!, ConnectionPermission.getPermissionFromString(connection["permission"]!)!));
+      _connections.add(Connection(allOtherUserProfiles.getUserFromId(connection["toUser"])!, ConnectionPermission.getPermissionFromString(connection["permission"]!)!));
     }
   }
 

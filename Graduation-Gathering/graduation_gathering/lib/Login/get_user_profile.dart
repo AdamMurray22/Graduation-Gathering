@@ -13,6 +13,7 @@ class GetUserProfile extends SendRequest {
     Map<String, String> headers = {"Authorization": token.getToken()};
     String responseBody = await get(headers);
     Map<String, dynamic> responseJson = json.decode(responseBody);
+    print(responseJson);
     List<dynamic> userZonesIds = responseJson["userGradZoneIds"];
     GradZones userZones = GradZones([]);
     for (GradZone zone in allZones) {

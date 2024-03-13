@@ -45,6 +45,14 @@ def lambda_handler(event, context):
     }
     
     if verifyCode(email, code):
+        with conn.cursor() as cur:
+            cur.execute(f"UPDATE user SET email_verified = true WHERE user_email = '{email}'")
+            loginCode = None
+            for row in cur:
+                loginCode = row[0]
+                expires = row[1]
+            cur.close()
+        conn.commit()
         response["validated"] = True
         response["token"] = jwt.generateToken(email, getUserId(email))
     return response
