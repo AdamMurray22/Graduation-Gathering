@@ -14,6 +14,16 @@ class Connections extends Iterable<Connection>
     }
   }
 
+  addAll(Connections connections)
+  {
+    _connections.addAll(connections);
+  }
+
+  clear()
+  {
+    _connections.clear();
+  }
+
   @override
   Iterator<Connection> get iterator => _connections.iterator;
 }

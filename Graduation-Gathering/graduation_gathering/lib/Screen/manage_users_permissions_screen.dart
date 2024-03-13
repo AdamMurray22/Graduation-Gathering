@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:graduation_gathering/Profile/Connections/connection.dart';
 import 'package:graduation_gathering/Profile/Connections/connections.dart';
+import 'package:graduation_gathering/Profile/Connections/get_connections.dart';
 import 'package:graduation_gathering/Profile/academic_structure.dart';
 import 'package:graduation_gathering/Profile/set_user_profile.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
@@ -13,13 +14,9 @@ import '../Profile/profile_settings.dart';
 class ManageUserPermissionsScreen extends StatefulWidget {
   const ManageUserPermissionsScreen(
       {super.key,
-      required this.authToken,
-      required this.profile,
-      required this.academicStructure, required this.connections});
+      required this.authToken, required this.connections});
 
   final AuthToken authToken;
-  final ProfileSettings profile;
-  final AcademicStructure academicStructure;
   final Connections connections;
 
   @override
@@ -34,8 +31,14 @@ class _ManageUserPermissionsScreenState extends State<ManageUserPermissionsScree
 
   @override
   void initState() {
+    createConnectionsContainer();
+    super.initState();
+  }
+
+  createConnectionsContainer()
+  {
     if (widget.connections.isEmpty) {
-      _connectionsContainer = Text("You have no Connections");
+      _connectionsContainer = const Text("You have no Connections");
     }
     else
     {
@@ -48,7 +51,6 @@ class _ManageUserPermissionsScreenState extends State<ManageUserPermissionsScree
         children: connectionsWidgets,
       );
     }
-    super.initState();
   }
 
   @override
@@ -66,7 +68,7 @@ class _ManageUserPermissionsScreenState extends State<ManageUserPermissionsScree
                   Container(
                     alignment: Alignment.centerLeft,
                     child: ElevatedButton(
-                        onPressed: () {}, child: const Text("Refresh")),
+                        onPressed: () {refreshPressed();}, child: const Text("Refresh")),
                   ),
                   Container(
                     alignment: Alignment.centerRight,
@@ -101,5 +103,15 @@ class _ManageUserPermissionsScreenState extends State<ManageUserPermissionsScree
             ),
           ],
         ));
+  }
+
+  refreshPressed() async
+  {
+    Connections connections = await GetConnections().send(widget.authToken);
+    widget.connections.clear();
+    widget.connections.addAll(connections);
+    createConnectionsContainer();
+    setState(() {
+    });
   }
 }
