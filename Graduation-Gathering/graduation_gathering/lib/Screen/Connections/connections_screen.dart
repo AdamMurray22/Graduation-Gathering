@@ -5,14 +5,15 @@ import 'package:graduation_gathering/Profile/Connections/get_connections.dart';
 import 'package:graduation_gathering/Profile/academic_structure.dart';
 import 'package:graduation_gathering/Profile/set_user_profile.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
+import 'package:graduation_gathering/Screen/Connections/add_connections_screen.dart';
 
-import '../Auth/auth_token.dart';
-import '../Profile/account_type.dart';
-import '../Profile/profile_settings.dart';
+import '../../Auth/auth_token.dart';
+import '../../Profile/account_type.dart';
+import '../../Profile/profile_settings.dart';
 
 /// This holds the screen for the application.
-class ManageUserPermissionsScreen extends StatefulWidget {
-  const ManageUserPermissionsScreen(
+class ConnectionsScreen extends StatefulWidget {
+  const ConnectionsScreen(
       {super.key,
       required this.authToken, required this.connections});
 
@@ -20,14 +21,16 @@ class ManageUserPermissionsScreen extends StatefulWidget {
   final Connections connections;
 
   @override
-  State<ManageUserPermissionsScreen> createState() =>
-      _ManageUserPermissionsScreenState();
+  State<ConnectionsScreen> createState() =>
+      _ConnectionsScreenState();
 }
 
 // This class contains the GUI structure for the app.
-class _ManageUserPermissionsScreenState extends State<ManageUserPermissionsScreen> {
+class _ConnectionsScreenState extends State<ConnectionsScreen> {
 
   late Widget _connectionsContainer;
+
+  int _screenIndex = 0;
 
   @override
   void initState() {
@@ -57,7 +60,10 @@ class _ManageUserPermissionsScreenState extends State<ManageUserPermissionsScree
   Widget build(BuildContext context) {
     return Scaffold(
         resizeToAvoidBottomInset: false,
-        body: Column(
+        body: IndexedStack(
+          index: _screenIndex,
+          children: [
+        Column(
           children: [
             Container(
               alignment: Alignment.topCenter,
@@ -73,7 +79,7 @@ class _ManageUserPermissionsScreenState extends State<ManageUserPermissionsScree
                   Container(
                     alignment: Alignment.centerRight,
                     child: ElevatedButton(
-                        onPressed: () {}, child: const Text("Add Connections")),
+                        onPressed: () {_screenIndex = 1;setState(() {});}, child: const Text("Add Connections")),
                   ),
                 ],
               ),
@@ -102,7 +108,9 @@ class _ManageUserPermissionsScreenState extends State<ManageUserPermissionsScree
               ],
             ),
           ],
-        ));
+        ),
+            AddConnectionsScreen(authToken: widget.authToken, connections: widget.connections, backButtonPressed: () {_screenIndex = 0;setState(() {});},),
+    ]));
   }
 
   refreshPressed() async
