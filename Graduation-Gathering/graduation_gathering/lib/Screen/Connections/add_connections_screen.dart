@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:graduation_gathering/Profile/Connections/connection.dart';
-import 'package:graduation_gathering/Profile/Connections/connection_box_widget.dart';
+import 'package:graduation_gathering/Screen/Connections/connection_box_widget.dart';
 import 'package:graduation_gathering/Profile/Connections/connections.dart';
 import 'package:graduation_gathering/Profile/Connections/get_connections.dart';
 import 'package:graduation_gathering/Profile/academic_structure.dart';
