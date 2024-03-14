@@ -18,11 +18,12 @@ class ConnectionsScreen extends StatefulWidget {
       {super.key,
       required this.authToken,
       required this.connections,
-      required this.otherUserProfiles});
+      required this.otherUserProfiles, required this.academicStructure});
 
   final AuthToken authToken;
   final Connections connections;
   final OtherUserProfiles otherUserProfiles;
+  final AcademicStructure academicStructure;
 
   @override
   State<ConnectionsScreen> createState() => _ConnectionsScreenState();
@@ -118,6 +119,7 @@ class _ConnectionsScreenState extends State<ConnectionsScreen> {
               authToken: widget.authToken,
               connections: widget.connections,
               otherUserProfiles: widget.otherUserProfiles,
+              academicStructure: widget.academicStructure,
               backButtonPressed: () {
                 _screenIndex = 0;
                 setState(() {});

@@ -34,7 +34,7 @@ class NavigationBarItems
       zones.getZoneFromId(zone.getId())?.setColour(ZoneColours.blue.getColourRGB());
     }
     mapScreen = Tuple2(NavigationBarItemEnum.mapScreen, MapScreen(authToken: authToken, allGradZones: zones, usersGradZones: profile.getUserGradZones(), mainMapWidgetStateKey: mainMapWidgetStateKey));
-    manageUserPermissionsScreen = Tuple2(NavigationBarItemEnum.manageUserPermissionsScreen, ConnectionsScreen(authToken: authToken, connections: connections, otherUserProfiles: otherUserProfiles));
+    manageUserPermissionsScreen = Tuple2(NavigationBarItemEnum.manageUserPermissionsScreen, ConnectionsScreen(authToken: authToken, connections: connections, otherUserProfiles: otherUserProfiles, academicStructure: structure));
     profileScreen = Tuple2(NavigationBarItemEnum.profileScreen, ProfileScreen(authToken: authToken, profile: profile, academicStructure: structure, allGradZones: zones, mainMapWidgetStateKey: mainMapWidgetStateKey));
     aboutScreen =
       const Tuple2(NavigationBarItemEnum.aboutScreen, AboutScreen());
