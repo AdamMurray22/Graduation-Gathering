@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:graduation_gathering/Profile/Connections/connection.dart';
+import 'package:graduation_gathering/Profile/Connections/connection_box_widget.dart';
 import 'package:graduation_gathering/Profile/Connections/connections.dart';
 import 'package:graduation_gathering/Profile/Connections/get_connections.dart';
 import 'package:graduation_gathering/Profile/academic_structure.dart';
@@ -112,7 +113,7 @@ class _AddConnectionsScreenState extends State<AddConnectionsScreen> {
 
     List<Widget> connectionsWidgets = [];
     for (ConnectionProfile profile in connections) {
-      connectionsWidgets.add(Text(profile.getName()!));
+      connectionsWidgets.add(ConnectionBoxWidget(profile: profile));
     }
 
     _connectionsContainer = Column(
@@ -131,10 +132,10 @@ class _AddConnectionsScreenState extends State<AddConnectionsScreen> {
         return true;
       } else {
         if (_school != null) {
-          if (_school != profile.getFaculty()) {
+          if (_school != profile.getSchool()) {
             return true;
           } else {
-            if (_course != null && _course != profile.getSchool()) {
+            if (_course != null && _course != profile.getCourse()) {
               return true;
             }
           }
