@@ -17,7 +17,7 @@ void main() {
     ProfileSettings profile = ProfileSettings(true, "", "", "Student", null, null, null, null, zones);
     AcademicStructure structure = AcademicStructure({});
     OtherUserProfiles otherUserProfiles = OtherUserProfiles([]);
-    Connections connections = Connections([], otherUserProfiles);
+    Connections connections = Connections([], otherUserProfiles, profile);
 
     test('.getSelectedIndex() default value', () {
       NavigationBarItems navigationBarItems = NavigationBarItems(authToken, profile, structure, zones, connections, otherUserProfiles);

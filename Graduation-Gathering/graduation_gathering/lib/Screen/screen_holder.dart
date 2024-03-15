@@ -77,10 +77,10 @@ class _ScreenHolderState extends State<ScreenHolder> {
     Future<OtherUserProfiles> futureOtherUserProfiles = GetAllOtherUsersProfiles().send(authToken);
     Future<GradZones> futureZones = GetGradZones().send(authToken);
     Future<AcademicStructure> futureStructure = GetAcademicStructure().send(authToken);
-    OtherUserProfiles otherUserProfiles = await futureOtherUserProfiles;
-    Future<Connections> futureConnections = GetConnections().send(authToken, otherUserProfiles);
     GradZones zones = await futureZones;
     ProfileSettings profile = await GetUserProfile().send(authToken, zones);
+    OtherUserProfiles otherUserProfiles = await futureOtherUserProfiles;
+    Future<Connections> futureConnections = GetConnections().send(authToken, otherUserProfiles, profile);
     AcademicStructure structure = await futureStructure;
     Connections connections = await futureConnections;
     _screen = MainScreen(authToken: authToken, profile: profile, academicStructure: structure, gradZones: zones, connections: connections, otherUserProfiles: otherUserProfiles);

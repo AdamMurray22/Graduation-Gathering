@@ -29,12 +29,13 @@ def lambda_handler(event, context):
 
     connections = []
     with conn.cursor() as cur:
-        faculty_sql = "SELECT to_user, permission_granted FROM location_permission WHERE from_user = '{userID}' AND permission_granted != 'Denied'"
+        faculty_sql = "SELECT from_user, to_user, permission_granted FROM location_permission WHERE (from_user = '{userID}' OR to_user = '{userID}') AND permission_granted != 'Denied'"
         cur.execute(faculty_sql.format(userID = userID))
         for row in cur:
-            toUser = row[0]
-            permission = row[1]
-            connections.append({"toUser": toUser, "permission": permission})
+            fromUser = row[0]
+            toUser = row[1]
+            permission = row[2]
+            connections.append({"fromUser": fromUser, "toUser": toUser, "permission": permission})
     conn.commit()
 
     return connections

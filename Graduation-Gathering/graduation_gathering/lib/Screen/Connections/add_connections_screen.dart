@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:graduation_gathering/Profile/Connections/connection.dart';
-import 'package:graduation_gathering/Screen/Connections/connection_box_widget.dart';
+import 'package:graduation_gathering/Screen/Connections/follow_box_widget.dart';
 import 'package:graduation_gathering/Profile/Connections/connections.dart';
 import 'package:graduation_gathering/Profile/Connections/get_connections.dart';
 import 'package:graduation_gathering/Profile/academic_structure.dart';
@@ -113,7 +113,7 @@ class _AddConnectionsScreenState extends State<AddConnectionsScreen> {
 
     List<Widget> connectionsWidgets = [];
     for (ConnectionProfile profile in connections) {
-      connectionsWidgets.add(ConnectionBoxWidget(profile: profile));
+      connectionsWidgets.add(FollowBoxWidget(profile: profile, token: widget.authToken));
     }
 
     _connectionsContainer = Column(

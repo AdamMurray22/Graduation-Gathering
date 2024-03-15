@@ -1,25 +1,63 @@
 import 'package:graduation_gathering/Profile/Connections/connection_permission_enum.dart';
 
 import 'connection_profile.dart';
+import 'connection_type.dart';
 
 class Connection
 {
   final ConnectionProfile _connectionProfile;
-  ConnectionPermission _permission;
+  final ConnectionPermission? _permissionTo;
+  final ConnectionPermission? _permissionFrom;
+  late final ConnectionType _connectionType;
 
-  Connection(this._connectionProfile, this._permission);
-
-  String getToUserId()
+  Connection(this._connectionProfile, this._permissionTo, this._permissionFrom)
   {
-    return _connectionProfile.getId();
+    if (_permissionTo == null)
+    {
+      _connectionType = ConnectionType.to;
+    }
+    else if (_permissionFrom == null)
+    {
+      _connectionType = ConnectionType.from;
+    }
+    else
+    {
+      _connectionType = ConnectionType.both;
+    }
+  }
+
+  ConnectionProfile getConnectionProfile()
+  {
+    return _connectionProfile;
   }
 
   String getMainText()
   {
-    if (_connectionProfile.getName() != null)
-    {
-      return _connectionProfile.getName()!;
-    }
-    return _connectionProfile.getEmail();
+    return _connectionProfile.getMainText();
+  }
+
+  String getSubText()
+  {
+    return _connectionProfile.getSubText();
+  }
+
+  String getAccountTypeString()
+  {
+    return _connectionProfile.getAccountType().accountTypeAsString;
+  }
+
+  ConnectionPermission? getPermissionTo()
+  {
+    return _permissionTo;
+  }
+
+  ConnectionPermission? getPermissionFrom()
+  {
+    return _permissionFrom;
+  }
+
+  ConnectionType getConnectionType()
+  {
+    return _connectionType;
   }
 }

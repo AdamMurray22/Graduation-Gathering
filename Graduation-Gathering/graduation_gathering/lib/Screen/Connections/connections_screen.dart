@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:graduation_gathering/Profile/Connections/connection.dart';
+import 'package:graduation_gathering/Profile/Connections/connection_type.dart';
 import 'package:graduation_gathering/Profile/Connections/connections.dart';
 import 'package:graduation_gathering/Profile/Connections/get_connections.dart';
 import 'package:graduation_gathering/Profile/academic_structure.dart';
@@ -8,9 +9,11 @@ import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:graduation_gathering/Screen/Connections/add_connections_screen.dart';
 
 import '../../Auth/auth_token.dart';
+import '../../Profile/Connections/connection_permission_enum.dart';
 import '../../Profile/Connections/other_user_profiles.dart';
 import '../../Profile/account_type.dart';
 import '../../Profile/profile_settings.dart';
+import 'connection_box_widget.dart';
 
 /// This holds the screen for the application.
 class ConnectionsScreen extends StatefulWidget {
@@ -18,12 +21,13 @@ class ConnectionsScreen extends StatefulWidget {
       {super.key,
       required this.authToken,
       required this.connections,
-      required this.otherUserProfiles, required this.academicStructure});
+      required this.otherUserProfiles, required this.academicStructure, required this.userProfile});
 
   final AuthToken authToken;
   final Connections connections;
   final OtherUserProfiles otherUserProfiles;
   final AcademicStructure academicStructure;
+  final ProfileSettings userProfile;
 
   @override
   State<ConnectionsScreen> createState() => _ConnectionsScreenState();
@@ -33,6 +37,7 @@ class ConnectionsScreen extends StatefulWidget {
 class _ConnectionsScreenState extends State<ConnectionsScreen> {
   late Widget _connectionsContainer;
   late Widget _connectionRequestsContainer;
+  bool connectionRequests = false;
 
   int _screenIndex = 0;
 
@@ -43,15 +48,42 @@ class _ConnectionsScreenState extends State<ConnectionsScreen> {
   }
 
   createConnectionsContainer() {
-    if (widget.connections.isEmpty) {
+    List<Connection> connections = [];
+    List<Connection> connectionsToRequested = [];
+    for (Connection connection in widget.connections) {
+      if (!(connection.getPermissionTo() == ConnectionPermission.requested))
+      {
+        connections.add(connection);
+      }
+      else
+      {
+        connectionsToRequested.add(connection);
+      }
+    }
+
+    if (connections.isEmpty) {
       _connectionsContainer = const Text("You have no Connections");
     } else {
       List<Widget> connectionsWidgets = [];
-      for (Connection connection in widget.connections) {
-        connectionsWidgets.add(Text(connection.getMainText()));
+      for (Connection connection in connections) {
+        connectionsWidgets.add(ConnectionBoxWidget(profile: connection, token: widget.authToken));
       }
       _connectionsContainer = Column(
         children: connectionsWidgets,
+      );
+    }
+
+    if (connectionsToRequested.isEmpty) {
+      _connectionRequestsContainer = const Text("You have no Connection Requests");
+      connectionRequests = false;
+    } else {
+      connectionRequests = true;
+      List<Widget> connectionsToRequestedWidgets = [];
+      for (Connection connection in connectionsToRequested) {
+        connectionsToRequestedWidgets.add(ConnectionBoxWidget(profile: connection, token: widget.authToken));
+      }
+      _connectionRequestsContainer = Column(
+        children: connectionsToRequestedWidgets,
       );
     }
   }
@@ -90,7 +122,7 @@ class _ConnectionsScreenState extends State<ConnectionsScreen> {
                 ),
               ),
               Visibility(
-                visible: false,
+                visible: connectionRequests,
                 child: Column(
                   children: [
                     Container(
@@ -99,6 +131,7 @@ class _ConnectionsScreenState extends State<ConnectionsScreen> {
                       child: const Text("Location Requests",
                           style: TextStyle(fontSize: 17)),
                     ),
+                    _connectionRequestsContainer
                   ],
                 ),
               ),
@@ -128,7 +161,7 @@ class _ConnectionsScreenState extends State<ConnectionsScreen> {
   }
 
   refreshPressed() async {
-    Connections connections = await GetConnections().send(widget.authToken, widget.otherUserProfiles);
+    Connections connections = await GetConnections().send(widget.authToken, widget.otherUserProfiles, widget.userProfile);
     widget.connections.clear();
     widget.connections.addAll(connections);
     createConnectionsContainer();

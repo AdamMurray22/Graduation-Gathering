@@ -35,6 +35,29 @@ class ConnectionProfile
     }
   }
 
+  String getMainText()
+  {
+    if (getName() != null)
+    {
+      return getName()!;
+    }
+    return getEmail();
+  }
+
+  String getSubText()
+  {
+    if (getName() != null)
+    {
+      return getEmail();
+    }
+    return "";
+  }
+
+  String getAccountTypeString()
+  {
+    return getAccountType().accountTypeAsString;
+  }
+
   String getId()
   {
     return _id;
