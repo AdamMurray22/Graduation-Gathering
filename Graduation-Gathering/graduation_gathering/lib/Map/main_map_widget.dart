@@ -82,12 +82,12 @@ class MainMapWidgetState extends MapWidgetState<MainMapWidget> {
   _addOtherUsersMarkers(List<dynamic> users) async {
     for (Map<String, dynamic> user in users)
     {
-      if (!(await isPointInsideGeojson(user["location"]["long"], user["location"]["lat"], widget.allGradZones))) {
+      if (!(await isPointInsideGeojson(user["longitude"], user["latitude"], widget.allGradZones))) {
         removeMarker(MapDataId.otherUsers.idPrefix, user["email"]);
         return;
       }
         updateMarker(MapDataId.otherUsers.idPrefix, user["email"],
-            user["location"]["long"], user["location"]["lat"]);
+            user["longitude"], user["latitude"]);
     }
   }
 
