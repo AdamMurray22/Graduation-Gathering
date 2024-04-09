@@ -51,7 +51,7 @@ class _ConnectionsScreenState extends State<ConnectionsScreen> {
     List<Connection> connections = [];
     List<Connection> connectionsToRequested = [];
     for (Connection connection in widget.connections) {
-      if (!(connection.getPermissionTo() == ConnectionPermission.requested))
+      if (!(connection.getPermissionFrom() == ConnectionPermission.requested))
       {
         connections.add(connection);
       }

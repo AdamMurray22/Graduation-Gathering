@@ -42,7 +42,7 @@ class _ConnectionBoxWidgetState extends State<ConnectionBoxWidget> {
 
   _createButtons()
   {
-    if (widget.profile.getPermissionTo() == ConnectionPermission.requested) {
+    if (widget.profile.getPermissionFrom() == ConnectionPermission.requested) {
       _followerWidget = ElevatedButton(
           onPressed: () {
             grantFollower();
@@ -50,7 +50,7 @@ class _ConnectionBoxWidgetState extends State<ConnectionBoxWidget> {
             setState(() {});
           },
           child: const Text("Grant Follower Permission"));
-    } else if (widget.profile.getPermissionTo() ==
+    } else if (widget.profile.getPermissionFrom() ==
         ConnectionPermission.granted) {
       _followerWidget = ElevatedButton(
           onPressed: () {
@@ -63,7 +63,7 @@ class _ConnectionBoxWidgetState extends State<ConnectionBoxWidget> {
       _followerWidget = Container();
     }
 
-    if (widget.profile.getPermissionFrom() == ConnectionPermission.requested) {
+    if (widget.profile.getPermissionTo() == ConnectionPermission.requested) {
       _followingWidget = ElevatedButton(
           onPressed: () {
             removeFollowing();
@@ -77,7 +77,7 @@ class _ConnectionBoxWidgetState extends State<ConnectionBoxWidget> {
             setState(() {});
           },
           child: const Text("Remove Following request"));
-    } else if (widget.profile.getPermissionFrom() ==
+    } else if (widget.profile.getPermissionTo() ==
         ConnectionPermission.granted) {
       _followingWidget = ElevatedButton(
           onPressed: () {
@@ -92,7 +92,7 @@ class _ConnectionBoxWidgetState extends State<ConnectionBoxWidget> {
             setState(() {});
           },
           child: const Text("Remove Following"));
-    } else if (widget.profile.getPermissionFrom() ==
+    } else if (widget.profile.getPermissionTo() ==
         ConnectionPermission.denied) {
       _followingWidget = Container();
     } else {

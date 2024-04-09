@@ -1,4 +1,5 @@
 import 'package:graduation_gathering/Profile/Connections/connection_permission_enum.dart';
+import 'package:graduation_gathering/Profile/Connections/connection_profile.dart';
 import 'package:graduation_gathering/Profile/Connections/connection_type.dart';
 import 'package:graduation_gathering/Profile/Connections/other_user_profiles.dart';
 import 'package:graduation_gathering/Profile/profile_settings.dart';
@@ -11,48 +12,40 @@ class Connections extends Iterable<Connection>
 
   Connections(List<dynamic> connections, OtherUserProfiles allOtherUserProfiles, ProfileSettings userProfile)
   {
-    Set<String> doneBothIds = {};
+    Map<String, Map<String, String>> transformedConnections = {};
     for (Map<String, dynamic> connection in connections)
     {
       if (connection["fromUser"] == userProfile.getId())
       {
-        if (!doneBothIds.contains(connection["toUser"])) {
-          Map<String, dynamic>? isBoth = isBothFrom(connections, userProfile);
-          if (isBoth != null) {
-            _connections.add(Connection(
-                allOtherUserProfiles.getUserFromId(connection["toUser"])!,
-                ConnectionPermission.getPermissionFromString(
-                    connection["permission"]!)!, ConnectionPermission.getPermissionFromString(isBoth["permission"])));
-            doneBothIds.add(connection["toUser"]);
-          }
-          else {
-            _connections.add(Connection(
-                allOtherUserProfiles.getUserFromId(connection["toUser"])!,
-                ConnectionPermission.getPermissionFromString(
-                    connection["permission"]!)!, null));
-          }
+        String otherUser = connection["toUser"];
+        if (transformedConnections[otherUser] == null)
+        {
+          transformedConnections[otherUser] = {"toUser": connection["permission"]};
+        }
+        else
+        {
+          transformedConnections[otherUser]!["toUser"] = connection["permission"];
         }
       }
-      else {
-        if (!doneBothIds.contains(connection["fromUser"])) {
-        Map<String, dynamic>? isBoth = isBothTo(connections, userProfile);
-        if (isBoth != null) {
-          _connections.add(Connection(
-              allOtherUserProfiles.getUserFromId(connection["fromUser"])!,
-              ConnectionPermission.getPermissionFromString(
-                  connection["permission"]), ConnectionPermission.getPermissionFromString(isBoth["permission"])));
-          doneBothIds.add(connection["fromUser"]);
+      else if (connection["toUser"] == userProfile.getId())
+      {
+        String otherUser = connection["fromUser"];
+        if (transformedConnections[otherUser] == null)
+        {
+          transformedConnections[otherUser] = {"fromUser": connection["permission"]};
         }
-        else {
-          _connections.add(Connection(
-              allOtherUserProfiles.getUserFromId(connection["fromUser"])!,
-              null,
-              ConnectionPermission.getPermissionFromString(
-                  connection["permission"])));
+        else
+        {
+          transformedConnections[otherUser]!["fromUser"] = connection["permission"];
         }
-      }
       }
     }
+
+    transformedConnections.forEach((key, value)
+    {
+      _connections.add(Connection(allOtherUserProfiles.getUserFromId(key)!, ConnectionPermission.getPermissionFromString(value["toUser"]), ConnectionPermission.getPermissionFromString(value["fromUser"])));
+    });
+    print(_connections);
   }
 
   addAll(Connections connections)
@@ -67,28 +60,4 @@ class Connections extends Iterable<Connection>
 
   @override
   Iterator<Connection> get iterator => _connections.iterator;
-
-  Map<String, dynamic>? isBothFrom(List<dynamic> connections, ProfileSettings userProfile)
-  {
-    for (Map<String, dynamic> connection in connections)
-    {
-      if (connection["toUser"] == userProfile.getId())
-      {
-        return connection;
-      }
-    }
-    return null;
-  }
-
-  Map<String, dynamic>? isBothTo(List<dynamic> connections, ProfileSettings userProfile)
-  {
-    for (Map<String, dynamic> connection in connections)
-    {
-      if (connection["fromUser"] == userProfile.getId())
-      {
-        return connection;
-      }
-    }
-    return null;
-  }
 }

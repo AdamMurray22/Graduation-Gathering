@@ -4,8 +4,12 @@ enum ConnectionPermission
   requested,
   denied;
 
-  static ConnectionPermission? getPermissionFromString(String permission)
+  static ConnectionPermission? getPermissionFromString(String? permission)
   {
+    if (permission == null)
+    {
+      return null;
+    }
     for (ConnectionPermission value in ConnectionPermission.values)
     {
       if (value.name == permission.toLowerCase())
