@@ -60,4 +60,9 @@ class Connection
   {
     return _connectionType;
   }
+
+  @override
+  String toString() {
+    return {_connectionProfile.getEmail(), _permissionFrom, _permissionTo}.toString();
+  }
 }
