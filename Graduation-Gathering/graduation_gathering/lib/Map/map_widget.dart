@@ -41,7 +41,8 @@ abstract class MapWidgetState<E extends MapWidget> extends State<E> {
           onProgress: (int progress) {
             // Update loading bar.
           },
-          onPageStarted: (String url) {},
+          onPageStarted: (String url) {
+          },
           onPageFinished: (String url)
           async {
             await _addTileServer();
