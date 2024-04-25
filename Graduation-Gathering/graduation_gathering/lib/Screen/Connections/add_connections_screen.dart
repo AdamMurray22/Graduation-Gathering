@@ -116,9 +116,11 @@ class _AddConnectionsScreenState extends State<AddConnectionsScreen> {
       connectionsWidgets.add(FollowBoxWidget(profile: profile, token: widget.authToken));
     }
 
-    _connectionsContainer = Column(
+    _connectionsContainer = SingleChildScrollView(
+      scrollDirection: Axis.vertical,
+        child:Column(
       children: connectionsWidgets,
-    );
+    ));
   }
 
   bool filterProfile(ConnectionProfile profile) {
