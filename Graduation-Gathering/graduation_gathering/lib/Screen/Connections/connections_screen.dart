@@ -1,21 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:graduation_gathering/Profile/Connections/connection.dart';
-import 'package:graduation_gathering/Profile/Connections/connection_type.dart';
 import 'package:graduation_gathering/Profile/Connections/connections.dart';
 import 'package:graduation_gathering/Profile/Connections/get_connections.dart';
 import 'package:graduation_gathering/Profile/academic_structure.dart';
-import 'package:graduation_gathering/Profile/set_user_profile.dart';
-import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:graduation_gathering/Screen/Connections/add_connections_screen.dart';
 
 import '../../Auth/auth_token.dart';
 import '../../Profile/Connections/connection_permission_enum.dart';
 import '../../Profile/Connections/other_user_profiles.dart';
-import '../../Profile/account_type.dart';
 import '../../Profile/profile_settings.dart';
 import 'connection_box_widget.dart';
 
-/// This holds the screen for the application.
+/// Connection screen widget.
 class ConnectionsScreen extends StatefulWidget {
   const ConnectionsScreen(
       {super.key,
@@ -33,7 +29,7 @@ class ConnectionsScreen extends StatefulWidget {
   State<ConnectionsScreen> createState() => _ConnectionsScreenState();
 }
 
-// This class contains the GUI structure for the app.
+// Connection screen state.
 class _ConnectionsScreenState extends State<ConnectionsScreen> {
   late Widget _connectionsContainer;
   late Widget _connectionRequestsContainer;
@@ -43,11 +39,12 @@ class _ConnectionsScreenState extends State<ConnectionsScreen> {
 
   @override
   void initState() {
-    createConnectionsContainer();
+    _createConnectionsContainer();
     super.initState();
   }
 
-  createConnectionsContainer() {
+  // Creates the visual list of connections
+  _createConnectionsContainer() {
     List<Connection> connections = [];
     List<Connection> connectionsToRequested = [];
     for (Connection connection in widget.connections) {
@@ -105,7 +102,7 @@ class _ConnectionsScreenState extends State<ConnectionsScreen> {
                       alignment: Alignment.centerLeft,
                       child: ElevatedButton(
                           onPressed: () {
-                            refreshPressed();
+                            _refreshPressed();
                           },
                           child: const Text("Refresh")),
                     ),
@@ -160,11 +157,12 @@ class _ConnectionsScreenState extends State<ConnectionsScreen> {
         ]));
   }
 
-  refreshPressed() async {
+  // Retrieves the updated connections from the server and updates the display.
+  _refreshPressed() async {
     Connections connections = await GetConnections().send(widget.authToken, widget.otherUserProfiles, widget.userProfile);
     widget.connections.clear();
     widget.connections.addAll(connections);
-    createConnectionsContainer();
+    _createConnectionsContainer();
     setState(() {});
   }
 }

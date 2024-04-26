@@ -6,7 +6,7 @@ import 'package:tuple/tuple.dart';
 import '../Auth/auth_token.dart';
 import '../Login/send_code.dart';
 
-/// This holds the screen for the application.
+/// The login screen widget.
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key, required this.changeScreen});
 
@@ -16,7 +16,7 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-// This class contains the GUI structure for the app.
+// The login screen state.
 class _LoginScreenState extends State<LoginScreen> {
   String _emailInput = "";
   String _codeInput = "";
@@ -125,6 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ])));
   }
 
+  // Parses the email and if its valid it sends it too the server.
   _emailEntered(String emailInput) {
     emailInput = emailInput.trim();
     ParseEmail parseEmail = ParseEmail();
@@ -160,6 +161,7 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
+  // Sends the email and code to the server to get the auth token.
   _codeEntered(String email, String code) async {
     SendCode sendCode = SendCode();
     Tuple2<bool, String?> response = await sendCode.send(email, code);
@@ -170,6 +172,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  // Sends the email.
   _sendCode(String email)
   {
     SendEmail emailCode = SendEmail();

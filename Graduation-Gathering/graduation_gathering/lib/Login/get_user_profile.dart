@@ -7,8 +7,10 @@ import 'package:graduation_gathering/Map/Zones/grad_zones.dart';
 import '../AWS/send_request.dart';
 import '../Profile/profile_settings.dart';
 
+/// Sends requests to the server to get the users profile.
 class GetUserProfile extends SendRequest {
 
+  /// Sends the request and retrieves the users profile.
   Future<ProfileSettings> send(AuthToken token, GradZones allZones) async {
     Map<String, String> headers = {"Authorization": token.getToken()};
     String responseBody = await get(headers);
@@ -30,6 +32,7 @@ class GetUserProfile extends SendRequest {
       responseJson["school"], responseJson["course"], userZones);
   }
 
+  /// Returns the route within the server to the getUserProfile endpoint.
   @override
   getRoute() {
     return "getUserProfile";

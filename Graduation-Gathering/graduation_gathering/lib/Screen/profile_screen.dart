@@ -11,7 +11,7 @@ import '../Auth/auth_token.dart';
 import '../Profile/account_type.dart';
 import '../Profile/profile_settings.dart';
 
-/// This holds the screen for the application.
+/// This is the profile screen widget.
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen(
       {super.key, required this.authToken, required this.profile, required this.academicStructure, required this.allGradZones, required this.mainMapWidgetStateKey});
@@ -26,7 +26,7 @@ class ProfileScreen extends StatefulWidget {
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-// This class contains the GUI structure for the app.
+// This is the profile screen state.
 class _ProfileScreenState extends State<ProfileScreen> {
   late SetUserProfile _setUserProfile;
   late SingleValueDropDownController _facultyDropDownController;
@@ -297,6 +297,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         )));
   }
 
+  // Sends the request to the server to save the users profile settings.
   _saveSettings() {
     widget.profile.setHasLoggedInBefore(true);
     widget.profile.setName(_name);
@@ -318,6 +319,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _setUserProfile.send(widget.profile);
   }
 
+  // Used to update the UI to tick the clicked check box.
   _zoneCheckBoxTicked(String zoneId, bool checked)
   {
     _gradZonesCheckboxTicked[zoneId] = checked;
@@ -325,6 +327,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
+  // Updates the geojson colour for the zones on the map.
   _updateMapGeojsonColours()
   {
     for (GradZone zone in widget.allGradZones)

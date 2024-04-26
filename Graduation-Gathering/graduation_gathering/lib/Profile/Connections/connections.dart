@@ -6,6 +6,7 @@ import 'package:graduation_gathering/Profile/profile_settings.dart';
 
 import 'connection.dart';
 
+/// Collection of all the Connections between this user and other users.
 class Connections extends Iterable<Connection>
 {
   final Set<Connection> _connections = {};
@@ -13,6 +14,9 @@ class Connections extends Iterable<Connection>
   Connections(List<dynamic> connections, OtherUserProfiles allOtherUserProfiles, ProfileSettings userProfile)
   {
     Map<String, Map<String, String>> transformedConnections = {};
+    // Transforms the connections from the format User A, User B, permission (I.e. granted or requested)
+    // into the format, User that is not this client user, permission from this
+    // user to that user, permission to this user from that user.
     for (Map<String, dynamic> connection in connections)
     {
       if (connection["fromUser"] == userProfile.getId())
@@ -45,19 +49,21 @@ class Connections extends Iterable<Connection>
     {
       _connections.add(Connection(allOtherUserProfiles.getUserFromId(key)!, ConnectionPermission.getPermissionFromString(value["toUser"]), ConnectionPermission.getPermissionFromString(value["fromUser"])));
     });
-    print(_connections);
   }
 
+  /// Adds the given connections to this collection of connections.
   addAll(Connections connections)
   {
     _connections.addAll(connections);
   }
 
+  /// Clears this collection.
   clear()
   {
     _connections.clear();
   }
 
+  /// Creates an iterator from this collection of the connections.
   @override
   Iterator<Connection> get iterator => _connections.iterator;
 }

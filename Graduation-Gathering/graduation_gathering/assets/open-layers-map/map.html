@@ -149,6 +149,13 @@
         addMarker(markedFeature);
     }
 
+    // Clears a marker layer
+    function clearMarkerLayer(layerId)
+    {
+        const layer = IDLayersMap.get(layerId.layerId).get(layerEnum.markerLayer);
+        layer.getSource().clear();
+    }
+
     // Toggles the visibility of the markers
     function toggleShowLayers(visible) {
         const layers = Array.from(IDLayersMap.get(visible.layerId).values());
