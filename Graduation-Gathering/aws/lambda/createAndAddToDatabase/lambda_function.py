@@ -11,6 +11,7 @@ password = os.environ['PASSWORD']
 rds_proxy_host = os.environ['RDS_PROXY_HOST']
 db_name = os.environ['DB_NAME']
 
+# Allows for AWS Logging
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
@@ -26,11 +27,14 @@ except pymysql.MySQLError as e:
 logger.info("SUCCESS: Connection to RDS for MySQL instance succeeded")
 
 def lambda_handler(event, context):
-    #deleteDatabase()
+    #deleteDatabase() # Used to reload the database during testing
     #createDatabase()
+
     """
-    This function creates a new RDS database table and writes records to it
+    This function creates a new RDS database and writes records to it
     """
+
+    # Gets the database to put inserted into the database.
     message = event['body']
     FacultyData = message['Faculty']
     SchoolData = message['School']
@@ -40,7 +44,7 @@ def lambda_handler(event, context):
     GraduationZones = message['GraduationZones']
     UserZones = message['UserZones']
 
-
+    # Creates the sql string templates.
     faculty_sql_string = 'insert into faculty (faculty_name) values("{FacultyName}")'
     school_sql_string = 'insert into school (school_name, faculty_name) values("{SchoolName}", "{FacultyName}")'
     course_sql_string = 'insert into course (course_name, school_name) values("{CourseName}", "{SchoolName}")'
@@ -50,12 +54,12 @@ def lambda_handler(event, context):
     graduation_zones_text_sql_string = 'insert into graduation_zones_text (zone_id,geojson) values("{ZoneID}", "{GeoJson}")'
     user_zones_sql_string = 'insert into user_zones (user_id,zone_id) values("{UserID}","{ZoneID}")'
 
-    create_schema()
+    create_schema() # Creates the schema if it doesnt already exist.
 
     item_count = 0
 
     with conn.cursor() as cur:
-        for faculty in FacultyData:
+        for faculty in FacultyData: # Adds the faculty data to the database.
             try:
                 cur.execute(faculty_sql_string.format(FacultyName = escape_sql_string(faculty['faculty_name'])))
                 item_count += 1
@@ -63,7 +67,7 @@ def lambda_handler(event, context):
                 logger.error(e)
             conn.commit()
 
-        for school in SchoolData:
+        for school in SchoolData: # Adds the school data to the database.
             try:
                 cur.execute(school_sql_string.format(SchoolName = escape_sql_string(school['school_name']), FacultyName = escape_sql_string(school['faculty_name'])))
                 item_count += 1
@@ -71,7 +75,7 @@ def lambda_handler(event, context):
                 logger.error(e)
             conn.commit()
 
-        for course in CourseData:
+        for course in CourseData: # Adds the course data to the database.
             try:
                 cur.execute(course_sql_string.format(CourseName = escape_sql_string(course['course_name']), SchoolName = escape_sql_string(course['school_name'])))
                 item_count += 1
@@ -79,7 +83,7 @@ def lambda_handler(event, context):
                 logger.error(e)
             conn.commit()
 
-        for user in UserData:
+        for user in UserData: # Adds the user data to the database.
             try:
                 cur.execute(user_sql_string.format(UserID = escape_sql_string(user['user_id']), UserEmail = escape_sql_string(user['user_email']), UserName = escape_sql_string(user['user_name']), LoginCode = escape_sql_string(user['login_code']), LoginCodeExpires = user['login_code_expires'], FacultyName = escape_sql_string(user['faculty_name']), SchoolName = escape_sql_string(user['school_name']), CourseName = escape_sql_string(user['course_name']), Latitude = user['latitude'], Longitude = user['longitude'], LocationSet = user['location_set'], HasLoggedIn = user['has_logged_in'], EmailVerified = user['email_verified'], StudentStaff = escape_sql_string(user['student_staff'])))
                 item_count += 1
@@ -87,7 +91,7 @@ def lambda_handler(event, context):
                 logger.error(e)
             conn.commit()
 
-        for locationPermission in LocationPermissions:
+        for locationPermission in LocationPermissions: # Adds the location permission data to the database.
             try:
                 cur.execute(location_permission_sql_string.format(FromUser = escape_sql_string(locationPermission['from_user']), ToUser = escape_sql_string(locationPermission['to_user']), PermissionGranted = escape_sql_string(locationPermission['permission_granted'])))
                 item_count += 1
@@ -95,7 +99,7 @@ def lambda_handler(event, context):
                 logger.error(e)
             conn.commit()
 
-        for zone in GraduationZones:
+        for zone in GraduationZones: # Adds the grad zones data to the database.
             try:
                 cur.execute(graduation_zones_sql_string.format(ZoneID = escape_sql_string(zone['zone_id']), ZoneName = escape_sql_string(zone['zone_name'])))
             except pymysql.MySQLError as e:
@@ -107,7 +111,7 @@ def lambda_handler(event, context):
                 logger.error(e)
             conn.commit()
 
-        for userZone in UserZones:
+        for userZone in UserZones: # Adds the user zones data to the database.
             try:
                 cur.execute(user_zones_sql_string.format(UserID = escape_sql_string(userZone['user_id']), ZoneID = escape_sql_string(userZone['zone_id'])))
                 item_count += 1
@@ -195,6 +199,7 @@ def get_graduation_zones_text_table_sql():
 def get_user_zones_table_sql():
     return "create table if NOT EXISTS user_zones ( user_id varchar(255) NOT NULL, zone_id varchar(255) NOT NULL, FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (zone_id) REFERENCES graduation_zones(zone_id) ON DELETE CASCADE ON UPDATE CASCADE, PRIMARY KEY (user_id,zone_id))"
 
+# Escaspes a string that is to be put into the database to protect the database.
 def escape_sql_string(sql_string):
     translate_table = str.maketrans({"]": r"\]", "\\": r"\\",
                                  "^": r"\^", "$": r"\$", "*": r"\*", "'": r"\'", '"': r'\"'})
@@ -202,6 +207,7 @@ def escape_sql_string(sql_string):
         return sql_string
     return sql_string.translate(translate_table)
 
+# Deletes the database schema
 def deleteDatabase():
     with conn.cursor() as cur:
         try:
@@ -210,6 +216,7 @@ def deleteDatabase():
             logger.error(e)
         conn.commit()
 
+# Creates the database
 def createDatabase():
     with conn.cursor() as cur:
         try:
