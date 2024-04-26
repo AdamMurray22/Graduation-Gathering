@@ -12,6 +12,7 @@ password = os.environ['PASSWORD']
 rds_proxy_host = os.environ['RDS_PROXY_HOST']
 db_name = os.environ['DB_NAME']
 
+# Allows for AWS Logging
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
@@ -24,7 +25,7 @@ except pymysql.MySQLError as e:
     logger.error(e)
     sys.exit()
 
-def lambda_handler(event, context):
+def lambda_handler(event, context): # Entry point for AWS.
     zones = []
     with conn.cursor() as cur:
         sql = "SELECT graduation_zones.zone_id, graduation_zones.zone_name, graduation_zones_text.geojson FROM graduation_zones INNER JOIN graduation_zones_text ON graduation_zones.zone_id = graduation_zones_text.zone_id"

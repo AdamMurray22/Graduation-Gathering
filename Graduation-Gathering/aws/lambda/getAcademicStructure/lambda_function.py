@@ -12,6 +12,7 @@ password = os.environ['PASSWORD']
 rds_proxy_host = os.environ['RDS_PROXY_HOST']
 db_name = os.environ['DB_NAME']
 
+# Allows for AWS Logging
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
@@ -24,15 +25,17 @@ except pymysql.MySQLError as e:
     logger.error(e)
     sys.exit()
 
-def lambda_handler(event, context):
+def lambda_handler(event, context): # Entry point for AWS.
     structure = {}
     with conn.cursor() as cur:
+        # Gets the faculties
         faculty_sql = "SELECT faculty_name FROM faculty"
         cur.execute(faculty_sql)
         for row in cur:
             faculty = row[0]
             structure[faculty] = {}
 
+        # Gets the schools
         school_sql = "SELECT school_name, faculty_name FROM school"
         cur.execute(school_sql)
         for row in cur:
@@ -40,6 +43,7 @@ def lambda_handler(event, context):
             faculty = row[1]
             structure[faculty][school] = []
 
+        # Gets the courses
         course_sql = "SELECT course_name, school_name FROM course"
         cur.execute(course_sql)
         for row in cur:
