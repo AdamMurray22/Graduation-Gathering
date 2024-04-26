@@ -34,11 +34,14 @@ class _ScreenHolderState extends State<ScreenHolder> {
   @override
   initState() {
     _screen = const LoadingScreen();
-    validateToken();
+    _validateToken();
     super.initState();
   }
 
-  validateToken() async {
+  // Checks if a token stored in storage is valid.
+  // If their is a valid token, it loads the main app,
+  // otherwise loads the login screen.
+  _validateToken() async {
     AuthToken? authToken = await _tokenStorage.getToken();
     if (!(await ValidateToken().valid(authToken)))
     {
@@ -64,6 +67,7 @@ class _ScreenHolderState extends State<ScreenHolder> {
     );
   }
 
+  // Writes the auth token to storage and switches the view the main screen.
   _switchToMainScreen(AuthToken authToken) async
   {
     _tokenStorage.writeToken(authToken);
@@ -72,6 +76,7 @@ class _ScreenHolderState extends State<ScreenHolder> {
     });
   }
 
+  // Retrieves all the data needed for the start of the logged in app from the server.
   _loadMainScreen(AuthToken authToken) async
   {
     Future<OtherUserProfiles> futureOtherUserProfiles = GetAllOtherUsersProfiles().send(authToken);

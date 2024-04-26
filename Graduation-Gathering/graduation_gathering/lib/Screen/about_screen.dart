@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+/// The about screen widget.
 class AboutScreen extends StatefulWidget {
   const AboutScreen({super.key});
 
@@ -9,6 +10,7 @@ class AboutScreen extends StatefulWidget {
   State<AboutScreen> createState() => _AboutScreenState();
 }
 
+/// The about screen state
 class _AboutScreenState extends State<AboutScreen> {
   @override
   Widget build(BuildContext context) {

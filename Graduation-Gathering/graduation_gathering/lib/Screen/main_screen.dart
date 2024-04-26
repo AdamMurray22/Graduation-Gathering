@@ -10,7 +10,7 @@ import 'package:tuple/tuple.dart';
 import '../Auth/auth_token.dart';
 import 'navigation_bar_items.dart';
 
-/// This holds the screen for the application.
+/// This holds the sub-screens for the application.
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key, required this.authToken, required this.profile, required this.academicStructure, required this.gradZones, required this.connections, required this.otherUserProfiles});
 
@@ -25,7 +25,6 @@ class MainScreen extends StatefulWidget {
   State<MainScreen> createState() => _MainScreenState();
 }
 
-// This class contains the GUI structure for the app.
 class _MainScreenState extends State<MainScreen> {
 
   late final NavigationBarItems _navigationBarItems;

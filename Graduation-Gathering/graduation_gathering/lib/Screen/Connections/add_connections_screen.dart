@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:graduation_gathering/Profile/Connections/connection.dart';
 import 'package:graduation_gathering/Screen/Connections/follow_box_widget.dart';
 import 'package:graduation_gathering/Profile/Connections/connections.dart';
-import 'package:graduation_gathering/Profile/Connections/get_connections.dart';
 import 'package:graduation_gathering/Profile/academic_structure.dart';
-import 'package:graduation_gathering/Profile/set_user_profile.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 
 import '../../Auth/auth_token.dart';
 import '../../Profile/Connections/connection_profile.dart';
 import '../../Profile/Connections/other_user_profiles.dart';
 import '../../Profile/account_type.dart';
-import '../../Profile/profile_settings.dart';
 
-/// This holds the screen for the application.
+/// Widget for the add connections screen.
 class AddConnectionsScreen extends StatefulWidget {
   const AddConnectionsScreen(
       {super.key,
@@ -33,7 +29,7 @@ class AddConnectionsScreen extends StatefulWidget {
   State<AddConnectionsScreen> createState() => _AddConnectionsScreenState();
 }
 
-// This class contains the GUI structure for the app.
+// State for the add connections screen.
 class _AddConnectionsScreenState extends State<AddConnectionsScreen> {
   late Widget _connectionsContainer;
 
@@ -60,7 +56,7 @@ class _AddConnectionsScreenState extends State<AddConnectionsScreen> {
 
   @override
   void initState() {
-    createConnectionsContainer();
+    _createConnectionsContainer();
 
     _schoolVisible = false;
     _courseVisible = false;
@@ -75,7 +71,8 @@ class _AddConnectionsScreenState extends State<AddConnectionsScreen> {
     super.initState();
   }
 
-  createConnectionsContainer() {
+  // Forms the list of connections boxes.
+  _createConnectionsContainer() {
     if (!(_searchText != null && _searchText!.length >= 3)) {
       _connectionsContainer = const Column(
         children: [],
@@ -185,7 +182,7 @@ class _AddConnectionsScreenState extends State<AddConnectionsScreen> {
                     _courseVisible = true;
                     _courseDropDownController.dropDownValue = null;
                   }
-                  createConnectionsContainer();
+                  _createConnectionsContainer();
                   setState(() {});
                 },
                 elevation: 8,
@@ -232,7 +229,7 @@ class _AddConnectionsScreenState extends State<AddConnectionsScreen> {
                         });
                         _faculty = value.value;
                       }
-                      createConnectionsContainer();
+                      _createConnectionsContainer();
                       setState(() {});
                     },
                   ))
@@ -282,7 +279,7 @@ class _AddConnectionsScreenState extends State<AddConnectionsScreen> {
                               _school = value.value;
                             }
                           }
-                          createConnectionsContainer();
+                          _createConnectionsContainer();
                           setState(() {});
                         },
                       ))
@@ -318,7 +315,7 @@ class _AddConnectionsScreenState extends State<AddConnectionsScreen> {
                           } else {
                             _course = value.value;
                           }
-                          createConnectionsContainer();
+                          _createConnectionsContainer();
                           setState(() {});
                         },
                       ))
@@ -329,7 +326,7 @@ class _AddConnectionsScreenState extends State<AddConnectionsScreen> {
                   text = text.substring(0, 50);
                 }
                 _searchText = text;
-                createConnectionsContainer();
+                _createConnectionsContainer();
                 setState(() {});
               },
               controller: _searchBoxController,

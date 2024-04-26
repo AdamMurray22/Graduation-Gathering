@@ -1,23 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:graduation_gathering/Profile/Connections/connection.dart';
 import 'package:graduation_gathering/Profile/Connections/connection_permission_enum.dart';
-import 'package:graduation_gathering/Profile/Connections/connections.dart';
-import 'package:graduation_gathering/Profile/Connections/get_connections.dart';
 import 'package:graduation_gathering/Profile/Connections/grant_follower_request.dart';
-import 'package:graduation_gathering/Profile/academic_structure.dart';
-import 'package:graduation_gathering/Profile/set_user_profile.dart';
-import 'package:dropdown_textfield/dropdown_textfield.dart';
 
 import '../../Auth/auth_token.dart';
-import '../../Profile/Connections/connection_profile.dart';
-import '../../Profile/Connections/other_user_profiles.dart';
 import '../../Profile/Connections/remove_follower_request.dart';
 import '../../Profile/Connections/remove_following_request.dart';
 import '../../Profile/Connections/send_follow_request.dart';
-import '../../Profile/account_type.dart';
-import '../../Profile/profile_settings.dart';
 
-/// This holds the screen for the application.
+/// Connection box widget.
 class ConnectionBoxWidget extends StatefulWidget {
   const ConnectionBoxWidget(
       {super.key, required this.profile, required this.token});
@@ -29,7 +20,7 @@ class ConnectionBoxWidget extends StatefulWidget {
   State<ConnectionBoxWidget> createState() => _ConnectionBoxWidgetState();
 }
 
-// This class contains the GUI structure for the app.
+// Connection box state.
 class _ConnectionBoxWidgetState extends State<ConnectionBoxWidget> {
   late Widget _followerWidget;
   late Widget _followingWidget;
@@ -40,12 +31,14 @@ class _ConnectionBoxWidgetState extends State<ConnectionBoxWidget> {
     super.initState();
   }
 
+  // Takes the permissions between the client user and the user this box is about
+  // and creates the buttons to manage the permissions.
   _createButtons()
   {
     if (widget.profile.getPermissionFrom() == ConnectionPermission.requested) {
       _followerWidget = ElevatedButton(
           onPressed: () {
-            grantFollower();
+            _grantFollower();
             _followerWidget = const Text("Permission Granted");
             setState(() {});
           },
@@ -54,7 +47,7 @@ class _ConnectionBoxWidgetState extends State<ConnectionBoxWidget> {
         ConnectionPermission.granted) {
       _followerWidget = ElevatedButton(
           onPressed: () {
-            removeFollower();
+            _removeFollower();
             _followerWidget = const Text("Permission Removed");
             setState(() {});
           },
@@ -66,10 +59,10 @@ class _ConnectionBoxWidgetState extends State<ConnectionBoxWidget> {
     if (widget.profile.getPermissionTo() == ConnectionPermission.requested) {
       _followingWidget = ElevatedButton(
           onPressed: () {
-            removeFollowing();
+            _removeFollowing();
             _followingWidget = ElevatedButton(
                 onPressed: () {
-                  sendFollowingRequest();
+                  _sendFollowingRequest();
                   _followingWidget = const Text("Request sent");
                   setState(() {});
                 },
@@ -81,10 +74,10 @@ class _ConnectionBoxWidgetState extends State<ConnectionBoxWidget> {
         ConnectionPermission.granted) {
       _followingWidget = ElevatedButton(
           onPressed: () {
-            removeFollowing();
+            _removeFollowing();
             _followingWidget = ElevatedButton(
                 onPressed: () {
-                  sendFollowingRequest();
+                  _sendFollowingRequest();
                   _followingWidget = const Text("Request sent");
                   setState(() {});
                 },
@@ -98,7 +91,7 @@ class _ConnectionBoxWidgetState extends State<ConnectionBoxWidget> {
     } else {
       _followingWidget = ElevatedButton(
           onPressed: () {
-            sendFollowingRequest();
+            _sendFollowingRequest();
             _followingWidget = const Text("Request sent");
             setState(() {});
           },
@@ -133,21 +126,25 @@ class _ConnectionBoxWidgetState extends State<ConnectionBoxWidget> {
         ));
   }
 
-  sendFollowingRequest() {
+  // Sends a follow request to the server.
+  _sendFollowingRequest() {
     SendFollowRequest(widget.token).send(widget.profile.getConnectionProfile());
   }
 
-  grantFollower() {
+  // Grants a follower on the server.
+  _grantFollower() {
     GrantFollowerRequest(widget.token)
         .send(widget.profile.getConnectionProfile());
   }
 
-  removeFollower() {
+  // Removes a follow from the server.
+  _removeFollower() {
     RemoveFollowerRequest(widget.token)
         .send(widget.profile.getConnectionProfile());
   }
 
-  removeFollowing() {
+  // Removes the following request from the server.
+  _removeFollowing() {
     RemoveFollowingRequest(widget.token)
         .send(widget.profile.getConnectionProfile());
   }

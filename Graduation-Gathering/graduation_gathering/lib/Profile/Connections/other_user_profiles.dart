@@ -1,5 +1,6 @@
 import 'connection_profile.dart';
 
+/// Collection of the other users profiles.
 class OtherUserProfiles extends Iterable<ConnectionProfile>
 {
   final List<ConnectionProfile> _connectionProfile = [];
@@ -12,6 +13,7 @@ class OtherUserProfiles extends Iterable<ConnectionProfile>
     }
   }
 
+  /// Returns the user profile from the given user Id.
   ConnectionProfile? getUserFromId(String id)
   {
     for (ConnectionProfile profile in _connectionProfile)
@@ -23,7 +25,7 @@ class OtherUserProfiles extends Iterable<ConnectionProfile>
     }
     return null;
   }
-
+  /// Returns an iterable of the collection of profiles.
   @override
   Iterator<ConnectionProfile> get iterator => _connectionProfile.iterator;
 }
