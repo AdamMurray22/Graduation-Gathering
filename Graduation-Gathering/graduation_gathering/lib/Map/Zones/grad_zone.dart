@@ -44,4 +44,18 @@ class GradZone
   {
     _colour = colour;
   }
+
+  /// Sets the == operator to check if the id, name, colour and geojson are the same.
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is GradZone &&
+              runtimeType == other.runtimeType &&
+              getId() == other.getId() &&
+              getName() == other.getName() &&
+              getColour() == other.getColour();
+
+  /// Sets the hashcode to use the id, name, colour and geojson.
+  @override
+  int get hashCode => _id.hashCode + _name.hashCode + _colour.hashCode;
 }

@@ -12,7 +12,8 @@ class ConnectionProfile
   String? _school;
   String? _course;
 
-  ConnectionProfile(this._id, this._email, accountType, name, faculty, school, course)
+  ConnectionProfile(this._id, this._email, String accountType, String? name,
+      String? faculty, String? school, String? course)
   {
     _accountType = AccountType.getAccountTypeFromString(accountType)!;
     _name = name;
@@ -105,4 +106,23 @@ class ConnectionProfile
   {
     return _course;
   }
+
+  /// Sets the == operator to check if all the settings are the same.
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is ConnectionProfile &&
+              runtimeType == other.runtimeType &&
+              getId() == other.getId() &&
+              getEmail() == other.getEmail() &&
+              getName() == other.getName() &&
+              getAccountType() == other.getAccountType() &&
+              getFaculty() == other.getFaculty() &&
+              getSchool() == other.getSchool() &&
+              getCourse() == other.getCourse();
+
+  /// Sets the hashcode to use all the settings.
+  @override
+  int get hashCode => _id.hashCode + _email.hashCode + _name.hashCode
+      + _accountType.hashCode + _faculty.hashCode + _school.hashCode + _course.hashCode;
 }

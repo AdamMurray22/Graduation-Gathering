@@ -13,8 +13,13 @@ class TileServer
   String get attribution => _attribution;
 
   /// Returns the domain for the server.
-  String getUrlDomains()
+  String? getUrlDomains()
   {
-    return url.split("/")[2];
+    try {
+      return url.split("/")[2];
+    } catch (e)
+    {
+      return null;
+    }
   }
 }

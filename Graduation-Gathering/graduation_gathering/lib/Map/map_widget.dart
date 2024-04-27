@@ -81,7 +81,7 @@ abstract class MapWidgetState<E extends MapWidget> extends State<E> {
   {
     String jsObject = "{url: '${_tileServer.url}', attribution: '${_tileServer.attribution}'}";
     _webViewController.runJavaScript("addOSMTileServer($jsObject)");
-    widget.pingTileServerFunction?.call(_tileServer.getUrlDomains());
+    widget.pingTileServerFunction?.call(_tileServer.getUrlDomains()!);
   }
 
   /// Centres and zooms the map around the given lat, long and zoom.
@@ -135,7 +135,7 @@ abstract class MapWidgetState<E extends MapWidget> extends State<E> {
     _webViewController.runJavaScript("updateMarker($jsObject)");
   }
 
-  /// Toggles the visibility of the U1 bus stop markers on the map.
+  /// Toggles the visibility of the U1 bus stop maon the map.
   toggleMarkers(String layerId, bool visible) async {
     String jsObject = "{layerId: '$layerId', visible: $visible}";
     _webViewController.runJavaScript("toggleShowLayers($jsObject)");

@@ -16,13 +16,18 @@ class GradZones extends Iterable<GradZone>
     }
   }
 
+  GradZones.preformedZones(List<GradZone> zones)
+  {
+    _gradZones.addAll(zones);
+  }
+
   /// Returns the zones as a set.
   Set<GradZone> getZones()
   {
     return _gradZones;
   }
 
-  /// Returns the zones as a list sorted in alphabetical order of their names.
+  /// Returns the zones as a list sorted in alphabetical order of their ids.
   List<GradZone> getZonesInOrder()
   {
     HeapSort<String> sort = HeapSort<String>(Comparator.alphabeticalComparator());
@@ -32,13 +37,13 @@ class GradZones extends Iterable<GradZone>
     {
       zones.add(getZoneFromId(zoneId)!);
     }
-    return _gradZones.toList();
+    return zones;
   }
 
   /// Returns the Id's for the zones as a list.
-  List<String> getIds()
+  Set<String> getIds()
   {
-    List<String> ids = [];
+    Set<String> ids = {};
     for (GradZone zone in this)
     {
       ids.add(zone.getId());
@@ -85,4 +90,16 @@ class GradZones extends Iterable<GradZone>
   /// Retrieves an iterator of this object as the collection of Zones.
   @override
   Iterator<GradZone> get iterator => _gradZones.iterator;
+
+  /// Sets the == operator to check if the zones are the same.
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is GradZones &&
+              runtimeType == other.runtimeType &&
+              getZones() == other.getZones();
+
+  /// Sets the hashcode to use the zones.
+  @override
+  int get hashCode => _gradZones.hashCode;
 }

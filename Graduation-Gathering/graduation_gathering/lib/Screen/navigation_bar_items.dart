@@ -27,13 +27,13 @@ class NavigationBarItems
 
   GlobalKey<MainMapWidgetState> mainMapWidgetStateKey = GlobalKey();
 
-  NavigationBarItems(AuthToken authToken, ProfileSettings profile, AcademicStructure structure, GradZones zones, Connections connections, OtherUserProfiles otherUserProfiles)
+  NavigationBarItems(AuthToken authToken, ProfileSettings profile, AcademicStructure structure, GradZones zones, Connections connections, OtherUserProfiles otherUserProfiles, {MainMapWidget? mainMapWidget})
   {
     for (GradZone zone in profile.getUserGradZones())
     {
       zones.getZoneFromId(zone.getId())?.setColour(ZoneColours.blue.getColourRGB());
     }
-    mapScreen = Tuple2(NavigationBarItemEnum.mapScreen, MapScreen(authToken: authToken, allGradZones: zones, usersGradZones: profile.getUserGradZones(), mainMapWidgetStateKey: mainMapWidgetStateKey));
+    mapScreen = Tuple2(NavigationBarItemEnum.mapScreen, MapScreen(authToken: authToken, allGradZones: zones, usersGradZones: profile.getUserGradZones(), mainMapWidgetStateKey: mainMapWidgetStateKey, mainMapWidget: mainMapWidget));
     manageUserPermissionsScreen = Tuple2(NavigationBarItemEnum.manageUserPermissionsScreen, ConnectionsScreen(authToken: authToken, connections: connections, otherUserProfiles: otherUserProfiles, academicStructure: structure, userProfile: profile));
     profileScreen = Tuple2(NavigationBarItemEnum.profileScreen, ProfileScreen(authToken: authToken, profile: profile, academicStructure: structure, allGradZones: zones, mainMapWidgetStateKey: mainMapWidgetStateKey));
     aboutScreen =
