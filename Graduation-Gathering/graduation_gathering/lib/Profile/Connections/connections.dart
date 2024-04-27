@@ -1,6 +1,4 @@
 import 'package:graduation_gathering/Profile/Connections/connection_permission_enum.dart';
-import 'package:graduation_gathering/Profile/Connections/connection_profile.dart';
-import 'package:graduation_gathering/Profile/Connections/connection_type.dart';
 import 'package:graduation_gathering/Profile/Connections/other_user_profiles.dart';
 import 'package:graduation_gathering/Profile/profile_settings.dart';
 
@@ -61,6 +59,12 @@ class Connections extends Iterable<Connection>
   clear()
   {
     _connections.clear();
+  }
+
+  /// Returns a Set of the connections.
+  Set<Connection> getConnections()
+  {
+    return _connections;
   }
 
   /// Creates an iterator from this collection of the connections.

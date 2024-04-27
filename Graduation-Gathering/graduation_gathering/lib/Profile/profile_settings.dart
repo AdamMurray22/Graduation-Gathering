@@ -15,7 +15,8 @@ class ProfileSettings
   String? _school;
   String? _course;
 
-  ProfileSettings(hasLoggedInBefore, this._id, this._email, accountType, name, faculty, school, course, this._userGradZones)
+  ProfileSettings(hasLoggedInBefore, this._id, this._email, String accountType,
+      String? name, String? faculty, String? school, String? course, this._userGradZones)
   {
     _hasLoggedInBefore = (hasLoggedInBefore != 0);
     _accountType = AccountType.getAccountTypeFromString(accountType)!;

@@ -1,5 +1,3 @@
-
-
 import 'package:graduation_gathering/Auth/auth_token.dart';
 import 'package:graduation_gathering/Map/Zones/grad_zones.dart';
 import 'package:graduation_gathering/Profile/Connections/connections.dart';

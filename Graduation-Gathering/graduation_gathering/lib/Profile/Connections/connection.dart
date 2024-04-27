@@ -81,4 +81,18 @@ class Connection
   String toString() {
     return {_connectionProfile.getEmail(), _permissionFrom, _permissionTo}.toString();
   }
+
+  /// Sets the == operator to check if the connection profile and permissions are the same.
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is Connection &&
+              runtimeType == other.runtimeType &&
+              getConnectionProfile() == other.getConnectionProfile() &&
+              getPermissionTo() == other.getPermissionTo() &&
+              getPermissionFrom() == other.getPermissionFrom();
+
+  /// Sets the hashcode to use the connection profile and permissions.
+  @override
+  int get hashCode => _connectionProfile.hashCode + _permissionFrom.hashCode + _permissionTo.hashCode;
 }

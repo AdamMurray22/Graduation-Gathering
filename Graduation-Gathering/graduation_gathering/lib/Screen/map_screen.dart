@@ -5,12 +5,13 @@ import '../Map/main_map_widget.dart';
 
 /// The screen that displays the map.
 class MapScreen extends StatefulWidget {
-  const MapScreen({super.key, required this.authToken, required this.allGradZones, required this.usersGradZones, required this.mainMapWidgetStateKey});
+  const MapScreen({super.key, required this.authToken, required this.allGradZones, required this.usersGradZones, required this.mainMapWidgetStateKey, this.mainMapWidget});
 
   final AuthToken authToken;
   final GradZones allGradZones;
   final GradZones usersGradZones;
   final GlobalKey<MainMapWidgetState> mainMapWidgetStateKey;
+  final MainMapWidget? mainMapWidget; // Used for Testing.
 
   @override
   State<MapScreen> createState() => _MapScreenState();
@@ -22,15 +23,21 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   initState() {
-    _mapWidget = MainMapWidget(
-      key: widget.mainMapWidgetStateKey,
-      authToken: widget.authToken,
-      allGradZones: widget.allGradZones,
-      usersGradZones: widget.usersGradZones,
-      markerClickedFunction: (String markerId) {
-        setState(() {});
-      },
-    );
+    if (widget.mainMapWidget == null) {
+      _mapWidget = MainMapWidget(
+        key: widget.mainMapWidgetStateKey,
+        authToken: widget.authToken,
+        allGradZones: widget.allGradZones,
+        usersGradZones: widget.usersGradZones,
+        markerClickedFunction: (String markerId) {
+          setState(() {});
+        },
+      );
+    }
+    else
+    {
+      _mapWidget = widget.mainMapWidget!;
+    }
     super.initState();
   }
 
