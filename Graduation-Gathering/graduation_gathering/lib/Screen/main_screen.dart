@@ -12,12 +12,13 @@ import 'navigation_bar_items.dart';
 
 /// This holds the sub-screens for the application.
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key, required this.authToken, required this.profile, required this.academicStructure, required this.gradZones, required this.connections, required this.otherUserProfiles, this.mainMapWidget});
+  const MainScreen({super.key, required this.authToken, required this.profile, required this.academicStructure, required this.gradZones, required this.logoutFunction, required this.connections, required this.otherUserProfiles, this.mainMapWidget});
 
   final AuthToken authToken;
   final ProfileSettings profile;
   final AcademicStructure academicStructure;
   final GradZones gradZones;
+  final Function() logoutFunction;
   final Connections connections;
   final OtherUserProfiles otherUserProfiles;
   final MainMapWidget? mainMapWidget; // Used for Testing.
@@ -34,7 +35,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   initState() {
     _navigationBarItems = NavigationBarItems(widget.authToken, widget.profile,
-        widget.academicStructure, widget.gradZones, widget.connections,
+        widget.academicStructure, widget.gradZones, widget.logoutFunction, widget.connections,
         widget.otherUserProfiles, mainMapWidget: widget.mainMapWidget);
     if (!widget.profile.getHasLoggedInBefore())
     {

@@ -31,7 +31,7 @@ void main()
       academicStructure: AcademicStructure({}), gradZones: GradZones([]),
       connections: Connections([], OtherUserProfiles([]), ProfileSettings(true, "id" , "email", "student", null, null, null, null, GradZones([]))),
       otherUserProfiles: OtherUserProfiles([]),
-      mainMapWidget: mockMapWidget)));
+      mainMapWidget: mockMapWidget, logoutFunction: () {  },)));
 
     final titleFinder = find.text('Graduation Gathering');
 
@@ -52,7 +52,7 @@ void main()
         academicStructure: AcademicStructure({}), gradZones: GradZones([]),
         connections: Connections([], OtherUserProfiles([]), ProfileSettings(true, "id" , "email", "student", null, null, null, null, GradZones([]))),
         otherUserProfiles: OtherUserProfiles([]),
-        mainMapWidget: mockMapWidget)));
+        mainMapWidget: mockMapWidget, logoutFunction: () {  },)));
     final navBarFinder = find.text("Home");
 
     expect(navBarFinder, findsOneWidget);
@@ -72,7 +72,7 @@ void main()
         academicStructure: AcademicStructure({}), gradZones: GradZones([]),
         connections: Connections([], OtherUserProfiles([]), ProfileSettings(true, "id" , "email", "student", null, null, null, null, GradZones([]))),
         otherUserProfiles: OtherUserProfiles([]),
-        mainMapWidget: mockMapWidget)));
+        mainMapWidget: mockMapWidget, logoutFunction: () {  },)));
     final navBarFinder = find.byIcon(Icons.person);
 
     expect(navBarFinder, findsOneWidget);
@@ -92,7 +92,7 @@ void main()
         academicStructure: AcademicStructure({}), gradZones: GradZones([]),
         connections: Connections([], OtherUserProfiles([]), ProfileSettings(true, "id" , "email", "student", null, null, null, null, GradZones([]))),
         otherUserProfiles: OtherUserProfiles([]),
-        mainMapWidget: mockMapWidget)));
+        mainMapWidget: mockMapWidget, logoutFunction: () {  },)));
     final navBarFinder = find.text("Profile");
 
     expect(navBarFinder, findsOneWidget);
@@ -112,7 +112,7 @@ void main()
         academicStructure: AcademicStructure({}), gradZones: GradZones([]),
         connections: Connections([], OtherUserProfiles([]), ProfileSettings(true, "id" , "email", "student", null, null, null, null, GradZones([]))),
         otherUserProfiles: OtherUserProfiles([]),
-        mainMapWidget: mockMapWidget)));
+        mainMapWidget: mockMapWidget, logoutFunction: () {  },)));
     final navBarFinder = find.text("About");
 
     expect(navBarFinder, findsOneWidget);
@@ -132,7 +132,7 @@ void main()
         academicStructure: AcademicStructure({}), gradZones: GradZones([]),
         connections: Connections([], OtherUserProfiles([]), ProfileSettings(true, "id" , "email", "student", null, null, null, null, GradZones([]))),
         otherUserProfiles: OtherUserProfiles([]),
-        mainMapWidget: mockMapWidget)));
+        mainMapWidget: mockMapWidget, logoutFunction: () {  },)));
     final navBarFinder = find.text("Profile");
     await tester.tap(navBarFinder);
     await tester.pump();

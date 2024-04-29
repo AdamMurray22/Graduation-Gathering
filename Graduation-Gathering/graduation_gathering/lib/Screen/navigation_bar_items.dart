@@ -27,7 +27,7 @@ class NavigationBarItems
 
   GlobalKey<MainMapWidgetState> mainMapWidgetStateKey = GlobalKey();
 
-  NavigationBarItems(AuthToken authToken, ProfileSettings profile, AcademicStructure structure, GradZones zones, Connections connections, OtherUserProfiles otherUserProfiles, {MainMapWidget? mainMapWidget})
+  NavigationBarItems(AuthToken authToken, ProfileSettings profile, AcademicStructure structure, GradZones zones, Function() logoutFunction, Connections connections, OtherUserProfiles otherUserProfiles, {MainMapWidget? mainMapWidget})
   {
     for (GradZone zone in profile.getUserGradZones())
     {
@@ -35,7 +35,7 @@ class NavigationBarItems
     }
     mapScreen = Tuple2(NavigationBarItemEnum.mapScreen, MapScreen(authToken: authToken, allGradZones: zones, usersGradZones: profile.getUserGradZones(), mainMapWidgetStateKey: mainMapWidgetStateKey, mainMapWidget: mainMapWidget));
     manageUserPermissionsScreen = Tuple2(NavigationBarItemEnum.manageUserPermissionsScreen, ConnectionsScreen(authToken: authToken, connections: connections, otherUserProfiles: otherUserProfiles, academicStructure: structure, userProfile: profile));
-    profileScreen = Tuple2(NavigationBarItemEnum.profileScreen, ProfileScreen(authToken: authToken, profile: profile, academicStructure: structure, allGradZones: zones, mainMapWidgetStateKey: mainMapWidgetStateKey));
+    profileScreen = Tuple2(NavigationBarItemEnum.profileScreen, ProfileScreen(authToken: authToken, profile: profile, academicStructure: structure, allGradZones: zones, logoutFunction: logoutFunction, mainMapWidgetStateKey: mainMapWidgetStateKey));
     aboutScreen =
       const Tuple2(NavigationBarItemEnum.aboutScreen, AboutScreen());
     _itemsInOrder.add(mapScreen);
