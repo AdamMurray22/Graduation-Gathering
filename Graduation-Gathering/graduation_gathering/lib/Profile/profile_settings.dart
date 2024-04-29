@@ -49,7 +49,7 @@ class ProfileSettings
   {
     return {'id': getId(), 'hasLoggedInBefore': getHasLoggedInBefore(), 'email': getEmail(),
       'accountType': getAccountType().accountTypeAsString, 'name': getName(), 'faculty': getFaculty(),
-      'school': getSchool(), 'course': getCourse(), 'userGradZoneIds': _userGradZones.getIds()};
+      'school': getSchool(), 'course': getCourse(), 'userGradZoneIds': _userGradZones.getIds().toList()};
   }
 
   /// Sets has logged in before.
