@@ -27,7 +27,7 @@ class NavigationBarItems
 
   GlobalKey<MainMapWidgetState> mainMapWidgetStateKey = GlobalKey();
 
-  NavigationBarItems(AuthToken authToken, ProfileSettings profile, AcademicStructure structure, GradZones zones, Connections connections, OtherUserProfiles otherUserProfiles, {MainMapWidget? mainMapWidget})
+  NavigationBarItems(AuthToken authToken, ProfileSettings profile, AcademicStructure structure, GradZones zones, Function() logoutFunction, Connections connections, OtherUserProfiles otherUserProfiles, {MainMapWidget? mainMapWidget})
   {
     for (GradZone zone in profile.getUserGradZones())
     {

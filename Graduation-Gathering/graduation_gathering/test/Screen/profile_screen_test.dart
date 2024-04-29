@@ -13,7 +13,7 @@ void main()
       authToken: AuthToken(""),
       profile: ProfileSettings(true, "id" , "email", "student", null, null, null, null, GradZones([])),
       academicStructure: AcademicStructure({}), allGradZones: GradZones([]),
-      mainMapWidgetStateKey: GlobalKey())));
+      mainMapWidgetStateKey: GlobalKey(), logoutFunction: () {  },)));
 
     final topLineFinder = find.text('Profile');
 
@@ -25,7 +25,7 @@ void main()
         authToken: AuthToken(""),
         profile: ProfileSettings(true, "id" , "email", "student", null, null, null, null, GradZones([])),
         academicStructure: AcademicStructure({}), allGradZones: GradZones([]),
-        mainMapWidgetStateKey: GlobalKey())));
+        mainMapWidgetStateKey: GlobalKey(), logoutFunction: () {  },)));
 
     final topLineFinder = find.text('Name: ');
 
@@ -37,7 +37,7 @@ void main()
         authToken: AuthToken(""),
         profile: ProfileSettings(true, "id" , "email", "student", null, null, null, null, GradZones([])),
         academicStructure: AcademicStructure({}), allGradZones: GradZones([]),
-        mainMapWidgetStateKey: GlobalKey())));
+        mainMapWidgetStateKey: GlobalKey(), logoutFunction: () {  },)));
 
     final topLineFinder = find.text('Account Type: Student');
 
@@ -49,7 +49,7 @@ void main()
         authToken: AuthToken(""),
         profile: ProfileSettings(true, "id" , "email", "student", null, null, null, null, GradZones([])),
         academicStructure: AcademicStructure({}), allGradZones: GradZones([]),
-        mainMapWidgetStateKey: GlobalKey())));
+        mainMapWidgetStateKey: GlobalKey(), logoutFunction: () {  },)));
 
     final topLineFinder = find.text('Enter your name here...');
 
@@ -61,7 +61,7 @@ void main()
         authToken: AuthToken(""),
         profile: ProfileSettings(true, "id" , "email", "student", null, null, null, null, GradZones([])),
         academicStructure: AcademicStructure({}), allGradZones: GradZones([]),
-        mainMapWidgetStateKey: GlobalKey())));
+        mainMapWidgetStateKey: GlobalKey(), logoutFunction: () {  },)));
 
     final topLineFinder = find.text('Graduation Zones you can be seen in:');
 

@@ -26,6 +26,6 @@ class TokenStorage
 
   clearToken() async
   {
-    await storage.write(key: "auth token", value: null);
+    await _storage.write(key: "auth token", value: null);
   }
 }
