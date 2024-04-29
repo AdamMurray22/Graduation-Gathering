@@ -18,10 +18,10 @@ class NavigationBarItems
   late final Tuple2<NavigationBarItemEnum, ProfileScreen> profileScreen;
   late final Tuple2<NavigationBarItemEnum, AboutScreen> aboutScreen;
 
-  NavigationBarItems(AuthToken authToken, ProfileSettings profile, AcademicStructure structure, GradZones zones)
+  NavigationBarItems(AuthToken authToken, ProfileSettings profile, AcademicStructure structure, GradZones zones, Function() logoutFunction)
   {
     mapScreen = Tuple2(NavigationBarItemEnum.mapScreen, MapScreen(authToken: authToken, allGradZones: zones, usersGradZones: profile.getUserGradZones()));
-    profileScreen = Tuple2(NavigationBarItemEnum.profileScreen, ProfileScreen(authToken: authToken, profile: profile, academicStructure: structure, allGradZones: zones));
+    profileScreen = Tuple2(NavigationBarItemEnum.profileScreen, ProfileScreen(authToken: authToken, profile: profile, academicStructure: structure, allGradZones: zones, logoutFunction: logoutFunction));
     aboutScreen =
       const Tuple2(NavigationBarItemEnum.aboutScreen, AboutScreen());
     _itemsInOrder.add(mapScreen);

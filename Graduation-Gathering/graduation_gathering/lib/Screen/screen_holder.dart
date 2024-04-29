@@ -74,6 +74,14 @@ class _ScreenHolderState extends State<ScreenHolder> {
     GradZones zones = await GetGradZones().send(authToken);
     ProfileSettings profile = await GetUserProfile().send(authToken, zones);
     AcademicStructure structure = await futureStructure;
-    _screen = MainScreen(authToken: authToken, profile: profile, academicStructure: structure, gradZones: zones);
+    _screen = MainScreen(authToken: authToken, profile: profile, academicStructure: structure, gradZones: zones, logoutFunction: _logout);
+  }
+
+  // Returns to the login screen and clears the token from the storage.
+  _logout()
+  {
+    _tokenStorage.clearToken();
+    _screen = LoginScreen(changeScreen: (authToken) {_switchToMainScreen(authToken);});
+    setState(() {});
   }
 }

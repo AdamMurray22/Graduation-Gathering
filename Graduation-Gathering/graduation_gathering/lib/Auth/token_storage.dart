@@ -19,4 +19,9 @@ class TokenStorage
   writeToken(AuthToken authToken) async {
     await storage.write(key: "auth token", value: authToken.getToken());
   }
+
+  clearToken() async
+  {
+    await storage.write(key: "auth token", value: null);
+  }
 }

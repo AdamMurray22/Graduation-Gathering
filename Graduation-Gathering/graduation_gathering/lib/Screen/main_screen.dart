@@ -9,12 +9,13 @@ import 'navigation_bar_items.dart';
 
 /// This holds the screen for the application.
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key, required this.authToken, required this.profile, required this.academicStructure, required this.gradZones});
+  const MainScreen({super.key, required this.authToken, required this.profile, required this.academicStructure, required this.gradZones, required this.logoutFunction});
 
   final AuthToken authToken;
   final ProfileSettings profile;
   final AcademicStructure academicStructure;
   final GradZones gradZones;
+  final Function() logoutFunction;
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -28,7 +29,8 @@ class _MainScreenState extends State<MainScreen> {
   /// Creates the screens accessed through the nav bar.
   @override
   initState() {
-    _navigationBarItems = NavigationBarItems(widget.authToken, widget.profile, widget.academicStructure, widget.gradZones);
+    _navigationBarItems = NavigationBarItems(widget.authToken, widget.profile,
+        widget.academicStructure, widget.gradZones, widget.logoutFunction);
     if (!widget.profile.getHasLoggedInBefore())
     {
       _navigationBarItems.setSelectedIndex(_navigationBarItems.profileScreen.item1.position);
