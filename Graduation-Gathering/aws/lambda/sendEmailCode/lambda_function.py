@@ -15,6 +15,7 @@ password = os.environ['PASSWORD']
 rds_proxy_host = os.environ['RDS_PROXY_HOST']
 db_name = os.environ['DB_NAME']
 
+# Allows for AWS Logging
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
@@ -31,7 +32,7 @@ except pymysql.MySQLError as e:
 
 logger.info("SUCCESS: Connection to RDS for MySQL instance succeeded")
 
-def lambda_handler(event, context):
+def lambda_handler(event, context): # Entry point for AWS.
 
     messageBodyJson = event["body"]
     messageBody = json.loads(messageBodyJson)
@@ -51,6 +52,7 @@ def lambda_handler(event, context):
 
     email_handler.sendEmail(email, code)
 
+# Returns the user Id from the database for the given email.
 def getUserID(email):
     with conn.cursor() as cur:
         cur.execute(f"select user_id from user where user_email = '{email}'")
@@ -61,6 +63,7 @@ def getUserID(email):
     conn.commit()
     return userID
 
+# Creates a new entry in the database for this user and adds the login code.
 def writeCodeToRDSWIthoutUserID(email, code):
     userID = createUserID()
     expires = getCodeExpireTime()
@@ -73,6 +76,7 @@ def writeCodeToRDSWIthoutUserID(email, code):
             logger.error(e)
         conn.commit()
 
+# Adds the code to the database for the existing entry for the user.
 def writeCodeToRDSWIthUserID(userID, code):
     expires = getCodeExpireTime()
     with conn.cursor() as cur:
@@ -83,6 +87,7 @@ def writeCodeToRDSWIthUserID(userID, code):
             logger.error(e)
         conn.commit()
 
+# Creates a new unique user ID.
 def createUserID():
     with conn.cursor() as cur:
         uniqueCodeCreated = False
@@ -98,23 +103,28 @@ def createUserID():
     conn.commit()
     return userID
 
+# Checks whether the given email is a valid student or staff email for the University of Portsmouth.
 def validEmail(email):
     startOfRegEmail = '(?:[a-z0-9!#\$%&\'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#\$%&\'*+/=?^_`{|}~-]+)*|"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*")'
     studentReg = startOfRegEmail  + '@myport.ac.uk'
     staffReg = startOfRegEmail + '@port.ac.uk'
     return re.search(studentReg, email) or re.search(staffReg, email)
 
+# Gets when the code should expire (24 hours from now) as seconds since unix epoch
 def getCodeExpireTime():
     return time.time() + (5 * 60)
 
+# Creates a 5 digit login code (Number from 0 - 99999 but always with padded zeros to make it 5 digits)
 def generateCode():
     codeList = [str(random.randint(0,9)) for _ in range(5)]
     return "".join(codeList)
 
+# Creates a potential user ID.
 def generateUserID():
     codeList = [str(random.randint(0,9)) for _ in range(10)]
     return "US-" + "".join(codeList)
 
+# Returns the account type.
 def getStudentStaff(email):
     endOfEmail = email.split('@')[1]
     if endOfEmail == "myport.ac.uk":
@@ -122,9 +132,10 @@ def getStudentStaff(email):
     elif endOfEmail == "port.ac.uk":
         return "Staff"
 
+# Escapes a string to be given to the database to protect the database.
 def escape_sql_string(sql_string):
     translate_table = str.maketrans({"]": r"\]", "\\": r"\\",
-                                 "^": r"\^", "$": r"\$", "*": r"\*", "'": r"\'"})
+                                 "^": r"\^", "$": r"\$", "*": r"\*", "'": r"\'", '"': r'\"'})
     if (sql_string is None):
         return sql_string
     return sql_string.translate(translate_table)

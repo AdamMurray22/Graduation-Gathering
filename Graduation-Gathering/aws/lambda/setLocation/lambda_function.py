@@ -13,6 +13,7 @@ password = os.environ['PASSWORD']
 rds_proxy_host = os.environ['RDS_PROXY_HOST']
 db_name = os.environ['DB_NAME']
 
+# Allows for AWS Logging
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
@@ -25,7 +26,7 @@ except pymysql.MySQLError as e:
     logger.error(e)
     sys.exit()
 
-def lambda_handler(event, context):
+def lambda_handler(event, context): # Entry point for AWS.
     email = event['requestContext']['authorizer']["lambda"]["email"]
     userID = event['requestContext']['authorizer']["lambda"]["userID"]
 
@@ -42,10 +43,11 @@ def lambda_handler(event, context):
             logger.error(e)
         cur.close()
     conn.commit()
-    
+
+# Escapes a string to be given to the database to protect the database.
 def escape_sql_string(sql_string):
     translate_table = str.maketrans({"]": r"\]", "\\": r"\\",
-                                 "^": r"\^", "$": r"\$", "*": r"\*", "'": r"\'"})
+                                 "^": r"\^", "$": r"\$", "*": r"\*", "'": r"\'", '"': r'\"'})
     if (sql_string is None):
         return sql_string
     return sql_string.translate(translate_table)

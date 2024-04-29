@@ -12,6 +12,7 @@ password = os.environ['PASSWORD']
 rds_proxy_host = os.environ['RDS_PROXY_HOST']
 db_name = os.environ['DB_NAME']
 
+# Allows for AWS Logging
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
@@ -24,13 +25,13 @@ except pymysql.MySQLError as e:
     logger.error(e)
     sys.exit()
 
-def lambda_handler(event, context):
+def lambda_handler(event, context): # Entry point for AWS.
     email = event['requestContext']['authorizer']["lambda"]["email"]
     userID = event['requestContext']['authorizer']["lambda"]["userID"]
 
     with conn.cursor() as cur:
-        sql = "SELECT user_email, user_id, user_name, faculty_name, school_name, course_name, student_staff, has_logged_in FROM user WHERE user_id = '{userID}'"
-        cur.execute(sql.format(userID = userID))
+        profile_sql = "SELECT user_email, user_id, user_name, faculty_name, school_name, course_name, student_staff, has_logged_in FROM user WHERE user_id = '{userID}'"
+        cur.execute(profile_sql.format(userID = userID))
         for row in cur:
             userEmail = row[0]
             userID = row[1]
@@ -40,7 +41,12 @@ def lambda_handler(event, context):
             userCourse = row[5]
             userStudentStaff = row[6]
             userHasLoggedIn = row[7]
-            user = {
+        zones = []
+        zones_sql = "SELECT zone_id FROM user_zones WHERE user_id = '{userID}'"
+        cur.execute(zones_sql.format(userID = userID))
+        for row in cur:
+             zones.append(row[0])
+        user = {
                 'email': userEmail,
                 'id': userID,
                 'name': userName,
@@ -48,16 +54,18 @@ def lambda_handler(event, context):
                 'school': userSchool,
                 'course': userCourse,
                 'accountType': userStudentStaff,
-                'hasLoggedInBefore': userHasLoggedIn
+                'hasLoggedInBefore': userHasLoggedIn,
+                'userGradZoneIds': zones
             }
         cur.close()
     conn.commit()
 
     return user
 
+# Escapes a string to be given to the database to protect the database.
 def escape_sql_string(sql_string):
     translate_table = str.maketrans({"]": r"\]", "\\": r"\\",
-                                 "^": r"\^", "$": r"\$", "*": r"\*", "'": r"\'"})
+                                 "^": r"\^", "$": r"\$", "*": r"\*", "'": r"\'", '"': r'\"'})
     if (sql_string is None):
         return sql_string
     return sql_string.translate(translate_table)
