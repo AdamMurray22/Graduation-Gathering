@@ -3,6 +3,7 @@ import json
 
 client = boto3.client('ses', region_name='eu-west-2')
 
+# Sends a request to AWS SES to send an email containing the login code.
 def sendEmail(receiver_email, code):
         
     response = client.send_email(
@@ -23,8 +24,6 @@ def sendEmail(receiver_email, code):
     },
     Source='graduation.gathering.login@gmail.com'
     )
-        
-    print(response)
     
     return {
     'statusCode': 200,

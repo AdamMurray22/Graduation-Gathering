@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:graduation_gathering/Map/Zones/grad_zone.dart';
 import 'package:graduation_gathering/Map/Zones/grad_zones.dart';
+import 'package:graduation_gathering/Map/Zones/zone_colours_enum.dart';
+import 'package:graduation_gathering/Map/main_map_widget.dart';
 import 'package:graduation_gathering/Profile/academic_structure.dart';
 import 'package:graduation_gathering/Profile/set_user_profile.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
@@ -9,26 +11,23 @@ import '../Auth/auth_token.dart';
 import '../Profile/account_type.dart';
 import '../Profile/profile_settings.dart';
 
-/// This holds the screen for the application.
+/// This is the profile screen widget.
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen(
-      {super.key,
-      required this.authToken,
-      required this.profile,
-      required this.academicStructure,
-      required this.allGradZones, required this.logoutFunction});
+      {super.key, required this.authToken, required this.profile, required this.academicStructure, required this.allGradZones, required this.logoutFunction, required this.mainMapWidgetStateKey});
 
   final AuthToken authToken;
   final ProfileSettings profile;
   final AcademicStructure academicStructure;
   final GradZones allGradZones;
   final Function() logoutFunction;
-
+  final GlobalKey<MainMapWidgetState> mainMapWidgetStateKey;
+  
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-// This class contains the GUI structure for the app.
+// This is the profile screen state.
 class _ProfileScreenState extends State<ProfileScreen> {
   late SetUserProfile _setUserProfile;
   late SingleValueDropDownController _facultyDropDownController;
@@ -335,6 +334,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         )));
   }
 
+  // Sends the request to the server to save the users profile settings.
   _saveSettings() {
     widget.profile.setHasLoggedInBefore(true);
     widget.profile.setName(_name);
@@ -352,10 +352,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             .removeZone(widget.allGradZones.getZoneFromId(zoneId)!);
       }
     }
+    _updateMapGeojsonColours();
     _setUserProfile.send(widget.profile);
   }
 
-  _zoneCheckBoxTicked(String zoneId, bool checked) {
+  // Used to update the UI to tick the clicked check box.
+  _zoneCheckBoxTicked(String zoneId, bool checked)
+  {
     _gradZonesCheckboxTicked[zoneId] = checked;
     setState(() {});
   }
@@ -364,5 +367,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
   _logout()
   {
     widget.logoutFunction();
+  }
+
+  // Updates the geojson colour for the zones on the map.
+  _updateMapGeojsonColours()
+  {
+    for (GradZone zone in widget.allGradZones)
+    {
+      zone.setColour(ZoneColours.red.getColourRGB());
+    }
+    for (GradZone zone in widget.profile.getUserGradZones())
+    {
+      widget.allGradZones.getZoneFromId(zone.getId())?.setColour(ZoneColours.blue.getColourRGB());
+    }
+    widget.mainMapWidgetStateKey.currentState?.updateGradZoneColours();
   }
 }

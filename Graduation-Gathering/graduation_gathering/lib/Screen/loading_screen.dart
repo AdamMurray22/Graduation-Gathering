@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Loading Screen Widget.
 class LoadingScreen extends StatefulWidget {
   const LoadingScreen({super.key});
 
@@ -7,7 +8,7 @@ class LoadingScreen extends StatefulWidget {
   State<LoadingScreen> createState() => _LoadingScreenState();
 }
 
-// This class contains the GUI structure for the app.
+// Loading Screen state.
 class _LoadingScreenState extends State<LoadingScreen> {
 
   @override

@@ -25,7 +25,7 @@ class _MyAppState extends State<MyApp> {
     LocationHandler.getHandler().requestLocationPermission();
   }
 
-  // This widget is the root of your application.
+  /// This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(

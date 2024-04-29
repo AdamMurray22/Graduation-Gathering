@@ -15,7 +15,7 @@ password = os.environ['PASSWORD']
 rds_proxy_host = os.environ['RDS_PROXY_HOST']
 db_name = os.environ['DB_NAME']
 
-
+# Allows for AWS Logging
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
@@ -32,7 +32,7 @@ except pymysql.MySQLError as e:
 
 logger.info("SUCCESS: Connection to RDS for MySQL instance succeeded")
 
-def lambda_handler(event, context):
+def lambda_handler(event, context): # Entry point for AWS.
 
     messageBodyJson = event["body"]
     messageBody = json.loads(messageBodyJson)
@@ -45,13 +45,18 @@ def lambda_handler(event, context):
     }
     
     if verifyCode(email, code):
+        with conn.cursor() as cur:
+            cur.execute(f"UPDATE user SET email_verified = true WHERE user_email = '{email}'")
+            cur.close()
+        conn.commit()
         response["validated"] = True
         response["token"] = jwt.generateToken(email, getUserId(email))
     return response
 
+# Verifies whether the given code is correct and with the time constraint for the given email.
 def verifyCode(email, code):
     with conn.cursor() as cur:
-        cur.execute(f"select login_code, login_code_expires from user where user_email = '{email}'")
+        cur.execute(f"select login_code, login_code_expires from user where user_email = '{escape_sql_string(email)}'")
         loginCode = None
         for row in cur:
             loginCode = row[0]
@@ -65,7 +70,8 @@ def verifyCode(email, code):
         return float(expires) >= time.time()
     else:
         return False
-    
+
+# Gets the user id for the account with the given email.
 def getUserId(email):
     with conn.cursor() as cur:
         cur.execute(f"select user_id from user where user_email = '{email}'")
@@ -74,3 +80,11 @@ def getUserId(email):
         cur.close()
     conn.commit()
     return userID
+
+# Escapes a string to be given to the database to protect the database.
+def escape_sql_string(sql_string):
+    translate_table = str.maketrans({"]": r"\]", "\\": r"\\",
+                                 "^": r"\^", "$": r"\$", "*": r"\*", "'": r"\'", '"': r'\"'})
+    if (sql_string is None):
+        return sql_string
+    return sql_string.translate(translate_table)

@@ -103,11 +103,11 @@
             }),
             style: new ol.style.Style({
                 stroke: new ol.style.Stroke({
-                    color: layer.colour,
+                    color: `rgb(${layer.colour.r}, ${layer.colour.g}, ${layer.colour.b})`,
                     width: 8,
                 }),
                 fill: new ol.style.Fill({
-                    color: 'rgba(0, 0, 255, 0.1)',
+                    color: `rgba(${layer.colour.r}, ${layer.colour.g}, ${layer.colour.b}, 0.1)`,
                 }),
             }),
         });
@@ -149,6 +149,13 @@
         addMarker(markedFeature);
     }
 
+    // Clears a marker layer
+    function clearMarkerLayer(layerId)
+    {
+        const layer = IDLayersMap.get(layerId.layerId).get(layerEnum.markerLayer);
+        layer.getSource().clear();
+    }
+
     // Toggles the visibility of the markers
     function toggleShowLayers(visible) {
         const layers = Array.from(IDLayersMap.get(visible.layerId).values());
@@ -162,19 +169,19 @@
         MarkerClickedDart.postMessage(marker.getId());
     }
 
-    // Adds a route default colour
+    // Adds a geojson default colour
     function addGeoJson(geoJsonFeature) {
         const layer = IDLayersMap.get(geoJsonFeature.layerId).get(layerEnum.geoJsonLayer);
         drawGeoJsonLines(geoJsonFeature, layer);
     }
 
-    // Adds a route with given colour
+    // Adds a geojson with given colour
     function addGeoJsonWithColour(geoJsonFeature) {
         const layer = IDLayersMap.get(geoJsonFeature.layerId).get(layerEnum.geoJsonLayer);
         drawGeoJsonLinesWithColour(geoJsonFeature, layer);
     }
 
-    // Removes a route
+    // Clears a geojson layer
     function clearGeoJsonLayer(layerId)
     {
         const layer = IDLayersMap.get(layerId.layerId).get(layerEnum.geoJsonLayer);
@@ -198,9 +205,12 @@
         features.forEach(function (feature) {
             feature.setStyle(new ol.style.Style({
                 stroke: new ol.style.Stroke({
-                   color: geoJson.colour,
-                   width: 8
-                })
+                    color: `rgb(${geoJson.colour.r}, ${geoJson.colour.g}, ${geoJson.colour.b})`,
+                    width: 8,
+                }),
+                fill: new ol.style.Fill({
+                    color: `rgba(${geoJson.colour.r}, ${geoJson.colour.g}, ${geoJson.colour.b}, 0.1)`,
+                }),
             }));
         });
         layer.getSource().addFeatures(features);

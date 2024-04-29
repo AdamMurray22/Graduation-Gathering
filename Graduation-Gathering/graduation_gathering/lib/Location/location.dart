@@ -19,6 +19,7 @@ class Location
     return _longitude;
   }
 
+  /// Sets the == operator to check if the longitude and latitude of the two object are equal.
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -27,6 +28,7 @@ class Location
               _latitude == other._latitude &&
               _longitude == other._longitude;
 
+  /// Sets the hashcode to use the longitude and latitude.
   @override
   int get hashCode => _longitude.hashCode + _latitude.hashCode;
 }

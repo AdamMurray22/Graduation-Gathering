@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:graduation_gathering/Auth/token_storage.dart';
 import 'package:graduation_gathering/Auth/validate_token.dart';
 import 'package:graduation_gathering/Map/Zones/get_grad_zones.dart';
+import 'package:graduation_gathering/Profile/Connections/connections.dart';
+import 'package:graduation_gathering/Profile/Connections/other_user_profiles.dart';
 import 'package:graduation_gathering/Profile/profile_settings.dart';
 import 'package:graduation_gathering/Screen/main_screen.dart';
 import '../Auth/auth_token.dart';
 import '../Login/get_user_profile.dart';
 import '../Map/Zones/grad_zones.dart';
+import '../Profile/Connections/get_all_other_users_profiles.dart';
+import '../Profile/Connections/get_connections.dart';
 import '../Profile/academic_structure.dart';
 import '../Profile/get_academic_structure.dart';
 import 'loading_screen.dart';
@@ -30,11 +34,14 @@ class _ScreenHolderState extends State<ScreenHolder> {
   @override
   initState() {
     _screen = const LoadingScreen();
-    validateToken();
+    _validateToken();
     super.initState();
   }
 
-  validateToken() async {
+  // Checks if a token stored in storage is valid.
+  // If their is a valid token, it loads the main app,
+  // otherwise loads the login screen.
+  _validateToken() async {
     AuthToken? authToken = await _tokenStorage.getToken();
     if (!(await ValidateToken().valid(authToken)))
     {
@@ -60,6 +67,7 @@ class _ScreenHolderState extends State<ScreenHolder> {
     );
   }
 
+  // Writes the auth token to storage and switches the view the main screen.
   _switchToMainScreen(AuthToken authToken) async
   {
     _tokenStorage.writeToken(authToken);
@@ -68,14 +76,20 @@ class _ScreenHolderState extends State<ScreenHolder> {
     });
   }
 
+  // Retrieves all the data needed for the start of the logged in app from the server.
   _loadMainScreen(AuthToken authToken) async
   {
+    Future<OtherUserProfiles> futureOtherUserProfiles = GetAllOtherUsersProfiles().send(authToken);
+    Future<GradZones> futureZones = GetGradZones().send(authToken);
     Future<AcademicStructure> futureStructure = GetAcademicStructure().send(authToken);
-    GradZones zones = await GetGradZones().send(authToken);
+    GradZones zones = await futureZones;
     ProfileSettings profile = await GetUserProfile().send(authToken, zones);
+    OtherUserProfiles otherUserProfiles = await futureOtherUserProfiles;
+    Future<Connections> futureConnections = GetConnections().send(authToken, otherUserProfiles, profile);
     AcademicStructure structure = await futureStructure;
-    _screen = MainScreen(authToken: authToken, profile: profile, academicStructure: structure, gradZones: zones, logoutFunction: _logout);
-  }
+    Connections connections = await futureConnections;
+    _screen = MainScreen(authToken: authToken, profile: profile, academicStructure: structure, gradZones: zones, logoutFunction: _logout, connections: connections, otherUserProfiles: otherUserProfiles);
+    }
 
   // Returns to the login screen and clears the token from the storage.
   _logout()
