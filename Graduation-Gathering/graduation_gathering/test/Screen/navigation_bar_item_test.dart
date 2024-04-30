@@ -1,3 +1,4 @@
+import 'package:graduation_gathering/AWS/graduation_dates.dart';
 import 'package:graduation_gathering/Auth/auth_token.dart';
 import 'package:graduation_gathering/Map/Zones/grad_zones.dart';
 import 'package:graduation_gathering/Profile/Connections/connections.dart';
@@ -16,20 +17,21 @@ void main() {
     AcademicStructure structure = AcademicStructure({});
     OtherUserProfiles otherUserProfiles = OtherUserProfiles([]);
     Connections connections = Connections([], otherUserProfiles, profile);
+    GraduationDates dates = GraduationDates([]);
 
     test('.getSelectedIndex() default value', () {
-      NavigationBarItems navigationBarItems = NavigationBarItems(authToken, profile, structure, zones, (){}, connections, otherUserProfiles);
+      NavigationBarItems navigationBarItems = NavigationBarItems(authToken, profile, structure, zones, (){}, connections, otherUserProfiles, dates);
       expect(navigationBarItems.getSelectedIndex(), 0);
     });
 
     test('.getSelectedIndex() value changed', () {
-      NavigationBarItems navigationBarItems = NavigationBarItems(authToken, profile, structure, zones, (){}, connections, otherUserProfiles);
+      NavigationBarItems navigationBarItems = NavigationBarItems(authToken, profile, structure, zones, (){}, connections, otherUserProfiles, dates);
       navigationBarItems.setSelectedIndex(3);
       expect(navigationBarItems.getSelectedIndex(), 3);
     });
 
     test('.getValuesInOrder() default nav bar items', () {
-      NavigationBarItems navigationBarItems = NavigationBarItems(authToken, profile, structure, zones, (){}, connections, otherUserProfiles);
+      NavigationBarItems navigationBarItems = NavigationBarItems(authToken, profile, structure, zones, (){}, connections, otherUserProfiles, dates);
       expect(navigationBarItems.getValuesInOrder(), [
         navigationBarItems.mapScreen,
         navigationBarItems.manageUserPermissionsScreen,
@@ -39,7 +41,7 @@ void main() {
     });
 
     test('.getValuesInOrder() default nav bar items', () {
-      NavigationBarItems navigationBarItems = NavigationBarItems(authToken, profile, structure, zones, (){}, connections, otherUserProfiles);
+      NavigationBarItems navigationBarItems = NavigationBarItems(authToken, profile, structure, zones, (){}, connections, otherUserProfiles, dates);
       expect(navigationBarItems.getScreensInOrder(), [
         navigationBarItems.mapScreen.item2,
         navigationBarItems.manageUserPermissionsScreen.item2,

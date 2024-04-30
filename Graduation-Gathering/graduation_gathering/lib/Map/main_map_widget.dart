@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:graduation_gathering/AWS/get_other_users_location.dart';
+import 'package:graduation_gathering/AWS/graduation_dates.dart';
 import 'package:graduation_gathering/AWS/send_location_data.dart';
 import 'package:graduation_gathering/Auth/auth_token.dart';
 import 'package:graduation_gathering/Map/Zones/colour.dart';
@@ -16,7 +17,7 @@ import 'map_widget.dart';
 
 /// The main map screen Widget.
 class MainMapWidget extends MapWidget {
-  const MainMapWidget({required this.authToken, required this.allGradZones, required this.usersGradZones, super.markerClickedFunction, super.key});
+  const MainMapWidget({required this.authToken, required this.allGradZones, required this.usersGradZones, required this.graduationDates, super.markerClickedFunction, super.key});
 
   /// The auth token to authenticate requests to the server.
   final AuthToken authToken;
@@ -24,6 +25,8 @@ class MainMapWidget extends MapWidget {
   final GradZones allGradZones;
   /// All of the zones that the user can appear in.
   final GradZones usersGradZones;
+  /// The dates when location sharing is enabled.
+  final GraduationDates graduationDates;
 
   @override
   MapWidgetState<MainMapWidget> createState() => MainMapWidgetState();
@@ -63,6 +66,10 @@ class MainMapWidgetState extends MapWidgetState<MainMapWidget> {
   _addUserLocationIcon() {
     LocationHandler handler = LocationHandler.getHandler();
     handler.onLocationChanged((location_data.LocationData currentLocation) async {
+      if (!widget.graduationDates.isGraduationDayToday())
+      {
+        return;
+      }
       updateMarker(MapDataId.userLocation.idPrefix, MapDataId.userLocation.idPrefix,
           currentLocation.longitude!, currentLocation.latitude!);
       if (await isPointInsideGeojson(currentLocation.longitude!, currentLocation.latitude!, widget.usersGradZones)) {
@@ -80,6 +87,10 @@ class MainMapWidgetState extends MapWidgetState<MainMapWidget> {
 
   // Adds the other users markers to the map.
   _getOtherUsersLocations() async {
+    if (!widget.graduationDates.isGraduationDayToday())
+    {
+      return;
+    }
     _addOtherUsersMarkers(await _getOtherUsersLocation.send());
   }
 

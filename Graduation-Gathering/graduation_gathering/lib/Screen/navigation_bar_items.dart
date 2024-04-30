@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:graduation_gathering/AWS/graduation_dates.dart';
 import 'package:graduation_gathering/Map/Zones/grad_zones.dart';
 import 'package:graduation_gathering/Map/main_map_widget.dart';
 import 'package:graduation_gathering/Profile/academic_structure.dart';
@@ -27,13 +28,13 @@ class NavigationBarItems
 
   GlobalKey<MainMapWidgetState> mainMapWidgetStateKey = GlobalKey();
 
-  NavigationBarItems(AuthToken authToken, ProfileSettings profile, AcademicStructure structure, GradZones zones, Function() logoutFunction, Connections connections, OtherUserProfiles otherUserProfiles, {MainMapWidget? mainMapWidget})
+  NavigationBarItems(AuthToken authToken, ProfileSettings profile, AcademicStructure structure, GradZones zones, Function() logoutFunction, Connections connections, OtherUserProfiles otherUserProfiles, GraduationDates graduationDates, {MainMapWidget? mainMapWidget})
   {
     for (GradZone zone in profile.getUserGradZones())
     {
       zones.getZoneFromId(zone.getId())?.setColour(ZoneColours.blue.getColourRGB());
     }
-    mapScreen = Tuple2(NavigationBarItemEnum.mapScreen, MapScreen(authToken: authToken, allGradZones: zones, usersGradZones: profile.getUserGradZones(), mainMapWidgetStateKey: mainMapWidgetStateKey, mainMapWidget: mainMapWidget));
+    mapScreen = Tuple2(NavigationBarItemEnum.mapScreen, MapScreen(authToken: authToken, allGradZones: zones, usersGradZones: profile.getUserGradZones(), mainMapWidgetStateKey: mainMapWidgetStateKey, mainMapWidget: mainMapWidget, graduationDates: graduationDates));
     manageUserPermissionsScreen = Tuple2(NavigationBarItemEnum.manageUserPermissionsScreen, ConnectionsScreen(authToken: authToken, connections: connections, otherUserProfiles: otherUserProfiles, academicStructure: structure, userProfile: profile));
     profileScreen = Tuple2(NavigationBarItemEnum.profileScreen, ProfileScreen(authToken: authToken, profile: profile, academicStructure: structure, allGradZones: zones, logoutFunction: logoutFunction, mainMapWidgetStateKey: mainMapWidgetStateKey));
     aboutScreen =

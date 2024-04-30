@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:graduation_gathering/AWS/get_graduation_dates.dart';
+import 'package:graduation_gathering/AWS/graduation_dates.dart';
 import 'package:graduation_gathering/Auth/token_storage.dart';
 import 'package:graduation_gathering/Auth/validate_token.dart';
 import 'package:graduation_gathering/Map/Zones/get_grad_zones.dart';
@@ -82,13 +84,15 @@ class _ScreenHolderState extends State<ScreenHolder> {
     Future<OtherUserProfiles> futureOtherUserProfiles = GetAllOtherUsersProfiles().send(authToken);
     Future<GradZones> futureZones = GetGradZones().send(authToken);
     Future<AcademicStructure> futureStructure = GetAcademicStructure().send(authToken);
+    Future<GraduationDates> futureGraduationDates = GetGraduationDates(authToken).send();
     GradZones zones = await futureZones;
     ProfileSettings profile = await GetUserProfile().send(authToken, zones);
     OtherUserProfiles otherUserProfiles = await futureOtherUserProfiles;
     Future<Connections> futureConnections = GetConnections().send(authToken, otherUserProfiles, profile);
     AcademicStructure structure = await futureStructure;
     Connections connections = await futureConnections;
-    _screen = MainScreen(authToken: authToken, profile: profile, academicStructure: structure, gradZones: zones, logoutFunction: _logout, connections: connections, otherUserProfiles: otherUserProfiles);
+    GraduationDates graduationDates = await futureGraduationDates;
+    _screen = MainScreen(authToken: authToken, profile: profile, academicStructure: structure, gradZones: zones, logoutFunction: _logout, connections: connections, otherUserProfiles: otherUserProfiles, graduationDates: graduationDates);
     }
 
   // Returns to the login screen and clears the token from the storage.

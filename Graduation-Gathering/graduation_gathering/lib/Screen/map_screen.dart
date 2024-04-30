@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:graduation_gathering/AWS/graduation_dates.dart';
 import 'package:graduation_gathering/Auth/auth_token.dart';
 import '../Map/Zones/grad_zones.dart';
 import '../Map/main_map_widget.dart';
 
 /// The screen that displays the map.
 class MapScreen extends StatefulWidget {
-  const MapScreen({super.key, required this.authToken, required this.allGradZones, required this.usersGradZones, required this.mainMapWidgetStateKey, this.mainMapWidget});
+  const MapScreen({super.key, required this.authToken, required this.allGradZones, required this.usersGradZones, required this.mainMapWidgetStateKey, this.mainMapWidget, required this.graduationDates});
 
   final AuthToken authToken;
   final GradZones allGradZones;
   final GradZones usersGradZones;
+  final GraduationDates graduationDates;
   final GlobalKey<MainMapWidgetState> mainMapWidgetStateKey;
   final MainMapWidget? mainMapWidget; // Used for Testing.
 
@@ -32,6 +34,7 @@ class _MapScreenState extends State<MapScreen> {
         markerClickedFunction: (String markerId) {
           setState(() {});
         },
+        graduationDates: widget.graduationDates
       );
     }
     else
