@@ -37,28 +37,34 @@ class _LoginScreenState extends State<LoginScreen> {
           style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
-        Row(children: [
-          Flexible(
-              child: TextField(
-                onChanged: (text) {
-                  _emailInput = text;
-                },
-                onSubmitted: (text) {
-                  _emailEntered(_emailInput);
-                },
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black, width: 0.0),
-                  ),
-                  hintText: 'Email...',
-                ),
-              )),
-          ElevatedButton(
-              onPressed: () {
+        Padding(
+          padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+          child: Row(children: [
+            Flexible(
+                child: TextField(
+              onChanged: (text) {
+                _emailInput = text;
+              },
+              onSubmitted: (text) {
                 _emailEntered(_emailInput);
               },
-              child: const Icon(Icons.arrow_outward))
-        ]),
+              decoration: const InputDecoration(
+                filled: true,
+                fillColor: Color(0xFFFFFFFF),
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black, width: 0.0),
+                ),
+                hintText: 'Email...',
+              ),
+            )),
+            const SizedBox(width: 5),
+            ElevatedButton(
+                onPressed: () {
+                  _emailEntered(_emailInput);
+                },
+                child: const Icon(Icons.arrow_outward))
+          ]),
+        ),
       ],
     );
     _displayedEmailWidgets = _emailWidgets;
@@ -70,58 +76,73 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         resizeToAvoidBottomInset: false,
-        backgroundColor: const Color(0xffffffff),
+        backgroundColor: const Color(0xff009a96),
         body: Center(
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  _displayedEmailWidgets,
+          _displayedEmailWidgets,
           Visibility(
-            visible: _emailErrorTextVisible,
+              visible: _emailErrorTextVisible,
               child: const Text(
                 "Must be a valid University of Portsmouth email",
-                style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.red),
+                style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red),
                 textAlign: TextAlign.center,
-              )
-          ),
+              )),
           Visibility(
-            visible: _codeAreaVisible,
+              visible: _codeAreaVisible,
               child: Column(
-                children:
-                [
-          const Text(
-            "Please enter the code sent to your email:",
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-            textAlign: TextAlign.center,
-          ),
-          Row(children: [
-            Flexible(
-                child: TextField(
-              onChanged: (text) {
-                _codeInput = text;
-              },
-              onSubmitted: (text) {
-                _codeEntered(_emailInput, _codeInput);
-              },
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black, width: 0.0),
-                ),
-                hintText: 'Code...',
-              ),
-            )),
-            ElevatedButton(
-                onPressed: () {
-                  _codeEntered(_emailInput, _codeInput);
-                },
-                child: const Icon(Icons.arrow_outward))
-          ]),
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
+                    child: Text(
+                      "Please enter the code sent to your email:",
+                      style:
+                          TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                    child: Row(children: [
+                      Flexible(
+                          child: TextField(
+                        onChanged: (text) {
+                          _codeInput = text;
+                        },
+                        onSubmitted: (text) {
+                          _codeEntered(_emailInput, _codeInput);
+                        },
+                        decoration: const InputDecoration(
+                          filled: true,
+                          fillColor: Color(0xFFFFFFFF),
+                          border: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.black, width: 0.0),
+                          ),
+                          hintText: 'Code...',
+                        ),
+                      )),
+                      const SizedBox(width: 5),
+                      ElevatedButton(
+                          onPressed: () {
+                            _codeEntered(_emailInput, _codeInput);
+                          },
+                          child: const Icon(Icons.arrow_outward))
+                    ]),
+                  ),
                   ElevatedButton(
                       onPressed: () {
                         _sendCode(_emailInput);
                       },
-                      child: const Text("Resend code", style: TextStyle(fontSize: 13),)
-                  )
-                ],))
+                      child: const Text(
+                        "Resend code",
+                        style: TextStyle(fontSize: 13),
+                      ))
+                ],
+              ))
         ])));
   }
 
@@ -133,32 +154,29 @@ class _LoginScreenState extends State<LoginScreen> {
       _emailErrorTextVisible = false;
       _codeAreaVisible = true;
       _displayedEmailWidgets = Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-          children:[
-            Text(_emailInput, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              _emailInput,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(width: 5),
             ElevatedButton(
                 onPressed: () {
                   _displayedEmailWidgets = _emailWidgets;
                   _emailErrorTextVisible = false;
                   _codeAreaVisible = false;
                   _emailInput = "";
-                  setState(() {
-
-                  });
+                  setState(() {});
                 },
-                child: const Text("Edit", style: TextStyle(fontSize: 13))
-            )
-          ]
-      );
+                child: const Text("Edit", style: TextStyle(fontSize: 13)))
+          ]);
       _sendCode(emailInput);
-    }
-    else
-    {
+    } else {
       _emailErrorTextVisible = true;
     }
-    setState(() {
-    });
+    setState(() {});
   }
 
   // Sends the email and code to the server to get the auth token.
@@ -173,8 +191,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   // Sends the email.
-  _sendCode(String email)
-  {
+  _sendCode(String email) {
     SendEmail emailCode = SendEmail();
     emailCode.send(email);
   }
