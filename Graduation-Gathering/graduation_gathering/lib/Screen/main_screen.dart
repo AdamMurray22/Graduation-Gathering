@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:graduation_gathering/AWS/graduation_dates.dart';
 import 'package:graduation_gathering/Map/Zones/grad_zones.dart';
 import 'package:graduation_gathering/Profile/Connections/connections.dart';
 import 'package:graduation_gathering/Profile/Connections/other_user_profiles.dart';
@@ -12,7 +13,7 @@ import 'navigation_bar_items.dart';
 
 /// This holds the sub-screens for the application.
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key, required this.authToken, required this.profile, required this.academicStructure, required this.gradZones, required this.logoutFunction, required this.connections, required this.otherUserProfiles, this.mainMapWidget});
+  const MainScreen({super.key, required this.authToken, required this.profile, required this.academicStructure, required this.gradZones, required this.logoutFunction, required this.connections, required this.otherUserProfiles, this.mainMapWidget, required this.graduationDates});
 
   final AuthToken authToken;
   final ProfileSettings profile;
@@ -21,6 +22,7 @@ class MainScreen extends StatefulWidget {
   final Function() logoutFunction;
   final Connections connections;
   final OtherUserProfiles otherUserProfiles;
+  final GraduationDates graduationDates;
   final MainMapWidget? mainMapWidget; // Used for Testing.
 
   @override
@@ -36,7 +38,7 @@ class _MainScreenState extends State<MainScreen> {
   initState() {
     _navigationBarItems = NavigationBarItems(widget.authToken, widget.profile,
         widget.academicStructure, widget.gradZones, widget.logoutFunction, widget.connections,
-        widget.otherUserProfiles, mainMapWidget: widget.mainMapWidget);
+        widget.otherUserProfiles, widget.graduationDates, mainMapWidget: widget.mainMapWidget);
     if (!widget.profile.getHasLoggedInBefore())
     {
       _navigationBarItems.setSelectedIndex(_navigationBarItems.profileScreen.item1.position);
