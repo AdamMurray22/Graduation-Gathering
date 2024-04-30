@@ -5,6 +5,7 @@ import getOthersLocations.package.pymysql as pymysql
 import os
 import sys
 import time
+from datetime import datetime
 
 # rds settings
 user_name = os.environ['USER_NAME']
@@ -28,6 +29,9 @@ except pymysql.MySQLError as e:
 def lambda_handler(event, context): # Entry point for AWS.
     email = event['requestContext']['authorizer']["lambda"]["email"]
     userID = event['requestContext']['authorizer']["lambda"]["userID"]
+
+    if not isGraduationDay():
+        return
 
     otherUsers = []
     with conn.cursor() as cur:
@@ -68,3 +72,38 @@ def escape_sql_string(sql_string):
     if (sql_string is None):
         return sql_string
     return sql_string.translate(translate_table)
+
+# Checks if it is currently during graduation time
+def isGraduationDay():
+    datesStrings = getDates()
+    dates = []
+    for dateString in datesStrings:
+        dates.append(datetime.strptime(dateString, '%y/%m/%d').date())
+
+    today = datetime.today().date()
+
+    for date in dates:
+        if today == date:
+            if today.time() >= datetime.strptime("08", "%H"):
+                return True
+        else: 
+            tomorrowDate = datetime.strftime(date - datetime.timedelta(1), '%Y-%m-%d')
+            if today == tomorrowDate:
+                if today.time() < datetime.strptime("01", "%H"):
+                    return True
+
+    return False
+
+# Gets the graduation dates from the database
+def getDates():
+    dates = []
+    with conn.cursor() as cur:
+        # Gets the graduation dates
+        sql = "SELECT date FROM graduation_date"
+        cur.execute(sql)
+        for row in cur:
+            date = row[0]
+            dates.append(date)
+    conn.commit()
+
+    return dates

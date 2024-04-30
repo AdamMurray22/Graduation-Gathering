@@ -36,6 +36,7 @@ def lambda_handler(event, context):
 
     # Gets the database to put inserted into the database.
     message = event['body']
+    GraduationDateData = message['GraduationDate']
     FacultyData = message['Faculty']
     SchoolData = message['School']
     CourseData = message['Course']
@@ -45,6 +46,7 @@ def lambda_handler(event, context):
     UserZones = message['UserZones']
 
     # Creates the sql string templates.
+    graduation_date_sql_string = 'insert into graduation_date (date) values("{Date}")'
     faculty_sql_string = 'insert into faculty (faculty_name) values("{FacultyName}")'
     school_sql_string = 'insert into school (school_name, faculty_name) values("{SchoolName}", "{FacultyName}")'
     course_sql_string = 'insert into course (course_name, school_name) values("{CourseName}", "{SchoolName}")'
@@ -59,6 +61,14 @@ def lambda_handler(event, context):
     item_count = 0
 
     with conn.cursor() as cur:
+        for graduationDate in GraduationDateData: # Adds the graduation date data to the database.
+            try:
+                cur.execute(graduation_date_sql_string.format(Date = escape_sql_string(graduationDate['date'])))
+                item_count += 1
+            except pymysql.MySQLError as e:
+                logger.error(e)
+            conn.commit()
+    
         for faculty in FacultyData: # Adds the faculty data to the database.
             try:
                 cur.execute(faculty_sql_string.format(FacultyName = escape_sql_string(faculty['faculty_name'])))
@@ -128,6 +138,8 @@ def lambda_handler(event, context):
 
 def create_schema():
     with conn.cursor() as cur:
+        # Creates the graduation_date_table table
+        cur.execute(get_graduation_date_table_sql())
         # Creates the faculty table
         cur.execute(get_faculty_table_sql())
         # Creates the school table
@@ -146,6 +158,10 @@ def create_schema():
         cur.execute(get_user_zones_table_sql())
         conn.commit()
     conn.commit()
+
+# Gets the graduation date table sql
+def get_graduation_date_table_sql():
+    return "create table if NOT EXISTS graduation_date ( date varchar(255) NOT NULL, PRIMARY KEY (date))"
 
 # Gets the faculty table sql
 def get_faculty_table_sql():
