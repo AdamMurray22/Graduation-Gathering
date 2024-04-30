@@ -15,14 +15,14 @@ class _LoadingScreenState extends State<LoadingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: const Color(0xffffffff),
+      backgroundColor: const Color(0xff009a96),
       body: Container(
         margin: const EdgeInsets.all(0),
         padding: const EdgeInsets.all(0),
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
-          color: const Color(0xffffffff),
+          color: const Color(0xff009a96),
           shape: BoxShape.rectangle,
           borderRadius: BorderRadius.zero,
           border: Border.all(color: const Color(0x4d9e9e9e), width: 1),
