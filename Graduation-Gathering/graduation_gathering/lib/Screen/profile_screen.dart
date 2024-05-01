@@ -126,6 +126,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ));
     }
     return Scaffold(
+        backgroundColor: const Color(0xFFFFFFFF),
         resizeToAvoidBottomInset: false,
         body: SingleChildScrollView(
             child: Padding(

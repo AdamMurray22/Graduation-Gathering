@@ -45,7 +45,16 @@ class Connections extends Iterable<Connection>
 
     transformedConnections.forEach((key, value)
     {
-      _connections.add(Connection(allOtherUserProfiles.getUserFromId(key)!, ConnectionPermission.getPermissionFromString(value["toUser"]), ConnectionPermission.getPermissionFromString(value["fromUser"])));
+      try {
+        _connections.add(Connection(allOtherUserProfiles.getUserFromId(key)!,
+            ConnectionPermission.getPermissionFromString(value["toUser"]),
+            ConnectionPermission.getPermissionFromString(value["fromUser"])));
+      }
+      catch (e)
+      {
+        // This happens when the user has been sent a request from an account
+        // that created there account after the user loaded up the app.
+      }
     });
   }
 

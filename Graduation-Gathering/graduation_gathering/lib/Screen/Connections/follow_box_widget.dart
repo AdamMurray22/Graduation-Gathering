@@ -47,6 +47,7 @@ class _FollowBoxWidgetState extends State<FollowBoxWidget> {
             Text(widget.profile.getAccountTypeString()),
           ],
         ),
+    const SizedBox(width: 5),
     Row(
     mainAxisAlignment: MainAxisAlignment.start,
     crossAxisAlignment: CrossAxisAlignment.start,

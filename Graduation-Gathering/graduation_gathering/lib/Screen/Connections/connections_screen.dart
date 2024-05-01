@@ -88,6 +88,7 @@ class _ConnectionsScreenState extends State<ConnectionsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: const Color(0xFFFFFFFF),
         resizeToAvoidBottomInset: false,
         body: IndexedStack(index: _screenIndex, children: [
           Column(

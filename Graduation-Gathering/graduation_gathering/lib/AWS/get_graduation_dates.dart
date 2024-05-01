@@ -3,6 +3,8 @@ import '../Auth/auth_token.dart';
 import '../Location/location.dart';
 import 'package:graduation_gathering/AWS/send_request.dart';
 
+import 'graduation_dates.dart';
+
 /// Sends requests to the server to set your location.
 class GetGraduationDates extends SendRequest {
 
@@ -13,9 +15,12 @@ class GetGraduationDates extends SendRequest {
   GetGraduationDates(this._token);
 
   /// Sends the request.
-  send() {
+  Future<GraduationDates> send() async {
     Map<String, String> headers = {"Authorization": _token.getToken()};
-    get(headers);
+    String responseBody = await get(headers);
+    List<dynamic> responseJson = json.decode(
+        responseBody);
+    return GraduationDates(responseJson);
   }
 
   /// Returns the route within the server to the getGraduationDates endpoint.

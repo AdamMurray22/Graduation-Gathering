@@ -15,7 +15,8 @@ class SendLocationData extends SendRequest {
   /// Sends the request.
   send(Location location) {
     Map<String, String> headers = {"Authorization": _token.getToken()};
-    Map<String, Map<String, double>> bodyJson = {"location": {"lat": location.getLatitude(), "long": location.getLongitude()}};
+    Map<String, Map<String, double>> bodyJson =
+      {"location": {"lat": location.getLatitude(), "long": location.getLongitude()}};
     String body = json.encode(bodyJson);
     post(body, headers: headers);
   }

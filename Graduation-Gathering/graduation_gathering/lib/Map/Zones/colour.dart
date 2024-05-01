@@ -1,4 +1,4 @@
-/// A Colour class that storwes the RGB values.
+/// A Colour class that stores the RGB values.
 class Colour
 {
   /// The red value.

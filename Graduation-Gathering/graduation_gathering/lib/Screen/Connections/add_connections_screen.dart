@@ -147,8 +147,12 @@ class _AddConnectionsScreenState extends State<AddConnectionsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: const Color(0xFFFFFFFF),
         resizeToAvoidBottomInset: false,
-        body: Column(
+        body: Padding(
+            padding: const EdgeInsets.fromLTRB(5, 5, 5, 5),
+        child:
+        Column(
           children: [
             ElevatedButton(
                 onPressed: () {
@@ -341,6 +345,6 @@ class _AddConnectionsScreenState extends State<AddConnectionsScreen> {
               child: _connectionsContainer,
             ),
           ],
-        ));
+        )));
   }
 }

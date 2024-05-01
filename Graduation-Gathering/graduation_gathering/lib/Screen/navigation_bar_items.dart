@@ -16,29 +16,60 @@ import '../Profile/Connections/other_user_profiles.dart';
 import 'about_screen.dart';
 import 'map_screen.dart';
 
-
 /// Defines the different screens for the navigation bar.
-class NavigationBarItems
-{
+class NavigationBarItems {
   final List<Tuple2<NavigationBarItemEnum, StatefulWidget>> _itemsInOrder = [];
   late final Tuple2<NavigationBarItemEnum, MapScreen> mapScreen;
-  late final Tuple2<NavigationBarItemEnum, ConnectionsScreen> manageUserPermissionsScreen;
+  late final Tuple2<NavigationBarItemEnum, ConnectionsScreen>
+      manageUserPermissionsScreen;
   late final Tuple2<NavigationBarItemEnum, ProfileScreen> profileScreen;
   late final Tuple2<NavigationBarItemEnum, AboutScreen> aboutScreen;
 
   GlobalKey<MainMapWidgetState> mainMapWidgetStateKey = GlobalKey();
 
-  NavigationBarItems(AuthToken authToken, ProfileSettings profile, AcademicStructure structure, GradZones zones, Function() logoutFunction, Connections connections, OtherUserProfiles otherUserProfiles, GraduationDates graduationDates, {MainMapWidget? mainMapWidget})
-  {
-    for (GradZone zone in profile.getUserGradZones())
-    {
-      zones.getZoneFromId(zone.getId())?.setColour(ZoneColours.blue.getColourRGB());
+  NavigationBarItems(
+      AuthToken authToken,
+      ProfileSettings profile,
+      AcademicStructure structure,
+      GradZones zones,
+      Function() logoutFunction,
+      Connections connections,
+      OtherUserProfiles otherUserProfiles,
+      GraduationDates graduationDates,
+      {MainMapWidget? mainMapWidget}) {
+    for (GradZone zone in profile.getUserGradZones()) {
+      zones
+          .getZoneFromId(zone.getId())
+          ?.setColour(ZoneColours.blue.getColourRGB());
     }
-    mapScreen = Tuple2(NavigationBarItemEnum.mapScreen, MapScreen(authToken: authToken, allGradZones: zones, usersGradZones: profile.getUserGradZones(), mainMapWidgetStateKey: mainMapWidgetStateKey, mainMapWidget: mainMapWidget, graduationDates: graduationDates));
-    manageUserPermissionsScreen = Tuple2(NavigationBarItemEnum.manageUserPermissionsScreen, ConnectionsScreen(authToken: authToken, connections: connections, otherUserProfiles: otherUserProfiles, academicStructure: structure, userProfile: profile));
-    profileScreen = Tuple2(NavigationBarItemEnum.profileScreen, ProfileScreen(authToken: authToken, profile: profile, academicStructure: structure, allGradZones: zones, logoutFunction: logoutFunction, mainMapWidgetStateKey: mainMapWidgetStateKey));
+    mapScreen = Tuple2(
+        NavigationBarItemEnum.mapScreen,
+        MapScreen(
+            authToken: authToken,
+            allGradZones: zones,
+            usersGradZones: profile.getUserGradZones(),
+            mainMapWidgetStateKey: mainMapWidgetStateKey,
+            mainMapWidget: mainMapWidget,
+            graduationDates: graduationDates));
+    manageUserPermissionsScreen = Tuple2(
+        NavigationBarItemEnum.manageUserPermissionsScreen,
+        ConnectionsScreen(
+            authToken: authToken,
+            connections: connections,
+            otherUserProfiles: otherUserProfiles,
+            academicStructure: structure,
+            userProfile: profile));
+    profileScreen = Tuple2(
+        NavigationBarItemEnum.profileScreen,
+        ProfileScreen(
+            authToken: authToken,
+            profile: profile,
+            academicStructure: structure,
+            allGradZones: zones,
+            logoutFunction: logoutFunction,
+            mainMapWidgetStateKey: mainMapWidgetStateKey));
     aboutScreen =
-      const Tuple2(NavigationBarItemEnum.aboutScreen, AboutScreen());
+        const Tuple2(NavigationBarItemEnum.aboutScreen, AboutScreen());
     _itemsInOrder.add(mapScreen);
     _itemsInOrder.add(manageUserPermissionsScreen);
     _itemsInOrder.add(profileScreen);
@@ -48,14 +79,12 @@ class NavigationBarItems
   int _selectedIndexBottomNavBar = 0;
 
   /// Returns the selected index in the nav bar.
-  int getSelectedIndex()
-  {
+  int getSelectedIndex() {
     return _selectedIndexBottomNavBar;
   }
 
   /// Sets the selected index in the nav bar.
-  setSelectedIndex(int index)
-  {
+  setSelectedIndex(int index) {
     _selectedIndexBottomNavBar = index;
   }
 
@@ -65,16 +94,16 @@ class NavigationBarItems
   }
 
   /// Returns the screens in order.
-  List<Widget> getScreensInOrder()
-  {
+  List<Widget> getScreensInOrder() {
     List<Widget> screens = [];
-    for (Tuple2<NavigationBarItemEnum, StatefulWidget> barItem in getValuesInOrder())
-    {
+    for (Tuple2<NavigationBarItemEnum, StatefulWidget> barItem
+        in getValuesInOrder()) {
       screens.add(barItem.item2);
     }
     return screens;
   }
 }
+
 enum NavigationBarItemEnum {
   mapScreen(0, Icon(Icons.home), "Home"),
   manageUserPermissionsScreen(1, Icon(Icons.person), "Connections"),
