@@ -6,6 +6,7 @@ import 'package:graduation_gathering/Auth/auth_token.dart';
 import 'package:graduation_gathering/Map/Zones/colour.dart';
 import 'package:graduation_gathering/Map/Zones/grad_zone.dart';
 import 'package:graduation_gathering/Map/Zones/grad_zones.dart';
+import 'package:graduation_gathering/Profile/Connections/other_user_profiles.dart';
 import 'package:location/location.dart' as location_data;
 import 'dart:async';
 
@@ -17,16 +18,27 @@ import 'map_widget.dart';
 
 /// The main map screen Widget.
 class MainMapWidget extends MapWidget {
-  const MainMapWidget({required this.authToken, required this.allGradZones, required this.usersGradZones, required this.graduationDates, super.markerClickedFunction, super.key});
+  const MainMapWidget(
+      {required this.authToken,
+      required this.allGradZones,
+      required this.usersGradZones,
+      required this.graduationDates,
+      required this.otherUserProfiles,
+      super.markerClickedFunction,
+      super.key});
 
   /// The auth token to authenticate requests to the server.
   final AuthToken authToken;
+
   /// All the graduation zones displayed on the map.
   final GradZones allGradZones;
+
   /// All of the zones that the user can appear in.
   final GradZones usersGradZones;
+
   /// The dates when location sharing is enabled.
   final GraduationDates graduationDates;
+  final OtherUserProfiles otherUserProfiles;
 
   @override
   MapWidgetState<MainMapWidget> createState() => MainMapWidgetState();
@@ -34,7 +46,6 @@ class MainMapWidget extends MapWidget {
 
 /// The main map screen state.
 class MainMapWidgetState extends MapWidgetState<MainMapWidget> {
-
   late final SendLocationData _sendLocationData;
   late final GetOtherUsersLocation _getOtherUsersLocation;
 
@@ -57,22 +68,28 @@ class MainMapWidgetState extends MapWidgetState<MainMapWidget> {
   @override
   createLayers() {
     createGeoJsonLayer(MapDataId.zones.idPrefix, Colour(0, 0, 255), 8);
-    createMakerLayer(MapDataId.otherUsers.idPrefix, "test.png", 0.2, 0.5, 1, true);
-    createMakerLayer(MapDataId.userLocation.idPrefix, "UserIcon.png", 0.1, 0.5, 0.5, false);
+    createMakerLayer(
+        MapDataId.otherUsers.idPrefix, "test.png", 0.2, 0.5, 1, true);
+    createMakerLayer(
+        MapDataId.userLocation.idPrefix, "UserIcon.png", 0.1, 0.5, 0.5, false);
   }
 
   // Adds the users location to the map as a marker and sets for it be updated whenever the user moves.
   // Also sends the users location to the server when the user is within one of their chosen zones.
   _addUserLocationIcon() {
     LocationHandler handler = LocationHandler.getHandler();
-    handler.onLocationChanged((location_data.LocationData currentLocation) async {
-      updateMarker(MapDataId.userLocation.idPrefix, MapDataId.userLocation.idPrefix,
-          currentLocation.longitude!, currentLocation.latitude!);
-      if (!widget.graduationDates.isGraduationDayToday())
-      {
+    handler
+        .onLocationChanged((location_data.LocationData currentLocation) async {
+      updateMarker(
+          MapDataId.userLocation.idPrefix,
+          MapDataId.userLocation.idPrefix,
+          currentLocation.longitude!,
+          currentLocation.latitude!);
+      if (!widget.graduationDates.isGraduationDayToday()) {
         return;
       }
-      if (await isPointInsideGeojson(currentLocation.longitude!, currentLocation.latitude!, widget.usersGradZones)) {
+      if (await isPointInsideGeojson(currentLocation.longitude!,
+          currentLocation.latitude!, widget.usersGradZones)) {
         _sendLocationData.send(
             Location(currentLocation.longitude!, currentLocation.latitude!));
       }
@@ -81,14 +98,13 @@ class MainMapWidgetState extends MapWidgetState<MainMapWidget> {
 
   // creates a repeating function to retrieve the other users locations.
   _setUpGetOtherUsersLocations() {
-    const dur = Duration(seconds:10);
+    const dur = Duration(seconds: 10);
     Timer.periodic(dur, (Timer t) => _getOtherUsersLocations());
   }
 
   // Adds the other users markers to the map.
   _getOtherUsersLocations() async {
-    if (!widget.graduationDates.isGraduationDayToday())
-    {
+    if (!widget.graduationDates.isGraduationDayToday()) {
       return;
     }
     _addOtherUsersMarkers(await _getOtherUsersLocation.send());
@@ -98,26 +114,27 @@ class MainMapWidgetState extends MapWidgetState<MainMapWidget> {
   // list given, and checking that all the given markers are in the graduation zones.
   _addOtherUsersMarkers(List<dynamic> users) async {
     await clearMarkerLayer(MapDataId.otherUsers.idPrefix);
-    for (Map<String, dynamic> user in users)
-    {
-      if (await isPointInsideGeojson(user["longitude"], user["latitude"], widget.allGradZones)) {
-        updateMarker(MapDataId.otherUsers.idPrefix, user["email"],
-            user["longitude"], user["latitude"]);
+    for (Map<String, dynamic> user in users) {
+      if (widget.otherUserProfiles.getUserFromId(user["id"]) != null) {
+        if (await isPointInsideGeojson(
+            user["longitude"], user["latitude"], widget.allGradZones)) {
+          updateMarker(MapDataId.otherUsers.idPrefix, user["id"],
+              user["longitude"], user["latitude"]);
+        }
       }
     }
   }
 
   // Adds the zones to the map as geojsons.
-  _addGradZones()
-  {
+  _addGradZones() {
     for (GradZone zone in widget.allGradZones) {
-      addGeoJsonWithColour(MapDataId.zones.idPrefix, jsonEncode(zone.getGeoJson()), zone.getColour()!);
+      addGeoJsonWithColour(MapDataId.zones.idPrefix,
+          jsonEncode(zone.getGeoJson()), zone.getColour()!);
     }
   }
 
   /// Updates the zones colours.
-  updateGradZoneColours()
-  {
+  updateGradZoneColours() {
     clearGeoJsonLayer(MapDataId.zones.idPrefix);
     _addGradZones();
   }

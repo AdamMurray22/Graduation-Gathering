@@ -4,7 +4,7 @@ import '../Exceptions/map_data_id_not_found_exception.dart';
 enum MapDataId
 {
   userLocation("UL-"),
-  otherUsers("OU-"),
+  otherUsers("US-"),
   zones("GZ-");
 
   const MapDataId(this.idPrefix);

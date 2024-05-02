@@ -31,7 +31,7 @@ def lambda_handler(event, context): # Entry point for AWS.
     userID = event['requestContext']['authorizer']["lambda"]["userID"]
 
     if not isGraduationDay():
-        return
+        return []
 
     otherUsers = []
     with conn.cursor() as cur:
@@ -78,18 +78,19 @@ def isGraduationDay():
     datesStrings = getDates()
     dates = []
     for dateString in datesStrings:
-        dates.append(datetime.strptime(dateString, '%y/%m/%d').date())
+        dates.append(datetime.strptime(dateString, '%Y/%m/%d').date())
 
-    today = datetime.today().date()
+    todayDate = datetime.today().date()
+    todayTime = datetime.today().time()
 
     for date in dates:
-        if today == date:
-            if today.time() >= datetime.strptime("08", "%H"):
+        if todayDate == date:
+            if todayTime >= datetime.strptime("08", "%H").time():
                 return True
         else: 
             tomorrowDate = datetime.strftime(date - datetime.timedelta(1), '%Y-%m-%d')
-            if today == tomorrowDate:
-                if today.time() < datetime.strptime("01", "%H"):
+            if todayDate == tomorrowDate:
+                if todayTime < datetime.strptime("01", "%H").time():
                     return True
 
     return False

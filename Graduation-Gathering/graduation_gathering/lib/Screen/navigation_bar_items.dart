@@ -50,7 +50,8 @@ class NavigationBarItems {
             usersGradZones: profile.getUserGradZones(),
             mainMapWidgetStateKey: mainMapWidgetStateKey,
             mainMapWidget: mainMapWidget,
-            graduationDates: graduationDates));
+            graduationDates: graduationDates,
+            otherUserProfiles: otherUserProfiles));
     manageUserPermissionsScreen = Tuple2(
         NavigationBarItemEnum.manageUserPermissionsScreen,
         ConnectionsScreen(
