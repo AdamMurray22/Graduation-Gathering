@@ -5,7 +5,7 @@ import 'package:test/test.dart';
 void main() {
   group('Map Data Id Tests', () {
     test('.getMapDataIdEnumFromId() valid other user', () {
-      expect(MapDataId.getMapDataIdEnumFromId("OU-873949"), MapDataId.otherUsers);
+      expect(MapDataId.getMapDataIdEnumFromId("US-873949"), MapDataId.otherUsers);
     });
 
     test('.getMapDataIdEnumFromId() valid grad zone', () {
